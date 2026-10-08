@@ -1,0 +1,73 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>어셈블리나우 · 22대 국회 지역구 지도</title>
+<meta name="description" content="지금 우리 지역구 국회의원은 누구? 254개 지역구와 비례대표 46명을 정당 색으로 한눈에.">
+<meta property="og:type" content="website">
+<meta property="og:title" content="어셈블리나우 · 22대 국회 지역구 지도">
+<meta property="og:description" content="지금 우리 지역구 국회의원은 누구? 254개 지역구와 비례대표 46명을 정당 색으로 한눈에.">
+<meta property="og:url" content="https://bvnm9979-creator.github.io/assembly-now/">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Cpath d='M2 26a14 14 0 0 1 28 0h-7a7 7 0 0 0-14 0z' fill='%231F5BC4'/%3E%3Cpath d='M16 12a14 14 0 0 1 14 14h-7a7 7 0 0 0-7-7z' fill='%23E2333C'/%3E%3C/svg%3E">
+<link rel="preconnect" href="https://cdn.jsdelivr.net">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/wanteddev/wanted-sans@v1.0.3/packages/wanted-sans/fonts/webfonts/variable/split/WantedSansVariable.min.css">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Hahmlet:wght@500;700;800&display=swap">
+<link rel="stylesheet" href="https://unpkg.com/maplibre-gl@4.7.1/dist/maplibre-gl.css">
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+<header class="bar" id="bar">
+  <div class="bar-in">
+    <div class="brand">
+      <span class="eyebrow">제22대 국회 · <span id="asof"></span></span>
+      <h1>지역구 지도</h1>
+    </div>
+
+    <div class="score">
+      <div class="score-top">
+        <span class="lead" id="leadL"></span>
+        <span class="majority">과반 150</span>
+        <span class="lead r" id="leadR"></span>
+      </div>
+      <div class="seatbar" id="seatbar" aria-label="정당별 의석"></div>
+    </div>
+
+    <div class="search" id="search">
+      <svg class="ico" viewBox="0 0 24 24" aria-hidden="true"><circle cx="11" cy="11" r="7"/><path d="m20 20-4-4"/></svg>
+      <input id="q" type="search" placeholder="지역구 · 의원 이름" autocomplete="off" spellcheck="false" aria-label="지역구나 의원 이름 검색" aria-controls="results" aria-expanded="false">
+      <ul class="results" id="results" role="listbox" hidden></ul>
+    </div>
+  </div>
+  <nav class="parties" id="parties" aria-label="정당 선택"></nav>
+</header>
+
+<main class="stage">
+  <section class="canvas">
+    <div class="seg" role="tablist" aria-label="보기 방식">
+      <button role="tab" data-view="geo" class="on">실제 지도</button>
+      <button role="tab" data-view="hex">육각형</button>
+      <button role="tab" data-view="pr">비례대표 <span id="prcount"></span></button>
+    </div>
+    <div class="view" id="view-geo"><div id="map"></div></div>
+    <div class="view" id="view-hex" hidden><svg id="hex" role="img" aria-label="육각형 지역구 지도"></svg></div>
+    <div class="view scroll" id="view-pr" hidden><div id="pr"></div></div>
+  </section>
+
+  <aside class="panel" id="panel" aria-live="polite"></aside>
+</main>
+
+<div class="tip" id="tip" hidden></div>
+
+<footer class="foot">
+  <p>의원 정보 국회 열린국회정보 · 선거구 경계 오마이뉴스(MIT) · 육각형 배치 polis-korea(MIT) · 지도 MapLibre</p>
+  <p>지역구 경계는 22대 총선(2024) 기준. 국회 자료의 '전남광주통합특별시' 지역구는 기존 광주·전남 선거구에 맞춰 표시했어요.</p>
+</footer>
+
+<script src="https://unpkg.com/maplibre-gl@4.7.1/dist/maplibre-gl.js"></script>
+<script src="app.js"></script>
+</body>
+</html>

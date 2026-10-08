@@ -1,0 +1,8 @@
+# 로컬 백업·중간 파일
+/archive/
+/data/
+raw/members_try.json
+raw/members_22.json
+raw/missing.json
+.DS_Store
+__pycache__/
