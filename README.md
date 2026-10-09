@@ -7,6 +7,8 @@
 - 실제 지도 / 육각형 지도(지역구 1곳 = 1칸) / 비례대표 목록
 - 정당을 누르면 그 정당 지역구만 표시
 - 지역구·의원 이름 검색, 지역구별 의원 정보(사진·당선 횟수·위원회·연락처)
+- 당선 선거 결과: 후보별 득표수·득표율, 2위와 표 차이, 투표율, 여러 시군구에 걸친 지역구는 시군구별 득표율
+  (재보궐로 바뀐 14곳은 2026.6.3 재보궐 결과 + 2024 총선 결과)
 - 국회 본회의장 모양의 반원 의석도
 
 ## 데이터 갱신 (탈당·보궐선거 후)
@@ -32,12 +34,14 @@ cd web && python3 -m http.server 8765   # http://localhost:8765
 | `web/` | 웹페이지 (GitHub Pages 로 배포되는 폴더) |
 | `web/data/` | 지도용 데이터 (`update.sh` 가 생성) |
 | `scripts/fetch_members.py` | 열린국회정보에서 현재 의원 명단·사진 수집 |
+| `scripts/build_results.py` | 선관위 개표결과(`raw/nec_*_raw.json`)를 지역구별로 정리 → `web/data/results.json` |
 | `scripts/build_data.py` | 선거구 경계·육각형 배치·의원 정보를 지역구 이름으로 연결 |
 | `raw/` | 원본 선거구 경계·육각형 배치 (23대 선거구가 확정되면 이 파일만 교체) |
 
 ## 출처
 
 - 의원 정보: [국회 열린국회정보](https://open.assembly.go.kr) (현재 국회의원 인적사항)
+- 선거 결과: [중앙선거관리위원회 선거통계시스템](https://info.nec.go.kr) 개표현황 (22대 총선, 2026.6.3 재보궐)
 - 22대 선거구 경계: 오마이뉴스 (MIT, `raw/district_22_geojson.LICENSE`)
 - 육각형 배치: [polis-korea](https://github.com/YangSeungWon/polis-korea) (MIT)
 - 지도: [MapLibre GL JS](https://maplibre.org) · 글꼴: 함렛(Hahmlet), 원티드 산스(Wanted Sans)

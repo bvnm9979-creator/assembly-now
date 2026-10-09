@@ -120,7 +120,11 @@ h1 { margin: 0; font-family: var(--serif); font-weight: 800; font-size: 31px; le
 .prcard small { color: var(--ink-3); font-size: 14px; }
 
 /* ── 오른쪽 패널 ─────────────────────────────── */
-.panel { position: sticky; top: calc(var(--bar-h) + 20px); min-height: 200px; }
+.panel {
+  position: sticky; top: calc(var(--bar-h) + 20px); min-height: 200px;
+  max-height: calc(100vh - var(--bar-h) - 40px); overflow-y: auto; overscroll-behavior: contain;
+  padding-right: 6px; scrollbar-width: thin;
+}
 .ov-title { font-family: var(--serif); font-size: 24px; font-weight: 800; margin: 2px 0 2px; letter-spacing: -.02em; }
 .ov-sub { color: var(--ink-3); font-size: 16px; margin: 0 0 12px; }
 .hemi { width: 100%; height: auto; display: block; }
@@ -154,6 +158,41 @@ h1 { margin: 0; font-family: var(--serif); font-weight: 800; font-size: 31px; le
 .facts li span { color: var(--ink-3); font-size: 16px; }
 .facts a { color: var(--ink); text-decoration: underline; text-decoration-color: var(--hair-2); text-underline-offset: 3px; word-break: break-all; }
 .facts a:hover { text-decoration-color: var(--ink); }
+/* 선거 결과 */
+.elec { margin-top: 26px; }
+.elec-head { display: flex; align-items: baseline; justify-content: space-between; gap: 10px; }
+.elec-head h3 { margin: 0; font-family: var(--serif); font-size: 22px; font-weight: 800; letter-spacing: -.02em; }
+.elec-head span { color: var(--ink-3); font-size: 14px; font-variant-numeric: tabular-nums; }
+.margin { margin: 6px 0 14px; font-size: 16px; color: var(--ink-2); line-height: 1.55; }
+.margin b { color: var(--ink); font-variant-numeric: tabular-nums; }
+.margin small { font-size: 14px; color: var(--ink-3); margin-left: 2px; }
+.cands { list-style: none; margin: 0; padding: 0; }
+.cands li { padding: 9px 0; border-bottom: 1px solid var(--hair); }
+.c-top { display: flex; justify-content: space-between; align-items: baseline; gap: 10px; font-size: 17px; }
+.c-nm { display: inline-flex; align-items: baseline; gap: 7px; min-width: 0; }
+.c-nm i { width: 9px; height: 9px; border-radius: 50%; flex: none; transform: translateY(-1px); }
+.c-nm small { color: var(--ink-3); font-size: 14px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.c-pct { font-family: var(--serif); font-weight: 700; font-variant-numeric: tabular-nums; }
+.win .c-nm, .win .c-pct { font-weight: 800; }
+.win .c-pct { font-size: 21px; }
+.c-bar { height: 7px; margin: 6px 0 4px; border-radius: 4px; background: var(--off); overflow: hidden; }
+.c-bar span { display: block; height: 100%; border-radius: 4px; }
+.cands li:not(.win) .c-bar span { opacity: .55; }
+.c-v { font-size: 14px; color: var(--ink-3); font-variant-numeric: tabular-nums; }
+.turnout { margin: 12px 0 0; font-size: 14px; color: var(--ink-3); font-variant-numeric: tabular-nums; }
+.turnout b { color: var(--ink); }
+.areas { margin-top: 16px; padding-top: 12px; border-top: 1px solid var(--hair-2); }
+.areas-t { margin: 0 0 8px; font-size: 14px; font-weight: 700; color: var(--ink-2); }
+.area { display: grid; grid-template-columns: 76px 1fr; gap: 2px 12px; align-items: center; padding: 5px 0; font-size: 15px; }
+.area small { grid-column: 2; color: var(--ink-3); font-size: 13px; font-variant-numeric: tabular-nums; }
+.stack { display: flex; height: 10px; border-radius: 3px; overflow: hidden; background: var(--off); }
+.stack span + span { box-shadow: inset 1px 0 0 rgba(255,255,255,.8); }
+.prev { margin-top: 18px; border: 1px solid var(--hair-2); border-radius: 10px; padding: 0 14px; }
+.prev summary { cursor: pointer; padding: 12px 0; font-size: 16px; font-weight: 600; list-style-position: inside; }
+.prev summary small { display: block; font-weight: 400; color: var(--ink-3); font-size: 14px; margin-left: 18px; }
+.prev[open] { padding-bottom: 12px; }
+.src { margin: 14px 0 0; font-size: 12px; color: var(--ink-3); }
+
 .vacant { margin-top: 4px; padding: 22px; border-radius: 10px; color: var(--ink-2); background: repeating-linear-gradient(135deg, #fff 0 7px, #f1f2f4 7px 14px); border: 1px dashed var(--hair-2); }
 
 /* ── 말풍선 · 지도 컨트롤 ─────────────────────── */
@@ -171,7 +210,7 @@ h1 { margin: 0; font-family: var(--serif); font-weight: 800; font-size: 31px; le
   .bar-in { grid-template-columns: auto minmax(0, 1fr); gap: 12px 20px; }
   .search { grid-column: 1 / -1; }
   .stage { grid-template-columns: 1fr; }
-  .panel { position: static; }
+  .panel { position: static; max-height: none; overflow: visible; padding-right: 0; }
   .canvas { height: 68vh; }
 }
 @media (max-width: 560px) {

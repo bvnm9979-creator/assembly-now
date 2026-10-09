@@ -9,6 +9,10 @@ const PARTY_COLOR = {
   "기본소득당": "#00A497",
   "사회민주당": "#EDB200",
   "무소속": "#9A9FA8",
+  // 선거 결과에만 나오는 정당
+  "새로운미래": "#2E9C9A",
+  "녹색정의당": "#E9B800",
+  "새미래민주당": "#4FA3C7",
 };
 // 의석도·막대에서 왼쪽→오른쪽 순서
 const PARTY_ORDER = ["진보당", "기본소득당", "사회민주당", "조국혁신당", "더불어민주당", "무소속", "개혁신당", "국민의힘"];
@@ -52,6 +56,8 @@ async function init() {
     f.properties.party = m ? m.party : "공석";
   }
   Object.assign(state, { members, hexes, geo, sido });
+  // 선거 결과는 없어도 지도는 보이게 따로 받음
+  load("results.json").then((r) => { state.results = r; if (state.sel) select(state.sel, false); }).catch(() => {});
   state.counts = partyCounts();
   $("#asof").textContent = members.fetched.replace(/-/g, ".") + " 기준";
   $("#prcount").textContent = members.pr.length;
@@ -344,7 +350,8 @@ function select(key, fly = true) {
   const m = state.members.district[key];
   if (m) return showMember(m, key);
   $("#panel").innerHTML = `${backBtn()}<p class="where"><span>지역구</span><b>${esc(key)}</b></p>
-    <div class="vacant"><b>공석</b> — 재보궐선거 전까지 이 지역구의 국회의원이 없어요.</div>`;
+    <div class="vacant"><b>공석</b> — 재보궐선거 전까지 이 지역구의 국회의원이 없어요.</div>
+    ${electionHTML(key, null)}`;
   bindBack();
 }
 
@@ -379,12 +386,59 @@ function showMember(m, key) {
       ${m.office ? `<li><span>사무실</span>${esc(m.office)}</li>` : ""}
       ${m.tel ? `<li><span>전화</span>${esc(m.tel)}</li>` : ""}
       ${m.home ? `<li><span>홈페이지</span><a href="${esc(m.home)}" target="_blank" rel="noopener">${esc(m.home.replace(/^https?:\/\//, "").replace(/\/$/, ""))}</a></li>` : ""}
-    </ul>`;
+    </ul>
+    ${key ? electionHTML(key, m.name) : ""}`;
   bindBack();
   if (window.matchMedia("(max-width: 1080px)").matches) {
     const y = $("#panel").getBoundingClientRect().top + scrollY - $("#bar").offsetHeight - 12;
     window.scrollTo({ top: y, behavior: "smooth" });
   }
+}
+
+// ── 선거 결과 ─────────────────────────────────────────
+const n0 = (x) => x.toLocaleString("ko-KR");
+const p1 = (x) => x.toFixed(2).replace(/\.?0+$/, "");
+
+// 이 의원이 당선된 선거(재보궐이 있으면 그것) + 그 전 총선 결과
+function electionHTML(key, name) {
+  if (!state.results) return "";
+  const found = state.results.elections
+    .map((e) => ({ e, r: e.district[key] }))
+    .filter((x) => x.r);
+  if (!found.length) return "";
+  const won = [...found].reverse().find((x) => x.r.cands[0].name === name) || found[found.length - 1];
+  const before = found.filter((x) => x !== won && x.e.date < won.e.date);
+  return `<section class="elec">
+      ${raceHTML(won, true)}
+      ${before.map((x) => `<details class="prev"><summary>${esc(x.e.name)} 결과 보기 <small>${esc(x.e.date)} · ${esc(x.r.cands[0].name)} 당선</small></summary>${raceHTML(x, false)}</details>`).join("")}
+      <p class="src">출처 중앙선거관리위원회 선거통계시스템</p>
+    </section>`;
+}
+
+function raceHTML({ e, r }, main) {
+  const [w, s] = r.cands;
+  const top = r.cands[0].votes;
+  const head = main
+    ? `<div class="elec-head"><h3>${esc(e.name)} 결과</h3><span>${esc(e.date)}</span></div>
+       <p class="margin">${s
+         ? `<b>${p1(w.pct)}%</b>로 당선 · 2위 ${esc(s.name)}<small>(${esc(s.party)})</small>에 <b>${n0(w.votes - s.votes)}표</b>(${p1(w.pct - s.pct)}%p) 앞섬`
+         : `<b>${p1(w.pct)}%</b>로 당선`}</p>`
+    : "";
+  return `${head}
+    <ol class="cands">${r.cands.map((c, i) => `
+      <li class="${i === 0 ? "win" : ""}">
+        <div class="c-top"><span class="c-nm"><i style="background:${colorOf(c.party)}"></i>${esc(c.name)}<small>${esc(c.party)}</small></span>
+          <span class="c-pct">${p1(c.pct)}%</span></div>
+        <div class="c-bar"><span style="width:${(c.votes / top) * 100}%;background:${colorOf(c.party)}"></span></div>
+        <div class="c-v">${n0(c.votes)}표${i === 0 ? " · 당선" : ""}</div>
+      </li>`).join("")}
+    </ol>
+    <p class="turnout">투표율 <b>${p1((r.turnout / r.electors) * 100)}%</b> · 선거인 ${n0(r.electors)}명 · 투표 ${n0(r.turnout)}명 · 무효 ${n0(r.invalid)}표</p>
+    ${r.areas.length ? `<div class="areas"><p class="areas-t">지역별 득표율</p>
+      ${r.areas.map((a) => `<div class="area"><span>${esc(a.name)}</span>
+        <div class="stack">${a.pct.map((p, i) => p ? `<span style="width:${p}%;background:${colorOf(r.cands[i].party)}" title="${esc(r.cands[i].name)} ${p1(p)}%"></span>` : "").join("")}</div>
+        <small>${esc(r.cands[0].name)} ${p1(a.pct[0])} · ${esc(r.cands[1].name)} ${p1(a.pct[1])}</small></div>`).join("")}
+    </div>` : ""}`;
 }
 
 // ── 말풍선 ─────────────────────────────────────────────
