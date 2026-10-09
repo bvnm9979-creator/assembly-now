@@ -27,9 +27,26 @@ const state = { members: null, hexes: null, geo: null, sido: null, party: null, 
 init();
 
 async function init() {
-  const [members, hexes, geo, sido] = await Promise.all(
-    ["members.json", "hex.json", "districts.geojson", "sido.geojson"].map((f) => fetch("data/" + f).then((r) => r.json()))
-  );
+  // 서버가 잠깐 오류(503 등)를 내면 최대 4번까지 다시 받음
+  const load = async (f) => {
+    for (let i = 0; ; i++) {
+      try {
+        const r = await fetch("data/" + f);
+        if (r.ok) return await r.json();
+        throw new Error(r.status);
+      } catch (e) {
+        if (i >= 3) throw e;
+        await new Promise((ok) => setTimeout(ok, 800 * (i + 1)));
+      }
+    }
+  };
+  let members, hexes, geo, sido;
+  try {
+    [members, hexes, geo, sido] = await Promise.all(["members.json", "hex.json", "districts.geojson", "sido.geojson"].map(load));
+  } catch {
+    $("#panel").innerHTML = `<p class="ov-sub">지도 자료를 불러오지 못했어요. 잠시 뒤 새로고침해 주세요.</p>`;
+    return;
+  }
   for (const f of geo.features) {
     const m = members.district[f.properties.key];
     f.properties.party = m ? m.party : "공석";
