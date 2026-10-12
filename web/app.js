@@ -278,10 +278,10 @@ function drawGeo() {
     // 독도: 전국 지도에서는 섬이 점보다 작아 이름표를 항상 붙여 둠(누르면 포항남구·울릉 선거구)
     const dokdo = document.createElement("button");
     dokdo.className = "dokdo";
-    dokdo.innerHTML = "<i></i>독도";
+    dokdo.textContent = "독도";
     dokdo.title = "독도 · 경북 울릉군 울릉읍 독도리 (경북 포항시남구울릉군 선거구)";
     dokdo.addEventListener("click", () => select("경북 포항시남구울릉군", false));
-    new maplibregl.Marker({ element: dokdo, anchor: "left" }).setLngLat([131.867, 37.2413]).addTo(map);
+    new maplibregl.Marker({ element: dokdo, anchor: "left", offset: [4, 0] }).setLngLat([131.8735, 37.2405]).addTo(map);   // 동도 동쪽 끝 바로 옆, 섬 모양을 가리지 않게
 
     map.on("mousemove", "fill", (e) => {
       const k = e.features[0].properties.key;
