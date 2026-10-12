@@ -147,13 +147,6 @@ def aggregate(src, precinct_level):
                 acc[s] += v + scale(town_rows + unknown, v["valid"] / tv)
     return acc, lost
 
-p21, lost_p = aggregate(json.load(open(os.path.join(RAW, "nec_p21_precinct_raw.json"))), True)
-l9, lost_l = aggregate(json.load(open(os.path.join(RAW, "nec_l9_governor_raw.json"))), False)
-
-# ── 3) 2024 총선은 공식 지역구 결과 그대로, 세 선거 비교 ──────────────────
-res = json.load(open(os.path.join(OUT, "results.json")))
-g = next(e for e in res["elections"] if e["id"] == "g22")["district"]
-
 def grade(m):
     if m >= 10: return "우세"
     if m >= 5: return "경합우세"
@@ -161,45 +154,59 @@ def grade(m):
     if m > -10: return "경합열세"
     return "열세"
 
-out = {}
-for k in sorted(g):
-    c = g[k]["cands"]
-    parties = [x["party"] + "|" for x in c]
-    di, ri = pick(parties, LEFT), rival(parties, [x["votes"] for x in c])
-    e24 = Counter({"D": c[di]["votes"] if di is not None else 0,
-                   "R": c[ri]["votes"] if ri is not None else 0, "valid": g[k]["valid"]})
-    row = {}
-    for eid, e in (("g22", e24), ("p21", p21.get(k)), ("l9", l9.get(k))):
-        row[eid] = {"d": round(e["D"] / e["valid"] * 100, 1), "r": round(e["R"] / e["valid"] * 100, 1),
-                    "m": round((e["D"] - e["R"]) / e["valid"] * 100, 1)} if e and e["valid"] else None
-    notes = []
-    if di is not None and c[di]["party"] != "더불어민주당":
-        notes.append(f"민주당 무공천 — {c[di]['party']} {c[di]['name']} 기준")
-    if ri is not None and c[ri]["party"] != "국민의힘":
-        notes.append(f"상대 후보 {c[ri]['party']} {c[ri]['name']}")
-    if notes:
-        row["g22"]["note"] = " · ".join(notes)
-    if di is None:                                   # 세종갑(민주당 공천 취소)·대구 서구·의성청송영덕울진: 민주 계열 후보 없음
-        why = "(공천 취소)" if k == "세종 세종특별자치시갑" else ""
-        row["g22"] = {"none": f"민주 계열 후보 없음{why} — 평균에서 제외"}
-    ms = [row[x]["m"] for x in ("g22", "p21", "l9") if row[x] and "m" in row[x]]
-    avg = round(sum(ms) / len(ms), 1)
-    out[k] = dict(row, avg=avg, grade=grade(avg),
-                  trend=round(row["l9"]["m"] - row["g22"]["m"], 1) if row["l9"] and "m" in row["g22"] else None)
 
-json.dump({"source": "중앙선거관리위원회 선거통계시스템 투표구·읍면동별 개표결과를 22대 지역구로 다시 합산",
-           "elections": [{"id": "g22", "name": "2024 총선", "desc": "지역구 후보"},
-                         {"id": "p21", "name": "2025 대선", "desc": "이재명 · 김문수"},
-                         {"id": "l9", "name": "2026 지선", "desc": "시·도지사 후보"}],
-           "rule": "세 선거의 '민주 득표율 − 상대(국민의힘 등) 최다 득표 후보 득표율' 평균 · +10%p 이상 우세 · +5~10 경합우세 · ±5 안 경합 · −5~−10 경합열세 · −10 이하 열세",
-           "district": out},
-          open(os.path.join(OUT, "outlook.json"), "w"), ensure_ascii=False, separators=(",", ":"))
+def main():
+    p21, lost_p = aggregate(json.load(open(os.path.join(RAW, "nec_p21_precinct_raw.json"))), True)
+    l9, lost_l = aggregate(json.load(open(os.path.join(RAW, "nec_l9_governor_raw.json"))), False)
 
-# ── 확인 ─────────────────────────────────────────────────────────────
-for name, acc, lost in (("대선", p21, lost_p), ("지선", l9, lost_l)):
-    tot, lv = sum(v["valid"] for v in acc.values()), sum(lost.values())
-    print(f"{name}: 지역구 {len([k for k in g if k in acc])}/{len(g)}곳, 지도에 없는 이름 {sorted(set(acc) - set(g))[:5]},",
-          f"유효표 {tot:,.0f}, 동 짝 못 찾아 구시군 비율로 나눈 표 {lv:,} ({lv / (tot + lv) * 100:.2f}%)")
-    for k, v in lost.most_common(10):
-        print("   못 찾음:", k, f"{v:,}")
-print(Counter(v["grade"] for v in out.values()))
+    # ── 3) 2024 총선은 공식 지역구 결과 그대로, 세 선거 비교 ──────────────────
+    res = json.load(open(os.path.join(OUT, "results.json")))
+    g = next(e for e in res["elections"] if e["id"] == "g22")["district"]
+
+
+    out = {}
+    for k in sorted(g):
+        c = g[k]["cands"]
+        parties = [x["party"] + "|" for x in c]
+        di, ri = pick(parties, LEFT), rival(parties, [x["votes"] for x in c])
+        e24 = Counter({"D": c[di]["votes"] if di is not None else 0,
+                       "R": c[ri]["votes"] if ri is not None else 0, "valid": g[k]["valid"]})
+        row = {}
+        for eid, e in (("g22", e24), ("p21", p21.get(k)), ("l9", l9.get(k))):
+            row[eid] = {"d": round(e["D"] / e["valid"] * 100, 1), "r": round(e["R"] / e["valid"] * 100, 1),
+                        "m": round((e["D"] - e["R"]) / e["valid"] * 100, 1)} if e and e["valid"] else None
+        notes = []
+        if di is not None and c[di]["party"] != "더불어민주당":
+            notes.append(f"민주당 무공천 — {c[di]['party']} {c[di]['name']} 기준")
+        if ri is not None and c[ri]["party"] != "국민의힘":
+            notes.append(f"상대 후보 {c[ri]['party']} {c[ri]['name']}")
+        if notes:
+            row["g22"]["note"] = " · ".join(notes)
+        if di is None:                                   # 세종갑(민주당 공천 취소)·대구 서구·의성청송영덕울진: 민주 계열 후보 없음
+            why = "(공천 취소)" if k == "세종 세종특별자치시갑" else ""
+            row["g22"] = {"none": f"민주 계열 후보 없음{why} — 평균에서 제외"}
+        ms = [row[x]["m"] for x in ("g22", "p21", "l9") if row[x] and "m" in row[x]]
+        avg = round(sum(ms) / len(ms), 1)
+        out[k] = dict(row, avg=avg, grade=grade(avg),
+                      trend=round(row["l9"]["m"] - row["g22"]["m"], 1) if row["l9"] and "m" in row["g22"] else None)
+
+    json.dump({"source": "중앙선거관리위원회 선거통계시스템 투표구·읍면동별 개표결과를 22대 지역구로 다시 합산",
+               "elections": [{"id": "g22", "name": "2024 총선", "desc": "지역구 후보"},
+                             {"id": "p21", "name": "2025 대선", "desc": "이재명 · 김문수"},
+                             {"id": "l9", "name": "2026 지선", "desc": "시·도지사 후보"}],
+               "rule": "세 선거의 '민주 득표율 − 상대(국민의힘 등) 최다 득표 후보 득표율' 평균 · +10%p 이상 우세 · +5~10 경합우세 · ±5 안 경합 · −5~−10 경합열세 · −10 이하 열세",
+               "district": out},
+              open(os.path.join(OUT, "outlook.json"), "w"), ensure_ascii=False, separators=(",", ":"))
+
+    # ── 확인 ─────────────────────────────────────────────────────────────
+    for name, acc, lost in (("대선", p21, lost_p), ("지선", l9, lost_l)):
+        tot, lv = sum(v["valid"] for v in acc.values()), sum(lost.values())
+        print(f"{name}: 지역구 {len([k for k in g if k in acc])}/{len(g)}곳, 지도에 없는 이름 {sorted(set(acc) - set(g))[:5]},",
+              f"유효표 {tot:,.0f}, 동 짝 못 찾아 구시군 비율로 나눈 표 {lv:,} ({lv / (tot + lv) * 100:.2f}%)")
+        for k, v in lost.most_common(10):
+            print("   못 찾음:", k, f"{v:,}")
+    print(Counter(v["grade"] for v in out.values()))
+
+
+if __name__ == "__main__":
+    main()
