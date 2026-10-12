@@ -1,3 +1,7 @@
+/* 제목·숫자: 마루부리(네이버, 굵기별 파일을 한 이름으로 묶음) · 본문: IBM Plex Sans KR */
+@font-face { font-family: "MaruBuri Web"; font-weight: 400; font-display: swap; src: url(https://hangeul.pstatic.net/hangeul_static/webfont/MaruBuri/MaruBuri-Regular.woff2) format("woff2"), url(https://hangeul.pstatic.net/hangeul_static/webfont/MaruBuri/MaruBuri-Regular.woff) format("woff"); }
+@font-face { font-family: "MaruBuri Web"; font-weight: 600; font-display: swap; src: url(https://hangeul.pstatic.net/hangeul_static/webfont/MaruBuri/MaruBuri-SemiBold.woff2) format("woff2"), url(https://hangeul.pstatic.net/hangeul_static/webfont/MaruBuri/MaruBuri-SemiBold.woff) format("woff"); }
+@font-face { font-family: "MaruBuri Web"; font-weight: 700 900; font-display: swap; src: url(https://hangeul.pstatic.net/hangeul_static/webfont/MaruBuri/MaruBuri-Bold.woff2) format("woff2"), url(https://hangeul.pstatic.net/hangeul_static/webfont/MaruBuri/MaruBuri-Bold.woff) format("woff"); }
 :root {
   --paper: #fbfaf7;
   --surface: #ffffff;
@@ -10,8 +14,8 @@
   --off: #e3e5e9;           /* 정당 선택 시 나머지 지역 */
   --bar-h: 112px;
   /* 본문·UI: 원티드 산스 / 제목·이름·큰 숫자: 함렛(현대 명조) */
-  --sans: "Wanted Sans Variable", "Wanted Sans", "Pretendard", -apple-system, BlinkMacSystemFont, "Apple SD Gothic Neo", "Malgun Gothic", sans-serif;
-  --serif: "Hahmlet", "AppleMyungjo", "Batang", serif;
+  --sans: "IBM Plex Sans KR", -apple-system, BlinkMacSystemFont, "Apple SD Gothic Neo", "Malgun Gothic", sans-serif;
+  --serif: "MaruBuri Web", "AppleMyungjo", "Batang", serif;
   --ease: cubic-bezier(.2, .7, .2, 1);
 }
 * { box-sizing: border-box; }
