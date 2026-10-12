@@ -881,7 +881,7 @@ function showOutlookOverview() {
       <div class="envscale"><span>국민의힘 +15</span><span>0</span><span>민주 +15</span></div>
       <details class="more" ${state.regOpen ? "open" : ""}>
         <summary>더 자세히 조정 <small>권역별 · 링크 공유</small>${adjusted ? ` <b class="on">권역 조정 중</b>` : ""}</summary>
-        ${p ? `<p class="pollnote">여론조사 값 = ${esc(p.source.replace(/ 데일리 오피니언.*/, ""))} ${esc(p.period)} 민주 계열 ${p.dbloc}% − 국민의힘 ${p.rival}% (무당층 ${p.undecided}%) · 정당 지지율은 실제 득표와 다를 수 있어요(2024 총선 한 달 전 갤럽은 국민의힘 37%·민주당 31%였지만 실제로는 민주 계열이 크게 이김) · <a href="${esc(p.url)}" target="_blank" rel="noopener">원문</a></p>` : ""}
+        ${p ? `<p class="pollnote">여론조사 값 = ${esc(p.source.replace(/ 데일리 오피니언.*/, ""))} ${esc(p.period)} ${esc(p.dlabel || "민주 계열")} ${p.dbloc}% − 국민의힘 ${p.rival}%${p.undecided != null ? ` (무당층 ${p.undecided}%)` : ""}${p.registry ? ` · ${esc(p.registry)}` : ""}${p.pending ? ` · ${esc(p.pending)}` : ""} · 정당 지지율은 실제 득표와 다를 수 있어요(2024 총선 한 달 전 갤럽은 국민의힘 37%·민주당 31%였지만 실제로는 민주 계열이 크게 이김) · <a href="${esc(p.url)}" target="_blank" rel="noopener">선관위 등록 정보</a></p>` : ""}
         <p class="more-h">권역별 조정 <small>특정 권역만 분위기가 다를 때 · 기본 0</small></p>
         ${REGIONS.map((g) => `<label class="reg"><span>${g}</span><input type="range" min="-10" max="10" step="0.5" value="${state.regAdj[g] || 0}" data-r="${g}"><b class="${(state.regAdj[g] || 0) >= 0 ? "pos" : "neg"}">${signed(state.regAdj[g] || 0)}</b></label>`).join("")}
         ${adjusted ? `<button class="clear" id="regReset">권역 모두 0으로</button>` : ""}
@@ -962,7 +962,7 @@ function methodExtraHTML(o) {
         <li>여론조사·후보 인지도는 들어가지 않음</li>
         ${state.cal?.incumbent ? `<li>현역 의원 효과는 검증 후 뺐음: 이전 당선자가 다시 나온 곳은 현역 없는 곳보다 민주 현역 +${state.cal.incumbent["2024"].D}%p(2024)·+${state.cal.incumbent["2020"].D}%p(2020), 국민의힘 현역 ${signed(state.cal.incumbent["2024"].R)}%p·${signed(state.cal.incumbent["2020"].R)}%p로 해마다 들쭉날쭉하고, 넣어도 적중률이 거의 그대로(0~1곳)</li>` : ""}
         ${state.pltest ? (() => { const t = state.pltest; return `<li>총선 비례대표 정당 투표도 검증 후 뺐음: 성향 계산에 더하면 2024 총선 ${t.now2024[0]} → ${t.add2024[0]}곳, 2020 총선 ${t.now2020[0]} → ${t.add2020[0]}곳 적중으로 한 번은 오르고 한 번은 내려감(2016 국민의당 돌풍처럼 비례 표가 크게 흔들린 해가 있음)</li>`; })() : ""}
-        <li>'여론조사' 버튼: 민주 계열(민주당+조국혁신당+진보당) − 국민의힘 정당 지지율 차이를 그대로 넣음(무당층은 양쪽에 똑같이 나뉜다고 봄) · 정당 지지율은 실제 득표와 차이가 커서 참고용</li>
+        <li>'여론조사' 버튼: 중앙선거여론조사심의위원회에 등록된 가장 최근 전국 정당 지지도 조사의 민주 쪽 − 국민의힘 지지율 차이를 그대로 넣음(무당층은 양쪽에 똑같이 나뉜다고 봄) · 지금 값: ${state.poll ? `${esc(state.poll.source)} ${esc(state.poll.period)} ${esc(state.poll.dlabel || "민주 계열")} ${state.poll.dbloc}% − 국민의힘 ${state.poll.rival}% = ${signed(state.poll.gap)}` : "불러오지 못함"} · 정당 지지율은 실제 득표와 차이가 커서 참고용</li>
         <li>권역: 수도권(서울·인천·경기) · 충청(대전·세종·충북·충남) · 호남(광주·전북·전남) · 부울경(부산·울산·경남) · 대구·경북 · 강원·제주</li>
       </ul>
     </section>`;
