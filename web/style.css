@@ -561,3 +561,28 @@ details.calc > summary small { font-weight: 400; color: var(--ink-3); margin-lef
 @media (max-width: 560px) { .m-stats3 { grid-template-columns: 1fr; } }
 .m-abl td:last-child, .m-abl th:last-child { color: inherit; font-weight: inherit; }
 .m-abl td.best { color: #1F5BC4; font-weight: 700; }
+
+/* ── 판세: 결론 카드 · 신뢰 줄 · 정리 ── */
+.hero { margin: 2px 0 6px; padding: 18px 18px 14px; border-radius: 14px; background: var(--surface); box-shadow: 0 0 0 1px var(--hair), 0 6px 18px -12px rgba(17,19,24,.25); }
+.hero-eye { margin: 0; font-size: 13px; color: var(--ink-3); letter-spacing: .02em; }
+.hero-h { margin: 4px 0 2px; font-family: var(--serif); font-size: 22px; font-weight: 800; line-height: 1.3; letter-spacing: -.02em; text-wrap: balance; }
+.hero-h b { font-size: 40px; color: #1F5BC4; font-variant-numeric: tabular-nums; }
+.hero-h span { display: block; font-family: var(--sans); font-size: 15px; font-weight: 600; color: var(--ink-2); letter-spacing: 0; }
+.hero .sb-bar { margin: 14px 0 24px; }
+.hero-facts { list-style: none; margin: 0; padding: 12px 0 0; border-top: 1px solid var(--hair); display: grid; grid-template-columns: repeat(auto-fit, minmax(90px, 1fr)); gap: 8px; }
+.hero-facts li { margin: 0; display: grid; gap: 2px; }
+.hero-facts b { font-size: 17px; font-variant-numeric: tabular-nums; }
+.hero-facts span { font-size: 12px; color: var(--ink-3); }
+.trust { margin: 0 0 14px; display: flex; flex-wrap: wrap; align-items: center; gap: 4px 10px; font-size: 12px; color: var(--ink-3); }
+.trust span + span::before { content: "·"; margin-right: 10px; color: var(--hair-2); }
+.trust button { margin-left: auto; border: 0; background: none; padding: 2px 0; font: 600 12px var(--sans); color: #1F5BC4; cursor: pointer; }
+.trust button:hover { text-decoration: underline; }
+.envbox { border: 0; background: none; padding: 4px 0 0; border-top: 1px solid var(--hair); border-radius: 0; }
+/* 버튼 정리: 색칠 기준(현재 의원·판세)은 위 왼쪽, 보기 방식은 아래 왼쪽 */
+.seg.mode { top: 14px; bottom: auto; }
+.seg[aria-label="보기 방식"] { top: auto; bottom: 14px; }
+@media (max-width: 560px) {
+  .seg.mode { top: 10px; }
+  .seg[aria-label="보기 방식"] { bottom: 10px; }
+  .hero-h b { font-size: 34px; }
+}

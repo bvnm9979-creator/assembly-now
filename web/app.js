@@ -208,9 +208,27 @@ function applyEnv(env) {
   state.map?.getSource("d")?.setData(state.geo);
 }
 
+// 머리띠: 현재 의원 모드 = 지금 국회 의석 · 판세 모드 = 다음 총선 예상(지역구)
+const BRAND = { seat: ["제22대 국회", "지역구 지도"], outlook: ["다음 총선 판세 · 지역구 254석", "총선 판세"] };
+function setBrand(m) {
+  const [eye, title] = BRAND[m];
+  $(".brand h1").textContent = title;
+  $(".brand .eyebrow").innerHTML = m === "seat" ? `${eye} · <span id="asof">${esc(state.members.fetched.replace(/-/g, ".") + " 기준")}</span>` : esc(eye);
+}
+function drawOutlookScore() {
+  if (!state.outlook) return;
+  const s = seatSim(), d = Object.values(state.outlook.district);
+  $(".majority").textContent = `과반 ${s.half}`;
+  $("#leadL").innerHTML = `<i style="background:#1F5BC4"></i>민주 계열 예상 <b>${s.mean}</b>`;
+  $("#leadR").innerHTML = `<b>${s.total - s.mean}</b> 국민의힘 등<i style="background:#E2333C"></i>`;
+  $("#seatbar").innerHTML = GRADES.map(([g, c]) => { const k = d.filter((x) => x.grade === g).length;
+    return k ? `<span style="flex:${k};background:${c}" title="${g} ${k}곳"></span>` : ""; }).join("");
+}
+
 // 판세 모드의 띠: 우세~열세 버튼(누르면 그 등급만 표시)
 function drawGrades() {
   const n = (g) => Object.values(state.outlook?.district || {}).filter((d) => d.grade === g).length;
+  drawOutlookScore();
   $("#parties").innerHTML = GRADES.map(([g, c]) =>
     `<button data-g="${g}" style="--c:${c}" aria-pressed="false"><i style="background:${c}"></i>${g} <b>${n(g)}</b></button>`).join("");
   $("#parties").onclick = (e) => {
@@ -251,9 +269,10 @@ function setMode(m) {
 function refreshMode() {
   state.party = null; state.grade = null;
   $("#parties").classList.remove("filtering");
-  state.mode === "outlook" ? drawGrades() : drawParties();
+  setBrand(state.mode);
+  if (state.mode === "outlook") drawGrades();
+  else { drawParties(); drawScore(); $(".majority").textContent = "과반 150"; }
   repaint();
-  paintScore();
   state.sel ? select(state.sel, false) : showOverview();
 }
 // 지도·육각형 색 다시 칠하기
@@ -612,10 +631,10 @@ function raceHTML({ e, r }, main) {
 }
 
 // ── 판세 · 민주당 지역위원장 ────────────────────────────
-const signed = (x) => (x > 0 ? "+" : x < 0 ? "−" : "±") + Math.abs(x).toFixed(1);
+const signed = (x) => x === 0 ? "0" : (x > 0 ? "+" : "−") + Math.abs(x).toFixed(1);
 const leanTag = (x) => x > 0 ? `민+${x.toFixed(1)}` : x < 0 ? `국+${(-x).toFixed(1)}` : "중립";
 const leanSay = (x) => x > 0 ? `전국 평균보다 더불어민주당 쪽으로 ${x.toFixed(1)}%p 기운 곳` : x < 0 ? `전국 평균보다 국민의힘 쪽으로 ${(-x).toFixed(1)}%p 기운 곳` : "전국 평균과 같은 곳";
-const envLabel = (x) => x > 0 ? `민주 +${x.toFixed(1)}%p` : x < 0 ? `국민의힘 +${(-x).toFixed(1)}%p` : "양당 같음";
+const envLabel = (x) => x > 0 ? `민주 +${x.toFixed(1)}` : x < 0 ? `국민의힘 +${(-x).toFixed(1)}` : "양당 같음";
 const chairOf = (key) => state.chairs?.district[key];
 const chairName = (key) => chairOf(key)?.chair?.name || "";
 const naverNews = (q) => "https://search.naver.com/search.naver?where=news&sort=1&query=" + encodeURIComponent(q);
@@ -798,6 +817,8 @@ function openMethod(auto = false) {
 // 같은 입력이면 같은 숫자가 나오도록 씨앗 고정 난수(mulberry32)
 function seatSim(n = 2000) {
   const o = state.outlook, sr = o.sigma_region || 4;
+  const key = state.env + "|" + JSON.stringify(state.regAdj);
+  if (state.simKey === key) return state.simRes;
   let a = 20280412;
   const rnd = () => { a |= 0; a = (a + 0x6D2B79F5) | 0; let t = Math.imul(a ^ (a >>> 15), 1 | a); t = (t + Math.imul(t ^ (t >>> 7), 61 | t)) ^ t; return ((t ^ (t >>> 14)) >>> 0) / 4294967296; };
   const gauss = () => Math.sqrt(-2 * Math.log(1 - rnd())) * Math.cos(2 * Math.PI * rnd());
@@ -810,19 +831,32 @@ function seatSim(n = 2000) {
     sims.push(w);
   }
   sims.sort((x, y) => x - y);
-  return { mean: Math.round(sims.reduce((x, y) => x + y, 0) / n), lo: sims[Math.floor(n * 0.1)], hi: sims[Math.floor(n * 0.9)], total: ds.length };
+  const half = Math.floor(ds.length / 2) + 1;
+  const res = { mean: Math.round(sims.reduce((x, y) => x + y, 0) / n), lo: sims[Math.floor(n * 0.1)], hi: sims[Math.floor(n * 0.9)], total: ds.length,
+                half, maj: Math.round(sims.filter((w) => w >= half).length / n * 100) };
+  state.simKey = key; state.simRes = res;
+  return res;
 }
 function seatHTML() {
-  const s = seatSim(), half = Math.floor(s.total / 2) + 1, pc = (x) => (x / s.total * 100).toFixed(1) + "%";
-  return `<p class="sb-h">민주 계열 지역구 예상 의석 <b>${s.mean}석</b> <small>/ ${s.total}석</small></p>
+  const s = seatSim(), half = s.half, pc = (x) => (x / s.total * 100).toFixed(1) + "%";
+  const majTxt = s.maj >= 99 ? "99% 이상" : s.maj <= 1 ? "1% 미만" : s.maj + "%";
+  // 승부처: 승리 확률 30~70%(경합) 지역구가 가장 많은 권역
+  const d = state.outlook.district, by = {};
+  for (const [k, x] of Object.entries(d)) if (x.grade === "경합") by[regionOf(k)] = (by[regionOf(k)] || 0) + 1;
+  const [bg, bn] = Object.entries(by).sort((a, b) => b[1] - a[1])[0] || [];
+  const now = state.members ? Object.keys(d).filter(heldByD).length : null;
+  return `<p class="hero-eye">다음 총선 예상 · 전국 분위기 ${envLabel(state.env)}</p>
+      <h2 class="hero-h">민주 계열 지역구 <b>${s.mean}석</b><span>${s.mean >= half ? "과반 확보 예상" : `과반에 ${half - s.mean}석 부족`} · 과반 가능성 ${majTxt}</span></h2>
       <div class="sb-bar" title="80% 범위 ${s.lo}~${s.hi}석">
         <span class="sb-rng" style="left:${pc(s.lo)};width:${pc(s.hi - s.lo)}"></span>
         <span class="sb-mean" style="left:${pc(s.mean)}"></span>
-        <span class="sb-half" style="left:${pc(half)}"><em>지역구 과반 ${half}</em></span>
+        <span class="sb-half" style="left:${pc(half)}"><em>과반 ${half}</em></span>
       </div>
-      <p class="sb-sub">10번 중 8번은 <b>${s.lo}~${s.hi}석</b> 사이 · 비례대표 제외</p>
-      ${state.members ? (() => { const ks = Object.keys(state.outlook.district), now = ks.filter(heldByD).length;
-        return `<p class="sb-sub">지금 민주 계열 지역구 ${now}석 → <b class="${s.mean >= now ? "pos" : "neg"}">${s.mean >= now ? "+" : "−"}${Math.abs(s.mean - now)}석</b> · 탈환 가능 ${listKeys("gain").length}곳 · 수성 위험 ${listKeys("hold").length}곳</p>`; })() : ""}`;
+      <ul class="hero-facts">
+        <li><b>${s.lo}~${s.hi}석</b><span>10번 중 8번 범위</span></li>
+        ${bg ? `<li><b>${esc(bg)} ${bn}곳</b><span>가장 큰 승부처(경합)</span></li>` : ""}
+        ${now != null ? `<li><b>${s.mean >= now ? "+" : "−"}${Math.abs(s.mean - now)}석</b><span>지금 ${now}석 대비</span></li>` : ""}
+      </ul>`;
 }
 
 // 검증 결과: calibration.json (scripts/calibrate.py)
@@ -878,6 +912,13 @@ function accHTML() {
       </ul>`;
 }
 
+// 4) 믿을 근거 한 줄: 자료 출처 · 검증 적중 · 갱신일 · 계산 방법 열기
+function trustHTML() {
+  const h = state.cal?.hit, r = (a, b) => Math.round(a / b * 100);
+  const day = (state.poll?.updated || "").slice(5).replace("-", ".");
+  return `<span>중앙선관위 개표 결과로 계산</span>${h ? `<span>지난 총선 미리 맞혀 보기 2020 ${r(h.r2020, h.n2020)}% · 2024 ${r(h.r2024, h.n2024)}%</span>` : ""}${day ? `<span>${day} 갱신</span>` : ""}<button id="openMethod">계산 방법·검증 보기 →</button>`;
+}
+
 function showOutlookOverview() {
   const d = state.outlook?.district;
   if (!d) { $("#panel").innerHTML = `<h2 class="ov-title">판세</h2><p class="ov-sub">판세 자료를 불러오는 중이에요…</p>`; return; }
@@ -894,8 +935,8 @@ function showOutlookOverview() {
   const presets = [["기본", def, "최근 세 선거 평균"], ...(p ? [["여론조사", p.gap, `선관위 등록 전국 조사 ${p.n}건 평균(${p.window[0]}~${p.window[1]}) ${signed(p.avg)}, 과거 선거 보정 ${signed(p.correction)}`]] : []), ["접전", 0, "양당 같음"]];
   const adjusted = Object.values(state.regAdj).some(Boolean);
   $("#panel").innerHTML = `
-    <h2 class="ov-title">판세 현황</h2>
-    <div class="seatbox" id="seatbox">${seatHTML()}</div>
+    <section class="hero" id="seatbox">${seatHTML()}</section>
+    <p class="trust">${trustHTML()}</p>
     <div class="envbox">
       <label for="env">전국 분위기 <b id="envv" class="${state.env >= 0 ? "pos" : "neg"}">${envLabel(state.env)}</b></label>
       <div class="presets">${presets.map(([n, v, t]) => `<button data-v="${v}" title="${esc(t)}" class="${state.env === v ? "on" : ""}">${n} <b>${signed(v)}</b></button>`).join("")}</div>
@@ -914,7 +955,6 @@ function showOutlookOverview() {
     <div class="ltabs" role="tablist">${LIST_TABS.map(([t, n]) => `<button data-t="${t}" class="${state.listTab === t && !state.grade ? "on" : ""}">${n}</button>`).join("")}</div>
     <p class="lmeta">${state.grade ? `<b>${state.grade}</b> ${list.length}곳 · 승리 확률 높은 순 <button class="clear" id="clearGrade">등급 해제</button>` : `${list.length}곳 · ${LIST_META[state.listTab]}`}</p>
     <ul class="klist" id="klist">${list.map((k, i) => `<li data-k="${esc(k)}"><em>${i + 1}</em><i style="background:${GRADE_COLOR[d[k].grade]}"></i><span>${esc(k)}</span><small>${right(k)}</small></li>`).join("") || "<li class='none'>해당 지역구가 없어요</li>"}</ul>
-    <button class="method-btn" id="openMethod"><span>i</span>어떻게 계산했나요? · 검증 결과</button>
     ${state.chairs ? `<p class="ov-hint">리스크 기사 갱신 ${esc(state.chairs.updated)}</p>` : ""}`;
   $$("#klist li[data-k]").forEach((li) => li.addEventListener("click", () => {
     state.listScroll = $("#panel").scrollTop;
