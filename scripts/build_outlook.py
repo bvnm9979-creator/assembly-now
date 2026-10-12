@@ -157,7 +157,8 @@ def grade(m):
 
 def main():
     p21, lost_p = aggregate(json.load(open(os.path.join(RAW, "nec_p21_precinct_raw.json"))), True)
-    l9, lost_l = aggregate(json.load(open(os.path.join(RAW, "nec_l9_governor_raw.json"))), False)
+    # 2026 지선은 시·도지사 대신 광역의원 비례대표 정당 투표 — 후보 개인 인기가 빠져 성향이 더 정확 (backtest·backtest2 두 검증 모두 같거나 더 높음)
+    l9, lost_l = aggregate(json.load(open(os.path.join(RAW, "nec_l9_partylist_raw.json"))), False)
 
     # ── 3) 2024 총선은 공식 지역구 결과 그대로, 세 선거 비교 ──────────────────
     res = json.load(open(os.path.join(OUT, "results.json")))
@@ -204,7 +205,7 @@ def main():
     json.dump({"source": "중앙선거관리위원회 선거통계시스템 투표구·읍면동별 개표결과를 22대 지역구로 다시 합산",
                "elections": [{"id": "g22", "name": "2024 총선", "desc": "지역구 후보"},
                              {"id": "p21", "name": "2025 대선", "desc": "이재명 · 김문수"},
-                             {"id": "l9", "name": "2026 지방선거", "desc": "시·도지사 후보"}],
+                             {"id": "l9", "name": "2026 지방선거", "desc": "광역비례 정당 투표"}],
                "national": nat, "env_default": env,
                "rule": "예상 격차 = 지역구 성향(선거별 지역구 격차 − 전국 평균 격차의 평균) + 전국 분위기 · +10%p 이상 우세 · +5~10 경합우세 · ±5 안 경합 · −5~−10 경합열세 · −10 이하 열세",
                "district": out},

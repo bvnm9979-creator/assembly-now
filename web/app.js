@@ -623,15 +623,15 @@ function openMethod(auto = false) {
     </section>
 
     <section class="m-check">
-      <h3>검증 — 2024 총선을 미리 맞혀 보기</h3>
-      <p>2020 총선 · 2022 대선 · 2022 지방선거만으로 같은 방식으로 계산해 실제 2024 총선 결과와 대조</p>
+      <h3>검증 — 과거 총선 두 번을 미리 맞혀 보기</h3>
+      <p>과거 선거만으로 같은 방식으로 계산해 실제 총선 결과와 두 번 대조 · 1차 2020·2022 선거 → 2024 총선 · 2차 2016·2017·2018 선거 → 2020 총선</p>
       <div class="m-stats">
-        <div><b>93<small>%</small></b><span>승패 적중<br>254곳 중 237곳</span></div>
-        <div><b>105<small>/107</small></b><span>우세로 본 곳<br>민주 승리</span></div>
-        <div><b>64<small>/66</small></b><span>열세로 본 곳<br>민주 패배</span></div>
-        <div class="dim"><b>80<small>%</small></b><span>단순 평균 방식<br>승패 적중</span></div>
+        <div><b>93<small>%</small></b><span>1차 · 2024 총선<br>254곳 중 237곳 적중</span></div>
+        <div><b>91<small>%</small></b><span>2차 · 2020 총선<br>252곳 중 229곳 적중</span></div>
+        <div><b>222<small>/227</small></b><span>우세로 본 곳<br>민주 승리</span></div>
+        <div><b>94<small>/95</small></b><span>열세로 본 곳<br>민주 패배</span></div>
       </div>
-      <p class="m-note">검증 때 전국 분위기는 2024 실제 값(민주 +5.5) 입력 · ±3%p 틀리게 넣어도 91~92%</p>
+      <p class="m-note">경합으로 본 72곳은 37곳 민주 승리(51%) — 경합이 실제로 반반 · 단순 평균 방식은 80%·84% · 전국 분위기를 ±3%p 틀리게 넣어도 89~93%</p>
     </section>
 
     <section>
@@ -705,7 +705,7 @@ function showOutlookOverview() {
       <p class="oneline">예상 격차 = <b>지역구 성향</b>(평소 전국보다 민주당이 몇 %p 더 나오는 곳인지) + <b>전국 분위기</b>(위 막대)</p>
       <p class="src"><b>계산 순서</b></p>
       <ol class="formula">
-        <li><b>격차</b>: 선거마다 민주당 득표율 − 상대 1위 득표율<br><small>2024 총선 · 2025 대선 · 2026 지방선거</small></li>
+        <li><b>격차</b>: 선거마다 민주당 득표율 − 상대 1위 득표율<br><small>2024 총선(지역구 후보) · 2025 대선 · 2026 지방선거(광역의원 비례대표 정당 투표)</small></li>
         <li><b>지역구 성향</b>: 그 격차가 전국 평균보다 몇 %p 높은지(낮은지)를 세 선거 평균<br><small>전국 평균 격차: 2024 총선 ${signed(o.national.g22)} · 2025 대선 ${signed(o.national.p21)} · 2026 지방선거 ${signed(o.national.l9)}</small></li>
         <li><b>예상 격차</b>: 지역구 성향 + 전국 분위기</li>
       </ol>
@@ -718,15 +718,14 @@ function showOutlookOverview() {
       <p class="src"><b>예시 — 서울 종로구</b></p>
       <table class="ex">
         <tr><th></th><th>종로구</th><th>전국</th><th>차이</th></tr>
-        <tr><td>2024 총선</td><td>+6.8</td><td>+6.4</td><td>+0.4</td></tr>
-        <tr><td>2025 대선</td><td>+8.3</td><td>+8.2</td><td>+0.1</td></tr>
-        <tr><td>2026 지방선거</td><td>+2.9</td><td>+8.4</td><td>−5.5</td></tr>
-        <tr class="sum"><td colspan="3">지역구 성향 = (+0.4 +0.1 −5.5) ÷ 3</td><td>−1.7</td></tr>
+        ${(() => { const z = o.district["서울 종로구"], es = o.elections.filter((e) => z[e.id]?.m !== undefined), df = (e) => Math.round((z[e.id].m - o.national[e.id]) * 10) / 10;
+          return es.map((e) => `<tr><td>${esc(e.name)}</td><td>${signed(z[e.id].m)}</td><td>${signed(o.national[e.id])}</td><td>${signed(df(e))}</td></tr>`).join("")
+            + `<tr class="sum"><td colspan="3">지역구 성향 = (${es.map((e) => signed(df(e))).join(" ")}) ÷ ${es.length}</td><td>${signed(z.lean)}</td></tr>
       </table>
       <ul>
-        <li>전국 분위기 민주 +7.7이면 → −1.7 + 7.7 = <b>+6.0 경합우세</b></li>
-        <li>전국 분위기 양당 같음(0)이면 → −1.7 + 0 = <b>−1.7 경합</b></li>
-      </ul>
+        <li>전국 분위기 ${envLabel(o.env_default)}이면 → ${signed(z.lean)} + ${o.env_default.toFixed(1)} = <b>${signed(z.lean + o.env_default)} ${gradeOf(z.lean + o.env_default)}</b></li>
+        <li>전국 분위기 양당 같음(0)이면 → ${signed(z.lean)} + 0 = <b>${signed(z.lean)} ${gradeOf(z.lean)}</b></li>
+      </ul>`; })()}
       <p class="src"><b>등급 기준</b>(예상 격차)</p>
       <ul>
         <li>+10%p 이상 우세 · +5~10 경합우세 · ±5 안 경합 · −5~−10 경합열세 · −10 이하 열세</li>
@@ -738,9 +737,10 @@ function showOutlookOverview() {
       </ul>
       <p class="src"><b>검증</b></p>
       <ul>
-        <li>2020 총선·2022 대선·2022 지방선거만으로 2024 총선을 이 방식으로 예측 → 254곳 중 237곳(93%) 승패 적중</li>
-        <li>우세로 본 107곳 중 105곳 민주 승리, 열세로 본 66곳 중 64곳 패배</li>
-        <li>그냥 평균 낸 방식은 80% 적중</li>
+        <li>1차: 2020 총선·2022 대선·2022 지방선거만으로 2024 총선 예측 → 254곳 중 237곳(93%) 승패 적중</li>
+        <li>2차: 2016 총선·2017 대선·2018 지방선거만으로 2020 총선 예측 → 252곳 중 229곳(91%) 승패 적중</li>
+        <li>두 번 합쳐 우세로 본 227곳 중 222곳 민주 승리, 열세로 본 95곳 중 94곳 패배, 경합 72곳은 37곳 승리(51%, 실제로 반반)</li>
+        <li>그냥 평균 낸 방식은 80%·84% 적중</li>
       </ul>
       <p class="src"><b>참고 사항</b></p>
       <ul>
@@ -748,7 +748,8 @@ function showOutlookOverview() {
         <li>민주당이 후보를 안 낸 곳은 같은 계열 후보로 계산</li>
         <li>민주 계열 후보가 없던 3곳(세종갑·대구 서구·경북 의성청송영덕울진)은 총선 빼고 두 선거만으로 성향 계산</li>
         <li>전국 평균 격차는 254개 지역구 단순 평균</li>
-        <li>검증 때 전국 분위기는 2024 실제 값(민주 +5.5) 입력, 2020 총선은 선거구 경계가 2024년과 같은 199곳만 사용</li>
+        <li>검증 때 전국 분위기는 그해 실제 값 입력(±3%p 틀려도 89~93%) · 이전 총선은 선거구 경계가 같은 곳만 사용(1차 199곳·2차 210곳)</li>
+        <li>지방선거는 시·도지사보다 정당 투표가 더 정확해 정당 투표를 씀(2차 검증 89% → 91%)</li>
         <li>여론조사·후보 인지도·현역 여부는 들어가지 않음</li>
       </ul>
     </details>
