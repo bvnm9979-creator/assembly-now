@@ -249,7 +249,7 @@ function drawGeo() {
     fitBoundsOptions: { padding: { top: 64, bottom: 24, left: 24, right: 24 } },
     minZoom: 5, maxZoom: 13,
     dragRotate: false, pitchWithRotate: false,
-    attributionControl: { compact: true, customAttribution: "선거구 경계 © 오마이뉴스" },
+    attributionControl: { compact: true, customAttribution: "선거구 경계 © 오마이뉴스 · 독도 해안선 © OpenStreetMap 기여자" },
   });
   map.touchZoomRotate.disableRotation();
   map.addControl(new maplibregl.NavigationControl({ showCompass: false }), "top-right");

@@ -57,6 +57,7 @@ cd web && python3 -m http.server 8765   # http://localhost:8765
 - 의원 정보: [국회 열린국회정보](https://open.assembly.go.kr) (현재 국회의원 인적사항)
 - 선거 결과: [중앙선거관리위원회 선거통계시스템](https://info.nec.go.kr) 개표현황 (22대 총선, 2026.6.3 재보궐)
 - 22대 선거구 경계: 오마이뉴스 (MIT, `raw/district_22_geojson.LICENSE`)
+- 독도 해안선: © OpenStreetMap contributors (ODbL), `raw/dokdo_osm.geojson` — 원본 경계에 독도가 없어 추가
 - 육각형 배치: [polis-korea](https://github.com/YangSeungWon/polis-korea) (MIT)
 - 지도: [MapLibre GL JS](https://maplibre.org) · 글꼴: 마루부리(MaruBuri, 네이버), IBM Plex Sans KR
 
