@@ -603,6 +603,12 @@ function showOutlookOverview() {
         <li><b>지역구 성향</b>: 그 격차가 전국 평균보다 몇 %p 높은지(낮은지)를 세 선거 평균<br><small>전국 평균 격차: 2024 총선 ${signed(o.national.g22)} · 2025 대선 ${signed(o.national.p21)} · 2026 지선 ${signed(o.national.l9)}</small></li>
         <li><b>예상 격차</b>: 지역구 성향 + 전국 분위기</li>
       </ol>
+      <p class="src"><b>전국 분위기란</b></p>
+      <ul>
+        <li>그해 선거에서 민주당이 전국적으로 상대보다 몇 %p 앞설지에 대한 가정</li>
+        <li>기본값 ${signed(o.env_default)} = 최근 세 선거 전국 평균 격차의 평균 (${signed(o.national.g22)} · ${signed(o.national.p21)} · ${signed(o.national.l9)})</li>
+        <li>2028 분위기는 아직 모르므로 위 막대로 직접 정함 (예: 여론조사 민주 3%p 우위면 민주 +3, 접전이면 0)</li>
+      </ul>
       <p class="src"><b>예시 — 서울 종로구</b></p>
       <table class="ex">
         <tr><th></th><th>종로구</th><th>전국</th><th>차이</th></tr>
