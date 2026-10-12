@@ -554,3 +554,10 @@ details.calc > summary small { font-weight: 400; color: var(--ink-3); margin-lef
 .m-dates { margin-bottom: 14px; }
 .m-dates td b { white-space: nowrap; font-weight: 600; }
 .m-dates small { color: var(--ink-3); font-size: 12px; font-weight: 400; }
+.m-stats3 { grid-template-columns: repeat(3, 1fr); }
+.m-stats > div.miss { background: #5B6274; }
+.m-tbl tr.now td { font-weight: 600; }
+.m-tbl td.best { color: var(--blue, #1F5BC4); font-weight: 700; }
+@media (max-width: 560px) { .m-stats3 { grid-template-columns: 1fr; } }
+.m-abl td:last-child, .m-abl th:last-child { color: inherit; font-weight: inherit; }
+.m-abl td.best { color: #1F5BC4; font-weight: 700; }

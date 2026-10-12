@@ -74,8 +74,9 @@ async function init() {
   load("results.json").then((r) => { state.results = r; if (state.sel) select(state.sel, false); }).catch(() => {});
   // 판세 + 검증 수치(calibration) + 재합산 정확도(accuracy): 안내문·팝업이 같이 쓰므로 함께 받음
   Promise.all([load("outlook.json"), load("calibration.json").catch(() => null), load("accuracy.json").catch(() => null),
-               load("poll.json").catch(() => null), load("partylist_test.json").catch(() => null)]).then(([o, cal, acc, poll, pltest]) => {
-    Object.assign(state, { outlook: o, cal, acc, poll, pltest });
+               load("poll.json").catch(() => null), load("partylist_test.json").catch(() => null),
+               load("backtest3.json").catch(() => null), load("ablation.json").catch(() => null)]).then(([o, cal, acc, poll, pltest, bt3, abl]) => {
+    Object.assign(state, { outlook: o, cal, acc, poll, pltest, bt3, abl });
     loadScenario();
     if (state.mode === "outlook") refreshMode();
     if (!methodHidden()) openWelcome();
@@ -659,7 +660,7 @@ function openWelcome() {
       <li><b>전국 분위기</b> 다음 총선 분위기를 골라 보세요 — 버튼이나 막대를 움직이면 지도와 의석이 바로 바뀌어요</li>
       <li><b>예상 의석</b> 그 분위기에서 민주 계열이 얻을 지역구 수 · 지역구를 누르면 승리 확률이 나와요</li>
     </ol>
-    <p class="w-note">2024.4.10 총선 · 2025.6.3 대선 · 2026.6.3 지방선거 결과로 계산 · 과거 총선 두 번을 미리 맞혀 본 적중률 91~95%</p>
+    <p class="w-note">2024.4.10 총선 · 2025.6.3 대선 · 2026.6.3 지방선거 결과로 계산 · 과거 총선을 미리 맞혀 본 적중률 2016 65% · 2020 91% · 2024 95%</p>
     <div class="m-btns"><button class="m-more">계산 방법 자세히</button><button class="m-close">시작하기</button></div>
   </div>`;
   document.body.append(box);
@@ -725,22 +726,25 @@ function openMethod(auto = false) {
         <li>지역구마다 승리 확률대로 모의 선거를 2,000번 치러 민주 계열 지역구 의석을 셈 · 평균 = 예상 의석, 가운데 80% = 범위 (FiveThirtyEight·Economist 의석 전망과 비슷한 원리)</li>
         <li>한 권역이 통째로 같이 움직이는 일을 반영해 권역별로 ±${o.sigma_region || 4}%p씩 함께 흔듦 — 이 폭을 빼면 범위가 너무 좁아져 과거 실제 의석이 범위 밖으로 나감</li>
       </ul>
-      ${state.cal?.seats ? `<div class="m-stats m-stats2">
-        ${["2024", "2020"].map((y) => { const v = state.cal.seats[y]; return `<div><b>${v.actual}<small>석</small></b><span>${y} 총선 실제<br>예상 ${v.mean.toFixed(0)}석 · 범위 ${v.lo}~${v.hi}</span></div>`; }).join("")}
-      </div><p class="m-note">그해 실제 전국 분위기를 넣고, 그 이전 선거만으로 계산한 결과 · 두 번 모두 실제 의석이 80% 범위 안</p>` : ""}
+      ${state.cal?.seats ? (() => { const sv = { ...(state.bt3 ? { 2016: state.bt3.seats } : {}), ...state.cal.seats }; return `<div class="m-stats m-stats3">
+        ${Object.keys(sv).sort().map((y) => { const v = sv[y], inside = v.lo <= v.actual && v.actual <= v.hi; return `<div class="${inside ? "" : "miss"}"><b>${v.actual}<small>석</small></b><span>${y} 총선 실제<br>예상 ${Math.round(v.mean)}석 · 범위 ${v.lo}~${v.hi}<br>${inside ? "범위 안" : "범위 밖"}</span></div>`; }).join("")}
+      </div><p class="m-note">그해 실제 전국 분위기를 넣고, 그 이전 선거만으로 계산한 결과 (시간 순) · 2020·2024는 실제 의석이 80% 범위 안 · 국민의당 3당 구도였던 2016은 범위 밖</p>`; })() : ""}
     </section>
 
     <section class="m-check">
-      <h3>검증 — 과거 총선 두 번을 미리 맞혀 보기</h3>
-      <p>예측할 총선 이전 선거만으로 같은 방식으로 계산해 실제 총선 결과와 두 번 대조 · 전국 분위기는 그해 실제 값</p>
+      <h3>검증 — 과거 총선 세 번을 미리 맞혀 보기 (시간 순)</h3>
+      <p>예측할 총선 이전 선거만으로 같은 방식으로 계산해 실제 총선 결과와 대조 · 전국 분위기는 그해 실제 값 · 승리 확률 공식은 2020·2024로만 정했으므로 2016은 처음 보는 선거로 시험한 셈</p>
       <div class="m-tbl m-dates"><table>
         <tr><th></th><th>총선</th><th>대선</th><th>지방선거<br><small>광역비례 정당 투표</small></th><th>→ 맞혀 본 총선</th></tr>
-        <tr><td>지금 판세</td><td><b>2024.4.10</b><br><small>제22대</small></td><td><b>2025.6.3</b><br><small>제21대</small></td><td><b>2026.6.3</b><br><small>제9회</small></td><td>다음 총선</td></tr>
-        <tr><td>1차 검증</td><td><b>2020.4.15</b><br><small>제21대</small></td><td><b>2022.3.9</b><br><small>제20대</small></td><td><b>2022.6.1</b><br><small>제8회</small></td><td><b>2024.4.10</b><br><small>제22대</small></td></tr>
+        <tr><td>1차 검증</td><td><b>2012.4.11</b><br><small>제19대</small></td><td><b>2012.12.19</b><br><small>제18대</small></td><td><b>2014.6.4</b><br><small>제6회</small></td><td><b>2016.4.13</b><br><small>제20대</small></td></tr>
         <tr><td>2차 검증</td><td><b>2016.4.13</b><br><small>제20대</small></td><td><b>2017.5.9</b><br><small>제19대</small></td><td><b>2018.6.13</b><br><small>제7회</small></td><td><b>2020.4.15</b><br><small>제21대</small></td></tr>
+        <tr><td>3차 검증</td><td><b>2020.4.15</b><br><small>제21대</small></td><td><b>2022.3.9</b><br><small>제20대</small></td><td><b>2022.6.1</b><br><small>제8회</small></td><td><b>2024.4.10</b><br><small>제22대</small></td></tr>
+        <tr><td>지금 판세</td><td><b>2024.4.10</b><br><small>제22대</small></td><td><b>2025.6.3</b><br><small>제21대</small></td><td><b>2026.6.3</b><br><small>제9회</small></td><td>다음 총선</td></tr>
       </table></div>
       ${checkHTML(true)}
     </section>
+
+    ${ablationHTML()}
 
     ${methodExtraHTML(o)}
 
@@ -826,24 +830,42 @@ function checkHTML(cards) {
   const c = state.cal;
   if (!c) return `<p class="m-note">검증 자료를 불러오지 못했어요</p>`;
   const h = c.hit, g = c.grades, r = (a, b) => Math.round(a / b * 100);
-  if (cards) return `<div class="m-stats">
-        <div><b>${r(h.r2024, h.n2024)}<small>%</small></b><span>1차 · 2024 총선<br>${h.n2024}곳 중 ${h.r2024}곳 적중</span></div>
+  const b = state.bt3?.all;
+  if (cards) return `<div class="m-stats m-stats3">
+        ${b ? `<div class="miss"><b>${Math.round(b.pct)}<small>%</small></b><span>1차 · 2016 총선<br>${b.n}곳 중 ${b.hit}곳 적중</span></div>` : ""}
         <div><b>${r(h.r2020, h.n2020)}<small>%</small></b><span>2차 · 2020 총선<br>${h.n2020}곳 중 ${h.r2020}곳 적중</span></div>
-        <div><b>${g["우세"][1]}<small>/${g["우세"][0]}</small></b><span>우세로 본 곳<br>민주 승리</span></div>
-        <div><b>${g["열세"][0] - g["열세"][1]}<small>/${g["열세"][0]}</small></b><span>열세로 본 곳<br>민주 패배</span></div>
+        <div><b>${r(h.r2024, h.n2024)}<small>%</small></b><span>3차 · 2024 총선<br>${h.n2024}곳 중 ${h.r2024}곳 적중</span></div>
       </div>
+      ${b ? `<p class="m-note"><b>2016이 낮은 이유</b>: 국민의당이 호남을 휩쓴 3당 구도라, '전국 분위기를 모든 지역구에 똑같이 더한다'는 가정이 깨짐 — 호남에서 민주당이 크게 진 만큼 전국 평균이 내려가 수도권·부울경을 실제보다 낮게 봄 · 호남 빼고 보면 ${Math.round(state.bt3.no_honam.pct)}%${state.bt3.honam_free ? `, 호남을 전국 기준 계산에서도 빼면 ${Math.round(state.bt3.honam_free.pct)}%` : ""} · 강한 제3당이 나오는 선거에서는 이 지도가 크게 빗나갈 수 있음</p>` : ""}
       <div class="m-tbl"><table>
-        <tr><th>등급</th><th>예상 승리 확률</th><th>실제 민주 승리</th></tr>
+        <tr><th>등급 <small>(2020·2024 합계)</small></th><th>예상 승리 확률</th><th>실제 민주 승리</th></tr>
         ${GRADES.map(([n], i) => g[n] ? `<tr><td>${n}</td><td>${GRADE_PROB[i]}</td><td>${g[n][0]}곳 중 ${g[n][1]}곳 (${Math.round(g[n][2])}%)</td></tr>` : "").join("")}
       </table></div>
-      <p class="m-note">등급마다 실제 승률이 예상 확률 범위에 들어옴 · 세 선거를 그냥 평균 낸 방식은 ${h.simple2024}%·${h.simple2020}% 적중 · 전국 분위기를 ±3%p 틀리게 넣어도 ${h.env_err3[0]}~${h.env_err3[1]}%</p>`;
+      <p class="m-note">등급마다 실제 승률이 예상 확률 범위에 들어옴 · 세 선거를 그냥 평균 낸 방식은 2020 ${h.simple2020}%·2024 ${h.simple2024}% 적중 · 전국 분위기를 ±3%p 틀리게 넣어도 ${h.env_err3[0]}~${h.env_err3[1]}%</p>`;
   return `<ul>
-        <li>1차: 2020.4.15 총선·2022.3.9 대선·2022.6.1 지방선거만으로 2024.4.10 총선 예측 → ${h.n2024}곳 중 ${h.r2024}곳(${r(h.r2024, h.n2024)}%) 승패 적중</li>
+        ${b ? `<li>1차: 2012.4.11 총선·2012.12.19 대선·2014.6.4 지방선거만으로 2016.4.13 총선 예측 → ${b.n}곳 중 ${b.hit}곳(${Math.round(b.pct)}%) 승패 적중 (국민의당 3당 구도)</li>` : ""}
         <li>2차: 2016.4.13 총선·2017.5.9 대선·2018.6.13 지방선거만으로 2020.4.15 총선 예측 → ${h.n2020}곳 중 ${h.r2020}곳(${r(h.r2020, h.n2020)}%) 승패 적중</li>
-        <li>두 번 합친 등급별 실제 민주 승리: ${GRADES.map(([n]) => g[n] ? `${n} ${g[n][0]}곳 중 ${g[n][1]}곳(${Math.round(g[n][2])}%)` : "").filter(Boolean).join(" · ")}</li>
-        <li>그냥 평균 낸 방식은 ${h.simple2024}%·${h.simple2020}% 적중 · 전국 분위기를 ±3%p 틀리게 넣어도 ${h.env_err3[0]}~${h.env_err3[1]}%</li>
+        <li>3차: 2020.4.15 총선·2022.3.9 대선·2022.6.1 지방선거만으로 2024.4.10 총선 예측 → ${h.n2024}곳 중 ${h.r2024}곳(${r(h.r2024, h.n2024)}%) 승패 적중</li>
+        <li>2020·2024 합친 등급별 실제 민주 승리: ${GRADES.map(([n]) => g[n] ? `${n} ${g[n][0]}곳 중 ${g[n][1]}곳(${Math.round(g[n][2])}%)` : "").filter(Boolean).join(" · ")}</li>
+        <li>그냥 평균 낸 방식은 2020 ${h.simple2020}%·2024 ${h.simple2024}% 적중 · 전국 분위기를 ±3%p 틀리게 넣어도 ${h.env_err3[0]}~${h.env_err3[1]}%</li>
       </ul>`;
 }
+// 어떤 선거를 쓸까: ablation.json (scripts/ablation.py) — 조합별 과거 세 총선 적중, 시간 순
+function ablationHTML() {
+  const a = state.abl;
+  if (!a) return "";
+  const best = Object.fromEntries(a.years.map((y) => [y, Math.max(...a.rows.map((r) => r[y][0] / r[y][1]))]));
+  return `<section>
+      <h3>왜 총선·대선·지방선거를 같이 쓰나</h3>
+      <p class="m-note">하나씩 빼고 같은 검증을 다시 해 본 결과 (맞힌 곳 / 대조한 곳) · 파란 글씨 = 그해 가장 잘 맞힌 조합</p>
+      <div class="m-tbl m-abl"><table>
+        <tr><th>성향 계산에 쓴 선거</th>${a.years.map((y) => `<th>${y} 총선</th>`).join("")}</tr>
+        ${a.rows.map((r, i) => `<tr${i === 0 ? ' class="now"' : ""}><td>${r.name}${i === 0 ? " (지금)" : ""}</td>${a.years.map((y) => `<td${r[y][0] / r[y][1] === best[y] ? ' class="best"' : ""}>${r[y][0]}/${r[y][1]} (${(r[y][0] / r[y][1] * 100).toFixed(1)}%)</td>`).join("")}</tr>`).join("")}
+      </table></div>
+      <p class="m-note">세 해 모두 고르게 좋은 조합은 셋 다 쓰는 경우 · 대선을 빼면 2020·2024는 나빠지고 3당 구도였던 2016만 조금 나아짐 · 총선을 빼면 2024가, 지방선거를 빼면 2020이 크게 나빠짐 · 대선은 전국이 같은 두 후보라 후보 효과가 가장 적고 투표율이 가장 높아 동네 성향이 깨끗하게 드러남</p>
+    </section>`;
+}
+
 // 재합산 정확도: accuracy.json (scripts/accuracy.py)
 function accHTML() {
   const a = state.acc;
@@ -957,7 +979,7 @@ function methodExtraHTML(o) {
         <li>민주당이 후보를 안 낸 곳은 같은 계열 후보로 계산</li>
         <li>민주 계열 후보가 없던 3곳(세종갑·대구 서구·경북 의성청송영덕울진)은 총선 빼고 두 선거만으로 성향 계산</li>
         <li>전국 평균 격차는 254개 지역구 단순 평균</li>
-        <li>검증 때 전국 분위기는 그해 실제 값 입력 · 이전 총선은 선거구 경계가 같은 곳만 사용(1차 199곳·2차 210곳) · 민주 계열 후보가 없던 곳은 대조에서 뺌</li>
+        <li>검증 때 전국 분위기는 그해 실제 값 입력 · 이전 총선은 선거구 경계가 같은 곳만 사용(2016 135곳·2020 210곳·2024 199곳) · 민주 계열 후보가 없던 곳은 대조에서 뺌</li>
         <li>지방선거는 시·도지사보다 정당 투표가 더 정확해 정당 투표를 씀(2차 검증 89% → 91%)</li>
         <li>여론조사·후보 인지도는 들어가지 않음</li>
         ${state.cal?.incumbent ? `<li>현역 의원 효과는 검증 후 뺐음: 이전 당선자가 다시 나온 곳은 현역 없는 곳보다 민주 현역 +${state.cal.incumbent["2024"].D}%p(2024)·+${state.cal.incumbent["2020"].D}%p(2020), 국민의힘 현역 ${signed(state.cal.incumbent["2024"].R)}%p·${signed(state.cal.incumbent["2020"].R)}%p로 해마다 들쭉날쭉하고, 넣어도 적중률이 거의 그대로(0~1곳)</li>` : ""}

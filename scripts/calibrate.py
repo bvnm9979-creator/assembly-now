@@ -34,7 +34,8 @@ def predict(parts, actual, ids):
     return out, env, nat
 
 
-def first():
+def first_parts():
+    """2024 총선 예측 재료: ({지역구: {선거: 격차}}, {지역구: (실제 격차, 민주 계열 승리)})"""
     p20, _ = bo.aggregate(bt.remap(load("nec_p20_precinct_raw.json")), True)
     l8, _ = bo.aggregate(bt.remap(load("nec_l8_partylist_raw.json")), False)
     g21 = bt.g21_districts(load("nec_g21_district_raw.json"))
@@ -55,10 +56,15 @@ def first():
             e = acc.get(k)
             if e and e["valid"]:
                 parts[k][eid] = (e["D"] - e["R"]) / e["valid"] * 100
-    return predict(parts, actual, IDS1)
+    return parts, actual
 
 
-def second():
+def first():
+    return predict(*first_parts(), IDS1)
+
+
+def second_parts():
+    """2020 총선 예측 재료 (build_outlook 짝을 21대로 바꿔 끼우므로 2024 뒤에 부를 것)"""
     bt2.use_21_maps(load("nec_g21_precinct_raw.json"))
     p19, _ = bo.aggregate(load("nec_p19_precinct_raw.json"), True)
     l7, _ = bo.aggregate(load("nec_l7_partylist_raw.json"), False)
@@ -76,7 +82,11 @@ def second():
             e = acc.get(k)
             if e and e["valid"]:
                 parts[k][eid] = (e["D"] - e["R"]) / e["valid"] * 100
-    return predict(parts, actual, IDS2)
+    return parts, actual
+
+
+def second():
+    return predict(*second_parts(), IDS2)
 
 
 def incumbents_2024(r1):
