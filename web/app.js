@@ -570,6 +570,81 @@ function listKeys(tab) {
   return keys.sort((a, b) => d[b].exp - d[a].exp);
 }
 
+// 판세 산출 방법 팝업: 방법론 출처(Cook PVI · Antony Green 스윙) + 검증 결과
+function openMethod() {
+  const o = state.outlook;
+  $("#method")?.remove();
+  const box = document.createElement("div");
+  box.id = "method";
+  box.innerHTML = `<div class="m-card" role="dialog" aria-modal="true" aria-labelledby="m-title">
+    <button class="m-x" aria-label="닫기">×</button>
+    <p class="m-kicker">METHODOLOGY</p>
+    <h2 id="m-title">판세 산출 방법</h2>
+    <p class="m-lead">미국·호주 선거 분석에서 쓰는 방식을 22대 254개 지역구에 맞춰 적용</p>
+
+    <div class="m-eq">
+      <div><small>STEP 1</small><b>지역구 성향</b><em>Cook PVI 방식</em></div>
+      <i>+</i>
+      <div><small>STEP 2</small><b>전국 분위기</b><em>스윙 계산 방식</em></div>
+      <i>=</i>
+      <div class="m-res"><small>STEP 3</small><b>예상 격차</b><em>→ 등급</em></div>
+    </div>
+
+    <section>
+      <h3><span>1</span>지역구 성향 — 미국 Cook Political Report ‘PVI’</h3>
+      <ul>
+        <li>PVI(Partisan Voter Index): 지역구가 전국보다 어느 당 쪽으로 몇 %p 기우는지 나타내는 지수 (예: D+5, R+3)</li>
+        <li>지역구 대선 결과 − 전국 대선 결과로 계산, 2022년부터 최근 대선 75%·직전 대선 25% 가중</li>
+        <li><b>이 지도</b>: 선거마다 (지역구 격차 − 전국 평균 격차)를 구해 세 선거 평균</li>
+      </ul>
+    </section>
+    <section>
+      <h3><span>2</span>전국 분위기 — 호주 ABC Antony Green ‘스윙 계산기’</h3>
+      <ul>
+        <li>전국 지지율 변화(스윙)를 입력하면 모든 지역구에 같은 폭으로 더해 의석을 다시 계산하는 방식</li>
+        <li><b>이 지도</b>: 판세 현황의 막대 · 기본값 ${signed(o.env_default)} = 최근 세 선거 전국 평균 격차(${signed(o.national.g22)} · ${signed(o.national.p21)} · ${signed(o.national.l9)})의 평균</li>
+      </ul>
+    </section>
+    <section>
+      <h3><span>3</span>예상 격차 → 등급</h3>
+      <div class="m-grades">${GRADES.map(([g, c], i) => `<span style="--c:${c}"><b>${g}</b>${["+10 이상", "+5~10", "±5", "−5~−10", "−10 이하"][i]}</span>`).join("")}</div>
+    </section>
+
+    <section class="m-check">
+      <h3>검증 — 2024 총선을 미리 맞혀 보기</h3>
+      <p>2020 총선 · 2022 대선 · 2022 지선만으로 같은 방식으로 계산해 실제 2024 총선 결과와 대조</p>
+      <div class="m-stats">
+        <div><b>93<small>%</small></b><span>승패 적중<br>254곳 중 237곳</span></div>
+        <div><b>105<small>/107</small></b><span>우세로 본 곳<br>민주 승리</span></div>
+        <div><b>64<small>/66</small></b><span>열세로 본 곳<br>민주 패배</span></div>
+        <div class="dim"><b>80<small>%</small></b><span>단순 평균 방식<br>승패 적중</span></div>
+      </div>
+      <p class="m-note">검증 때 전국 분위기는 2024 실제 값(민주 +5.5) 입력 · ±3%p 틀리게 넣어도 91~92%</p>
+    </section>
+
+    <section>
+      <h3>원래 방식과 다른 점</h3>
+      <div class="m-tbl"><table>
+        <tr><th></th><th>Cook PVI</th><th>이 지도</th></tr>
+        <tr><td>쓰는 선거</td><td>대통령 선거 2회</td><td>총선 · 대선 · 지선 3회</td></tr>
+        <tr><td>비교 기준</td><td>양당 득표 비율</td><td>민주 − 상대 1위 격차</td></tr>
+        <tr><td>전국 기준</td><td>실제 전국 득표</td><td>254개 지역구 단순 평균</td></tr>
+        <tr><td>가중치</td><td>최근 75 · 직전 25</td><td>세 선거 같게</td></tr>
+      </table></div>
+      <p class="m-note">대선·지선은 투표구·읍면동 결과를 22대 지역구로 다시 더한 추정치 · 여론조사·후보 요인은 들어가지 않음</p>
+    </section>
+
+    <p class="m-src">참고: <a href="https://www.cookpolitical.com/cook-pvi/2022-partisan-voting-index/state-map-and-list" target="_blank" rel="noopener">Cook Political Report — 2022 Cook PVI</a> · <a href="https://aceproject.org/ero-en/regions/pacific/AU/australia-antony-greens-house-of-reps-calculator" target="_blank" rel="noopener">Antony Green’s House of Reps Calculator (ABC)</a> · 자료: 중앙선거관리위원회 선거통계시스템</p>
+    <button class="m-close">확인</button>
+  </div>`;
+  document.body.append(box);
+  const close = () => { box.remove(); document.removeEventListener("keydown", onKey); };
+  const onKey = (e) => { if (e.key === "Escape") close(); };
+  document.addEventListener("keydown", onKey);
+  box.addEventListener("click", (e) => { if (e.target === box || e.target.closest(".m-x, .m-close")) close(); });
+  box.querySelector(".m-close").focus({ preventScroll: true });
+}
+
 function showOutlookOverview() {
   const d = state.outlook?.district;
   if (!d) { $("#panel").innerHTML = `<h2 class="ov-title">판세</h2><p class="ov-sub">판세 자료를 불러오는 중이에요…</p>`; return; }
@@ -585,6 +660,7 @@ function showOutlookOverview() {
   $("#panel").innerHTML = `
     <h2 class="ov-title">판세 현황</h2>
     <p class="ov-sub">이 지역구가 평소 전국보다 민주당에 얼마나 유리한지 + 전국 분위기 = 예상 격차</p>
+    <button class="method-btn" id="openMethod"><span>i</span>판세 산출 방법 · 검증 결과</button>
     <div class="envbox">
       <label for="env">전국 분위기 <b id="envv" class="${state.env >= 0 ? "pos" : "neg"}">${envLabel(state.env)}</b></label>
       <input type="range" id="env" min="-15" max="15" step="0.5" value="${state.env}">
@@ -658,6 +734,7 @@ function showOutlookOverview() {
   $$(".ltabs button").forEach((b) => b.addEventListener("click", () => { state.listTab = b.dataset.t; state.listScroll = 0; showOutlookOverview(); }));
   $$(".gradelegend li").forEach((li) => li.addEventListener("click", () => setGrade(state.grade === li.dataset.g ? null : li.dataset.g)));
   $("#clearGrade")?.addEventListener("click", () => setGrade(null));
+  $("#openMethod").addEventListener("click", openMethod);
   // 막대: 움직이는 동안 지도·띠만 다시 칠하고, 손을 떼면 목록까지 다시 그림
   const env = $("#env");
   env.addEventListener("input", () => {
