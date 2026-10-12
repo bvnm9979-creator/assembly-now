@@ -514,3 +514,7 @@ b.hi, .rk.hi { color: #C4252D; }
 @media (max-width: 1080px) {
   .ltabs { top: var(--bar-h, 0px); }   /* 휴대폰: 페이지 전체가 스크롤되므로 고정 띠 아래에 붙음 */
 }
+.pollbox { margin-top: 10px; padding-top: 8px; border-top: 1px solid var(--hair); }
+.pollbox p { margin: 0; display: block; font-size: 13px; color: var(--ink-2); line-height: 1.6; }
+.pollbox small { display: block; margin-top: 4px; font-size: 12px; color: var(--ink-3); line-height: 1.5; }
+.pollbox .clear[disabled] { opacity: .45; cursor: default; }

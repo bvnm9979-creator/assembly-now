@@ -73,8 +73,9 @@ async function init() {
   // 선거 결과는 없어도 지도는 보이게 따로 받음
   load("results.json").then((r) => { state.results = r; if (state.sel) select(state.sel, false); }).catch(() => {});
   // 판세 + 검증 수치(calibration) + 재합산 정확도(accuracy): 안내문·팝업이 같이 쓰므로 함께 받음
-  Promise.all([load("outlook.json"), load("calibration.json").catch(() => null), load("accuracy.json").catch(() => null)]).then(([o, cal, acc]) => {
-    Object.assign(state, { outlook: o, cal, acc });
+  Promise.all([load("outlook.json"), load("calibration.json").catch(() => null), load("accuracy.json").catch(() => null),
+               load("poll.json").catch(() => null)]).then(([o, cal, acc, poll]) => {
+    Object.assign(state, { outlook: o, cal, acc, poll });
     loadScenario();
     if (state.mode === "outlook") refreshMode();
     if (!methodHidden()) openMethod(true);
@@ -841,6 +842,11 @@ function showOutlookOverview() {
       <input type="range" id="env" min="-15" max="15" step="0.5" value="${state.env}">
       <div class="envscale"><span>국민의힘 +15</span><span>0</span><span>민주 +15</span></div>
       <p>기본값 ${signed(def)} = 최근 세 선거 전국 평균 격차 ${state.env !== def ? `<button class="clear" id="envReset">기본값으로</button>` : ""}</p>
+      ${state.poll ? (() => { const p = state.poll; return `<div class="pollbox">
+        <p><b>최근 여론조사</b> ${esc(p.source.replace(/ 데일리 오피니언.*/, ""))} ${esc(p.period)} · 민주 계열 ${p.dbloc}% · 국민의힘 ${p.rival}% · 무당층 ${p.undecided}%
+          → <b class="pos">민주 +${p.gap}</b> <button class="clear" id="usePoll" ${state.env === p.gap ? "disabled" : ""}>이 값으로</button></p>
+        <small>정당 지지율 차이는 실제 득표 격차와 다를 수 있음 — 2024 총선 한 달 전 갤럽은 국민의힘 37%·민주당 31%였지만 실제로는 민주 계열이 크게 이김 · <a href="${esc(p.url)}" target="_blank" rel="noopener">원문</a></small>
+      </div>`; })() : ""}
       <details class="regbox" ${state.regOpen ? "open" : ""}>
         <summary>권역별 조정 <small>(선택 · 특정 권역만 분위기가 다를 때)</small>${Object.values(state.regAdj).some(Boolean) ? ` <b class="on">조정 중</b>` : ""}</summary>
         ${REGIONS.map((g) => `<label class="reg"><span>${g}</span><input type="range" min="-10" max="10" step="0.5" value="${state.regAdj[g] || 0}" data-r="${g}"><b class="${(state.regAdj[g] || 0) >= 0 ? "pos" : "neg"}">${signed(state.regAdj[g] || 0)}</b></label>`).join("")}
@@ -867,6 +873,7 @@ function showOutlookOverview() {
         <li>그해 선거에서 민주당이 전국적으로 상대보다 몇 %p 앞설지에 대한 가정</li>
         <li>기본값 ${signed(o.env_default)} = 최근 세 선거 전국 평균 격차의 평균 (${signed(o.national.g22)} · ${signed(o.national.p21)} · ${signed(o.national.l9)})</li>
         <li>2028 분위기는 아직 모르므로 위 막대로 직접 정함 (예: 여론조사 민주 3%p 우위면 민주 +3, 접전이면 0)</li>
+        <li>'최근 여론조사 → 이 값으로' 버튼: 민주 계열(민주당+조국혁신당+진보당) − 국민의힘 정당 지지율 차이를 그대로 넣음(무당층은 양쪽에 똑같이 나뉜다고 봄) · 정당 지지율은 실제 득표와 차이가 커서 참고용</li>
       </ul>
       <p class="src"><b>예시 — 서울 종로구</b></p>
       <table class="ex">
@@ -950,6 +957,7 @@ function showOutlookOverview() {
   $("#regReset")?.addEventListener("click", () => { state.regAdj = {}; applyEnv(state.env); saveScenario(); drawGrades(); repaint(); showOutlookOverview(); });
   env.addEventListener("change", () => { saveScenario(); state.listScroll = $("#panel").scrollTop; showOutlookOverview(); });
   $("#envReset")?.addEventListener("click", () => { applyEnv(def); saveScenario(); drawGrades(); repaint(); showOutlookOverview(); });
+  $("#usePoll")?.addEventListener("click", () => { applyEnv(Math.max(-15, Math.min(15, state.poll.gap))); saveScenario(); drawGrades(); repaint(); showOutlookOverview(); });
   $("#shareLink").addEventListener("click", async () => {
     saveScenario();
     const u = new URL(location.href); u.hash = "";
