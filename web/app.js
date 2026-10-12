@@ -75,7 +75,7 @@ async function init() {
   // 판세 + 검증 수치(calibration) + 재합산 정확도(accuracy): 안내문·팝업이 같이 쓰므로 함께 받음
   Promise.all([load("outlook.json"), load("calibration.json").catch(() => null), load("accuracy.json").catch(() => null)]).then(([o, cal, acc]) => {
     Object.assign(state, { outlook: o, cal, acc });
-    applyEnv(o.env_default);
+    loadScenario();
     if (state.mode === "outlook") refreshMode();
     if (!methodHidden()) openMethod(true);
   }).catch(() => {});
@@ -171,6 +171,30 @@ const GRADE_PROB = ["90% 이상", "70~90%", "30~70%", "10~30%", "10% 미만"];
 // 권역: 시도 → 수도권·충청·호남·부울경·대구·경북·강원·제주 (outlook.json region)
 const regionOf = (key) => state.outlook?.region?.[key.split(" ")[0]] || "";
 const REGIONS = ["수도권", "충청", "호남", "부울경", "대구·경북", "강원·제주"];
+// 시나리오 링크: 전국 분위기·권역 조정을 주소에 담아 그대로 공유 (?mode=outlook&env=3&r=부울경:-2,호남:1)
+function loadScenario() {
+  const q = new URLSearchParams(location.search), o = state.outlook;
+  const clamp = (x, a) => Math.max(-a, Math.min(a, Math.round(x * 2) / 2));
+  const env = parseFloat(q.get("env"));
+  for (const part of (q.get("r") || "").split(",")) {
+    const [g, v] = part.split(":");
+    if (REGIONS.includes(g) && isFinite(+v) && +v) state.regAdj[g] = clamp(+v, 10);
+  }
+  if (Object.keys(state.regAdj).length) state.regOpen = true;
+  applyEnv(isFinite(env) ? clamp(env, 15) : o.env_default);
+}
+function saveScenario() {
+  const u = new URL(location.href);
+  state.env !== state.outlook.env_default ? u.searchParams.set("env", state.env) : u.searchParams.delete("env");
+  const r = REGIONS.filter((g) => state.regAdj[g]).map((g) => g + ":" + state.regAdj[g]).join(",");
+  r ? u.searchParams.set("r", r) : u.searchParams.delete("r");
+  history.replaceState(null, "", u);
+}
+function scenarioText() {
+  const r = REGIONS.filter((g) => state.regAdj[g]).map((g) => `${g} ${signed(state.regAdj[g])}`);
+  return `전국 분위기 ${envLabel(state.env)}${r.length ? " · " + r.join(" · ") : ""}`;
+}
+
 function applyEnv(env) {
   state.env = env;
   for (const [k, d] of Object.entries(state.outlook.district)) {
@@ -301,7 +325,10 @@ function drawGeo() {
     dokdo.textContent = "독도";
     dokdo.title = "독도 · 경북 울릉군 울릉읍 독도리 (경북 포항시남구울릉군 선거구)";
     dokdo.addEventListener("click", () => select("경북 포항시남구울릉군", false));
-    new maplibregl.Marker({ element: dokdo, anchor: "left", offset: [4, 0] }).setLngLat([131.8735, 37.2405]).addTo(map);   // 동도 동쪽 끝 바로 옆, 섬 모양을 가리지 않게
+    // 서도 서쪽 끝 바로 옆(울릉도 쪽)에 붙임 — 섬 모양을 가리지 않고, 휴대폰 좁은 화면에서도 오른쪽 끝에 잘리지 않게
+    new maplibregl.Marker({ element: dokdo, anchor: "right", offset: [-4, 0] }).setLngLat([131.8600, 37.2415]).addTo(map);
+    // 출처 상자는 접힌 채로 시작(펼쳐져 있으면 휴대폰에서 '현재 의원·판세' 버튼을 가림) · ⓘ 누르면 펼쳐짐
+    map.getContainer().querySelector(".maplibregl-ctrl-attrib")?.classList.remove("maplibregl-compact-show");
 
     map.on("mousemove", "fill", (e) => {
       const k = e.features[0].properties.key;
@@ -593,12 +620,19 @@ const naverNews = (q) => "https://search.naver.com/search.naver?where=news&sort=
 const highCount = (key) => (chairOf(key)?.news || []).filter((n) => n.level === "high").length;
 
 // 오른쪽 목록: 경합권 / 전체 / 리스크 탭. 지역구를 눌렀다 돌아와도 탭·스크롤 위치 유지
-const LIST_TABS = [["close", "경합권"], ["all", "전체"], ["risk", "리스크"]];
+const LIST_TABS = [["close", "경합권"], ["gain", "탈환 가능"], ["hold", "수성 위험"], ["all", "전체"], ["risk", "리스크"]];
+// 지금 지역구 의원이 민주 계열인지 (판세의 '민주 계열'과 같은 묶음)
+const DBLOC = ["더불어민주당", "조국혁신당", "진보당", "기본소득당", "사회민주당"];
+const holder = (k) => state.members?.district[k]?.party || "공석";
+const heldByD = (k) => DBLOC.includes(holder(k));
 function listKeys(tab) {
   const d = state.outlook.district;
   let keys = Object.keys(d);
   if (state.grade) keys = keys.filter((k) => d[k].grade === state.grade);
   if (tab === "close") return keys.filter((k) => ["경합우세", "경합", "경합열세"].includes(d[k].grade)).sort((a, b) => Math.abs(d[a].exp) - Math.abs(d[b].exp));
+  // 탈환 가능: 지금 민주 계열이 아닌 의원(·공석) 자리인데 승리 확률 30% 이상 · 수성 위험: 민주 계열 자리인데 70% 미만
+  if (tab === "gain") return keys.filter((k) => !heldByD(k) && probOf(d[k].exp) > 0.3).sort((a, b) => d[b].exp - d[a].exp);
+  if (tab === "hold") return keys.filter((k) => heldByD(k) && probOf(d[k].exp) < 0.7).sort((a, b) => d[a].exp - d[b].exp);
   if (tab === "risk") return keys.filter((k) => highCount(k) || (chairOf(k)?.news || []).length)
     .sort((a, b) => highCount(b) - highCount(a) || (chairOf(b)?.news.length || 0) - (chairOf(a)?.news.length || 0));
   return keys.sort((a, b) => d[b].exp - d[a].exp);
@@ -744,7 +778,9 @@ function seatHTML() {
         <span class="sb-mean" style="left:${pc(s.mean)}"></span>
         <span class="sb-half" style="left:${pc(half)}"><em>지역구 과반 ${half}</em></span>
       </div>
-      <p class="sb-sub">10번 중 8번은 <b>${s.lo}~${s.hi}석</b> 사이 · 지역구만(비례대표 제외) · 위 전국 분위기 기준</p>`;
+      <p class="sb-sub">10번 중 8번은 <b>${s.lo}~${s.hi}석</b> 사이 · 지역구만(비례대표 제외) · 위 전국 분위기 기준</p>
+      ${state.members ? (() => { const ks = Object.keys(state.outlook.district), now = ks.filter(heldByD).length;
+        return `<p class="sb-sub">지금 민주 계열 지역구 ${now}석 → <b class="${s.mean >= now ? "pos" : "neg"}">${s.mean >= now ? "+" : "−"}${Math.abs(s.mean - now)}석</b> · 탈환 가능 ${listKeys("gain").length}곳 · 수성 위험 ${listKeys("hold").length}곳</p>`; })() : ""}`;
 }
 
 // 검증 결과: calibration.json (scripts/calibrate.py)
@@ -792,7 +828,9 @@ function showOutlookOverview() {
   state.list = list;
   const right = (k) => state.listTab === "risk"
     ? `${esc(chairName(k))} · <b class="hi">${highCount(k)}</b>/${(chairOf(k)?.news || []).length}건`
-    : `<b class="${d[k].exp >= 0 ? "pos" : "neg"}">${signed(d[k].exp)}</b>`;
+    : ["gain", "hold"].includes(state.listTab)
+      ? `${esc(holder(k))} 현역 · <b class="${d[k].exp >= 0 ? "pos" : "neg"}">${pct(d[k].exp)}</b>`
+      : `<b class="${d[k].exp >= 0 ? "pos" : "neg"}">${signed(d[k].exp)}</b>`;
   const o = state.outlook, def = o.env_default;
   $("#panel").innerHTML = `
     <h2 class="ov-title">판세 현황</h2>
@@ -810,6 +848,7 @@ function showOutlookOverview() {
       </details>
     </div>
     <div class="seatbox" id="seatbox">${seatHTML()}</div>
+    <div class="sharebox"><button class="clear" id="shareLink">🔗 이 시나리오 링크 복사</button><span id="shareMsg">${esc(scenarioText())}</span></div>
     <div class="gradebar">${GRADES.map(([g, c]) => cnt[g] ? `<span data-g="${g}" style="flex:${cnt[g]};background:${c}" title="${g} ${cnt[g]}곳"></span>` : "").join("")}</div>
     <ul class="gradelegend">${GRADES.map(([g, c]) => `<li data-g="${g}" class="${state.grade === g ? "on" : ""}"><i style="background:${c}"></i>${g} <b>${cnt[g]}</b></li>`).join("")}</ul>
     <details class="notice">
@@ -877,7 +916,7 @@ function showOutlookOverview() {
       </ul>
     </details>
     <div class="ltabs" role="tablist">${LIST_TABS.map(([t, n]) => `<button data-t="${t}" class="${state.listTab === t ? "on" : ""}">${n}</button>`).join("")}</div>
-    <p class="lmeta">${state.grade ? `<b>${state.grade}</b>만 · ` : ""}${list.length}곳 · ${state.listTab === "close" ? "차이가 작은 순" : state.listTab === "risk" ? "리스크 기사 많은 순(높음/전체)" : "민주당 우세한 순"}
+    <p class="lmeta">${state.grade ? `<b>${state.grade}</b>만 · ` : ""}${list.length}곳 · ${state.listTab === "close" ? "차이가 작은 순" : state.listTab === "gain" ? "지금 민주 계열이 아닌 의원 자리 중 승리 확률 30% 이상 · 높은 순" : state.listTab === "hold" ? "지금 민주 계열 의원 자리 중 승리 확률 70% 미만 · 낮은 순" : state.listTab === "risk" ? "리스크 기사 많은 순(높음/전체)" : "민주당 우세한 순"}
       ${state.grade ? `<button class="clear" id="clearGrade">등급 해제</button>` : ""}</p>
     <ul class="klist" id="klist">${list.map((k, i) => `<li data-k="${esc(k)}"><em>${i + 1}</em><i style="background:${GRADE_COLOR[d[k].grade]}"></i><span>${esc(k.replace(/^(\S+) /, "$1 "))}</span><small>${right(k)}</small></li>`).join("") || "<li class='none'>해당 지역구가 없어요</li>"}</ul>
     ${state.chairs ? `<p class="ov-hint">리스크 기사 갱신 ${esc(state.chairs.updated)}</p>` : ""}`;
@@ -906,11 +945,18 @@ function showOutlookOverview() {
       applyEnv(state.env); drawGrades(); repaint();
       $("#seatbox").innerHTML = seatHTML();
     });
-    r.addEventListener("change", () => { state.listScroll = $("#panel").scrollTop; showOutlookOverview(); });
+    r.addEventListener("change", () => { saveScenario(); state.listScroll = $("#panel").scrollTop; showOutlookOverview(); });
   });
-  $("#regReset")?.addEventListener("click", () => { state.regAdj = {}; applyEnv(state.env); drawGrades(); repaint(); showOutlookOverview(); });
-  env.addEventListener("change", () => { state.listScroll = $("#panel").scrollTop; showOutlookOverview(); });
-  $("#envReset")?.addEventListener("click", () => { applyEnv(def); drawGrades(); repaint(); showOutlookOverview(); });
+  $("#regReset")?.addEventListener("click", () => { state.regAdj = {}; applyEnv(state.env); saveScenario(); drawGrades(); repaint(); showOutlookOverview(); });
+  env.addEventListener("change", () => { saveScenario(); state.listScroll = $("#panel").scrollTop; showOutlookOverview(); });
+  $("#envReset")?.addEventListener("click", () => { applyEnv(def); saveScenario(); drawGrades(); repaint(); showOutlookOverview(); });
+  $("#shareLink").addEventListener("click", async () => {
+    saveScenario();
+    const u = new URL(location.href); u.hash = "";
+    let ok = false;
+    try { await navigator.clipboard.writeText(u.href); ok = true; } catch {}
+    $("#shareMsg").textContent = ok ? "링크를 복사했어요 · 받는 사람도 이 설정 그대로 봐요" : u.href;
+  });
   $("#panel").scrollTop = state.listScroll || 0;
   $$(".gradebar span").forEach((sp) => (sp.style.opacity = !state.grade || sp.dataset.g === state.grade ? 1 : 0.25));
 }

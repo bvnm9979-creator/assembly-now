@@ -348,7 +348,7 @@ b.hi, .rk.hi { color: #C4252D; }
 .notice b { color: var(--ink); }
 .notice .src { margin: 8px 0 0; font-size: 13px; color: var(--ink-3); }
 .ltabs { display: flex; gap: 4px; margin: 24px 0 8px; padding: 4px; background: #eef0f2; border-radius: 10px; position: sticky; top: 0; z-index: 2; }
-.ltabs button { flex: 1; border: 0; background: none; padding: 10px; border-radius: 8px; font-size: 18px; font-weight: 700; color: var(--ink-2); cursor: pointer; }
+.ltabs button { flex: 1; border: 0; background: none; padding: 9px 4px; border-radius: 8px; font-size: 15px; white-space: nowrap; font-weight: 700; color: var(--ink-2); cursor: pointer; }
 .ltabs button.on { background: var(--surface); color: var(--ink); box-shadow: 0 1px 3px rgba(17,19,24,.12); }
 .lmeta { margin: 4px 0 4px; font-size: 15px; color: var(--ink-3); display: flex; align-items: center; gap: 8px; flex-wrap: wrap; }
 .lmeta b { color: var(--ink); }
@@ -508,3 +508,9 @@ b.hi, .rk.hi { color: #C4252D; }
 .regbox .reg input { margin: 0; width: 100%; accent-color: #1F5BC4; }
 .regbox .reg b { text-align: right; font-variant-numeric: tabular-nums; }
 .m-stats2 { grid-template-columns: repeat(2, 1fr); }
+.sharebox { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; margin: -6px 0 14px; font-size: 12px; color: var(--ink-3); }
+.sharebox span { overflow-wrap: anywhere; }
+.ltabs { flex-wrap: wrap; }
+@media (max-width: 1080px) {
+  .ltabs { top: var(--bar-h, 0px); }   /* 휴대폰: 페이지 전체가 스크롤되므로 고정 띠 아래에 붙음 */
+}
