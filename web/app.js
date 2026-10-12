@@ -574,7 +574,20 @@ function showOutlookOverview() {
     <p class="ov-sub">2024 총선 · 2025 대선 · 2026 지선에서 민주당이 상대 후보보다 몇 %p 앞섰는지 평균 낸 값이에요.</p>
     <div class="gradebar">${GRADES.map(([g, c]) => cnt[g] ? `<span data-g="${g}" style="flex:${cnt[g]};background:${c}" title="${g} ${cnt[g]}곳"></span>` : "").join("")}</div>
     <ul class="gradelegend">${GRADES.map(([g, c]) => `<li data-g="${g}" class="${state.grade === g ? "on" : ""}"><i style="background:${c}"></i>${g} <b>${cnt[g]}</b></li>`).join("")}</ul>
-    <p class="rule">${esc(state.outlook.rule)}</p>
+    <details class="notice">
+      <summary>판세 기준</summary>
+      <ul>
+        <li><b>계산 방법</b>: 세 선거에서 '민주당 득표율 − 상대 후보 중 가장 많이 받은 후보 득표율'을 구해 평균</li>
+        <li><b>등급 기준</b>: +10%p 이상 우세 · +5~10 경합우세 · ±5 안 경합 · −5~−10 경합열세 · −10 이하 열세</li>
+      </ul>
+      <p class="src"><b>참고 사항</b></p>
+      <ul>
+        <li>대선·지방선거 숫자는 지역구에 맞춰 다시 더한 추정치</li>
+        <li>민주당이 후보를 안 낸 곳은 같은 계열 후보로 계산</li>
+        <li>세종갑은 총선을 빼고 두 선거만 평균</li>
+        <li>여론조사·후보 인지도는 들어가지 않음</li>
+      </ul>
+    </details>
     <div class="ltabs" role="tablist">${LIST_TABS.map(([t, n]) => `<button data-t="${t}" class="${state.listTab === t ? "on" : ""}">${n}</button>`).join("")}</div>
     <p class="lmeta">${state.grade ? `<b>${state.grade}</b>만 · ` : ""}${list.length}곳 · ${state.listTab === "close" ? "차이가 작은 순" : state.listTab === "risk" ? "리스크 기사 많은 순(높음/전체)" : "민주당 우세한 순"}
       ${state.grade ? `<button class="clear" id="clearGrade">등급 해제</button>` : ""}</p>
