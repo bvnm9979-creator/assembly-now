@@ -78,11 +78,43 @@ for code, pages in json.load(open(os.path.join(RAW, "nec_22_precinct_raw.json"))
                 prec_map[(code, b, r[1])] = sgg
 
 # ── 2) 대선·지선 표를 지역구별로 더하기 ───────────────────────────────
-def aggregate(src, precinct_level, stats=None, with_town=True):
+def party_table(src):
+    """총선 비례대표 투표구별 표 → aggregate 가 읽는 대선 표 모양으로 바꾼다.
+    비례 표는 읍면동 칸이 없고 동마다 '소계' 줄로 시작(그 아래 관내사전·투표구) · 구시군 합계 줄 이름은 '계'.
+    → [읍면동, 투표구, 선거인수, 투표수, 정당…, 계, 무효, 기권] · 동 이름은 그 동 첫 투표구 이름에서 뽑음"""
+    out = {}
+    for code, pages in src.items():
+        out[code] = {}
+        for page, rows in pages.items():
+            new = [["읍면동명", "투표구명"] + rows[0][1:], rows[1]]
+            for i, r in enumerate(rows[2:], 2):
+                name, rest = r[0], r[1:]
+                if name == "계":
+                    new.append(["합계", ""] + rest)
+                elif name.startswith("재외투표"):                       # 2020 '재외투표(공관)' 포함
+                    new.append(["재외투표", ""] + rest)
+                elif name in TOWN_ROWS:
+                    new.append([name, ""] + rest)
+                elif name == "소계":
+                    dong = None
+                    for x in rows[i + 1:]:
+                        if x[0] == "소계":
+                            break
+                        if x[0] != "관내사전투표":
+                            dong = re.sub(r"(제?\d+)?투(표소)?$", "", x[0]); break
+                    new.append([dong or "?", "계"] + rest)
+                else:
+                    new.append(["", name] + rest)
+            out[code][page] = new
+    return out
+
+
+def aggregate(src, precinct_level, stats=None, with_town=True, d_parties=None):
     """{시도: {'코드|구시군': rows}} → ({지역구: Counter(D,R,valid)}, {짝 못 찾은 곳: 유효표})
     stats(Counter)를 주면 유효표가 어떻게 배정됐는지 센다 — official(선관위 합계), exact(한 지역구에 그대로),
     split(두 지역구에 나뉜 동), town(관외사전·거소·재외 등 구시군 단위 표), unknown(짝 못 찾은 새 동)
-    with_town=False 면 구시군 단위 표를 빼고 더한다(그 표를 나누는 방식이 결과를 얼마나 움직이는지 점검용)."""
+    with_town=False 면 구시군 단위 표를 빼고 더한다(그 표를 나누는 방식이 결과를 얼마나 움직이는지 점검용).
+    d_parties 를 주면 그 정당들 득표를 합쳐 민주 쪽으로 본다(예: 비례 더불어민주연합 + 조국혁신당)."""
     acc, lost = collections.defaultdict(Counter), Counter()
     for code, pages in src.items():
         for page, rows in pages.items():
@@ -90,12 +122,15 @@ def aggregate(src, precinct_level, stats=None, with_town=True):
             b = base(town)
             cands = [c for c in rows[1] if c and c != "계"]
             n = len(cands)
-            iD = pick(cands, LEFT)
+            iDs = [i for i, c in enumerate(cands) if c.split("|")[0] in d_parties] if d_parties else \
+                  [i for i in [pick(cands, LEFT)] if i is not None]
             total = next(r for r in rows[2:] if r[0] == "합계")
-            iR = rival(cands, [num(x) for x in total[4:4 + n]])   # 시도 전체에서 2위(대선 김문수, 지선 국민의힘 후보)
+            tv_ = [num(x) for x in total[4:4 + n]]
+            others = [i for i in range(n) if i not in iDs and cands[i].split("|")[0] not in LEFT]
+            iR = max(others, key=lambda i: tv_[i]) if others else None   # 시도 전체에서 민주 쪽 아닌 1위(대선 김문수, 지선 국민의힘 후보)
 
             def vec(r):
-                return Counter({"D": num(r[4 + iD]) if iD is not None else 0,
+                return Counter({"D": sum(num(r[4 + i]) for i in iDs),
                                 "R": num(r[4 + iR]) if iR is not None else 0, "valid": num(r[4 + n])})
             bases = ALIAS.get((code, town), [b])
             sggs = set().union(*(town_sgg.get((code, x), set()) for x in bases))

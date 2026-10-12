@@ -74,8 +74,8 @@ async function init() {
   load("results.json").then((r) => { state.results = r; if (state.sel) select(state.sel, false); }).catch(() => {});
   // 판세 + 검증 수치(calibration) + 재합산 정확도(accuracy): 안내문·팝업이 같이 쓰므로 함께 받음
   Promise.all([load("outlook.json"), load("calibration.json").catch(() => null), load("accuracy.json").catch(() => null),
-               load("poll.json").catch(() => null)]).then(([o, cal, acc, poll]) => {
-    Object.assign(state, { outlook: o, cal, acc, poll });
+               load("poll.json").catch(() => null), load("partylist_test.json").catch(() => null)]).then(([o, cal, acc, poll, pltest]) => {
+    Object.assign(state, { outlook: o, cal, acc, poll, pltest });
     loadScenario();
     if (state.mode === "outlook") refreshMode();
     if (!methodHidden()) openMethod(true);
@@ -729,7 +729,7 @@ function openMethod(auto = false) {
         <tr><td>전국 기준</td><td>실제 전국 득표</td><td>254개 지역구 단순 평균</td></tr>
         <tr><td>가중치</td><td>최근 75 · 직전 25</td><td>세 선거 같게</td></tr>
       </table></div>
-      <p class="m-note">여론조사·후보 요인은 들어가지 않음 · 현역 의원 효과는 과거 총선으로 검증해 보니 해마다 방향이 달라 넣지 않음</p>
+      <p class="m-note">여론조사·후보 요인은 들어가지 않음 · 현역 의원 효과·총선 비례 정당 투표는 과거 총선으로 검증해 보니 효과가 해마다 달라 넣지 않음</p>
     </section>
     <section>
       <h3>대선·지방선거 숫자를 지역구에 맞춘 방법</h3>
@@ -920,6 +920,7 @@ function showOutlookOverview() {
         <li>지방선거는 시·도지사보다 정당 투표가 더 정확해 정당 투표를 씀(2차 검증 89% → 91%)</li>
         <li>여론조사·후보 인지도는 들어가지 않음</li>
         ${state.cal?.incumbent ? `<li>현역 의원 효과는 검증 후 뺐음: 이전 당선자가 다시 나온 곳은 현역 없는 곳보다 민주 현역 +${state.cal.incumbent["2024"].D}%p(2024)·+${state.cal.incumbent["2020"].D}%p(2020), 국민의힘 현역 ${signed(state.cal.incumbent["2024"].R)}%p·${signed(state.cal.incumbent["2020"].R)}%p로 해마다 들쭉날쭉하고, 넣어도 적중률이 거의 그대로(0~1곳)</li>` : ""}
+        ${state.pltest ? (() => { const t = state.pltest; return `<li>총선 비례대표 정당 투표도 검증 후 뺐음: 성향 계산에 더하면 2024 총선 ${t.now2024[0]} → ${t.add2024[0]}곳, 2020 총선 ${t.now2020[0]} → ${t.add2020[0]}곳 적중으로 한 번은 오르고 한 번은 내려감(2016 국민의당 돌풍처럼 비례 표가 크게 흔들린 해가 있음)</li>`; })() : ""}
       </ul>
     </details>
     <div class="ltabs" role="tablist">${LIST_TABS.map(([t, n]) => `<button data-t="${t}" class="${state.listTab === t ? "on" : ""}">${n}</button>`).join("")}</div>
