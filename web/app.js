@@ -73,6 +73,7 @@ async function init() {
     state.outlook = o;
     applyEnv(o.env_default);
     if (state.mode === "outlook") refreshMode();
+    if (!methodHidden()) openMethod(true);
   }).catch(() => {});
   load("chairs.json").then((c) => { state.chairs = c; if (state.sel) select(state.sel, false); else if (state.mode === "outlook") showOverview(); }).catch(() => {});
   state.counts = partyCounts();
@@ -571,7 +572,12 @@ function listKeys(tab) {
 }
 
 // 판세 산출 방법 팝업: 방법론 출처(Cook PVI · Antony Green 스윙) + 검증 결과
-function openMethod() {
+// 처음 들어오면 자동으로 뜨고, '다시 보지 않기'를 누르면 이 브라우저에서는 다음부터 자동으로 안 뜸
+const METHOD_KEY = "methodHidden";
+function methodHidden() {
+  try { return localStorage.getItem(METHOD_KEY) === "1"; } catch { return false; }
+}
+function openMethod(auto = false) {
   const o = state.outlook;
   $("#method")?.remove();
   const box = document.createElement("div");
@@ -635,13 +641,19 @@ function openMethod() {
     </section>
 
     <p class="m-src">참고: <a href="https://www.cookpolitical.com/cook-pvi/2022-partisan-voting-index/state-map-and-list" target="_blank" rel="noopener">Cook Political Report — 2022 Cook PVI</a> · <a href="https://aceproject.org/ero-en/regions/pacific/AU/australia-antony-greens-house-of-reps-calculator" target="_blank" rel="noopener">Antony Green’s House of Reps Calculator (ABC)</a> · 자료: 중앙선거관리위원회 선거통계시스템</p>
-    <button class="m-close">확인</button>
+    <div class="m-btns">
+      ${auto ? `<button class="m-hide">다시 보지 않기</button>` : ""}
+      <button class="m-close">확인</button>
+    </div>
   </div>`;
   document.body.append(box);
   const close = () => { box.remove(); document.removeEventListener("keydown", onKey); };
   const onKey = (e) => { if (e.key === "Escape") close(); };
   document.addEventListener("keydown", onKey);
-  box.addEventListener("click", (e) => { if (e.target === box || e.target.closest(".m-x, .m-close")) close(); });
+  box.addEventListener("click", (e) => {
+    if (e.target.closest(".m-hide")) { try { localStorage.setItem(METHOD_KEY, "1"); } catch {} close(); }
+    else if (e.target === box || e.target.closest(".m-x, .m-close")) close();
+  });
   box.querySelector(".m-close").focus({ preventScroll: true });
 }
 
@@ -734,7 +746,7 @@ function showOutlookOverview() {
   $$(".ltabs button").forEach((b) => b.addEventListener("click", () => { state.listTab = b.dataset.t; state.listScroll = 0; showOutlookOverview(); }));
   $$(".gradelegend li").forEach((li) => li.addEventListener("click", () => setGrade(state.grade === li.dataset.g ? null : li.dataset.g)));
   $("#clearGrade")?.addEventListener("click", () => setGrade(null));
-  $("#openMethod").addEventListener("click", openMethod);
+  $("#openMethod").addEventListener("click", () => openMethod());
   // 막대: 움직이는 동안 지도·띠만 다시 칠하고, 손을 떼면 목록까지 다시 그림
   const env = $("#env");
   env.addEventListener("input", () => {
