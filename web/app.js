@@ -659,7 +659,7 @@ function openWelcome() {
       <li><b>전국 분위기</b> 다음 총선 분위기를 골라 보세요 — 버튼이나 막대를 움직이면 지도와 의석이 바로 바뀌어요</li>
       <li><b>예상 의석</b> 그 분위기에서 민주 계열이 얻을 지역구 수 · 지역구를 누르면 승리 확률이 나와요</li>
     </ol>
-    <p class="w-note">2024 총선·2025 대선·2026 지방선거 결과로 계산 · 과거 총선 두 번을 미리 맞혀 본 적중률 91~95%</p>
+    <p class="w-note">2024.4.10 총선 · 2025.6.3 대선 · 2026.6.3 지방선거 결과로 계산 · 과거 총선 두 번을 미리 맞혀 본 적중률 91~95%</p>
     <div class="m-btns"><button class="m-more">계산 방법 자세히</button><button class="m-close">시작하기</button></div>
   </div>`;
   document.body.append(box);
@@ -732,7 +732,13 @@ function openMethod(auto = false) {
 
     <section class="m-check">
       <h3>검증 — 과거 총선 두 번을 미리 맞혀 보기</h3>
-      <p>과거 선거만으로 같은 방식으로 계산해 실제 총선 결과와 두 번 대조 · 1차 2020·2022 선거 → 2024 총선 · 2차 2016·2017·2018 선거 → 2020 총선</p>
+      <p>예측할 총선 이전 선거만으로 같은 방식으로 계산해 실제 총선 결과와 두 번 대조 · 전국 분위기는 그해 실제 값</p>
+      <div class="m-tbl m-dates"><table>
+        <tr><th></th><th>총선</th><th>대선</th><th>지방선거<br><small>광역비례 정당 투표</small></th><th>→ 맞혀 본 총선</th></tr>
+        <tr><td>지금 판세</td><td><b>2024.4.10</b><br><small>제22대</small></td><td><b>2025.6.3</b><br><small>제21대</small></td><td><b>2026.6.3</b><br><small>제9회</small></td><td>다음 총선</td></tr>
+        <tr><td>1차 검증</td><td><b>2020.4.15</b><br><small>제21대</small></td><td><b>2022.3.9</b><br><small>제20대</small></td><td><b>2022.6.1</b><br><small>제8회</small></td><td><b>2024.4.10</b><br><small>제22대</small></td></tr>
+        <tr><td>2차 검증</td><td><b>2016.4.13</b><br><small>제20대</small></td><td><b>2017.5.9</b><br><small>제19대</small></td><td><b>2018.6.13</b><br><small>제7회</small></td><td><b>2020.4.15</b><br><small>제21대</small></td></tr>
+      </table></div>
       ${checkHTML(true)}
     </section>
 
@@ -832,8 +838,8 @@ function checkHTML(cards) {
       </table></div>
       <p class="m-note">등급마다 실제 승률이 예상 확률 범위에 들어옴 · 세 선거를 그냥 평균 낸 방식은 ${h.simple2024}%·${h.simple2020}% 적중 · 전국 분위기를 ±3%p 틀리게 넣어도 ${h.env_err3[0]}~${h.env_err3[1]}%</p>`;
   return `<ul>
-        <li>1차: 2020 총선·2022 대선·2022 지방선거만으로 2024 총선 예측 → ${h.n2024}곳 중 ${h.r2024}곳(${r(h.r2024, h.n2024)}%) 승패 적중</li>
-        <li>2차: 2016 총선·2017 대선·2018 지방선거만으로 2020 총선 예측 → ${h.n2020}곳 중 ${h.r2020}곳(${r(h.r2020, h.n2020)}%) 승패 적중</li>
+        <li>1차: 2020.4.15 총선·2022.3.9 대선·2022.6.1 지방선거만으로 2024.4.10 총선 예측 → ${h.n2024}곳 중 ${h.r2024}곳(${r(h.r2024, h.n2024)}%) 승패 적중</li>
+        <li>2차: 2016.4.13 총선·2017.5.9 대선·2018.6.13 지방선거만으로 2020.4.15 총선 예측 → ${h.n2020}곳 중 ${h.r2020}곳(${r(h.r2020, h.n2020)}%) 승패 적중</li>
         <li>두 번 합친 등급별 실제 민주 승리: ${GRADES.map(([n]) => g[n] ? `${n} ${g[n][0]}곳 중 ${g[n][1]}곳(${Math.round(g[n][2])}%)` : "").filter(Boolean).join(" · ")}</li>
         <li>그냥 평균 낸 방식은 ${h.simple2024}%·${h.simple2020}% 적중 · 전국 분위기를 ±3%p 틀리게 넣어도 ${h.env_err3[0]}~${h.env_err3[1]}%</li>
       </ul>`;
