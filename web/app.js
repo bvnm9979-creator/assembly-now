@@ -72,8 +72,9 @@ async function init() {
   Object.assign(state, { members, hexes, geo, sido });
   // 선거 결과는 없어도 지도는 보이게 따로 받음
   load("results.json").then((r) => { state.results = r; if (state.sel) select(state.sel, false); }).catch(() => {});
-  load("outlook.json").then((o) => {
-    state.outlook = o;
+  // 판세 + 검증 수치(calibration) + 재합산 정확도(accuracy): 안내문·팝업이 같이 쓰므로 함께 받음
+  Promise.all([load("outlook.json"), load("calibration.json").catch(() => null), load("accuracy.json").catch(() => null)]).then(([o, cal, acc]) => {
+    Object.assign(state, { outlook: o, cal, acc });
     applyEnv(o.env_default);
     if (state.mode === "outlook") refreshMode();
     if (!methodHidden()) openMethod(true);
@@ -150,8 +151,23 @@ function drawParties() {
   };
 }
 
-// 예상 격차 = 지역구 성향 + 전국 분위기 → 등급 (scripts/build_outlook.py 와 같은 기준)
-const gradeOf = (m) => m >= 10 ? "우세" : m >= 5 ? "경합우세" : m > -5 ? "경합" : m > -10 ? "경합열세" : "열세";
+// 예상 격차 = 지역구 성향 + 전국 분위기 → 승리 확률 → 등급 (scripts/build_outlook.py 와 같은 기준)
+// 승리 확률 = Φ(예상 격차 / σ), σ는 과거 총선 검증으로 정한 값(민주 불리 쪽 5.0 · 유리 쪽 7.5, scripts/calibrate.py)
+function erf(x) {   // Abramowitz–Stegun 7.1.26 (오차 1.5e-7)
+  const t = 1 / (1 + 0.3275911 * Math.abs(x));
+  const y = 1 - ((((1.061405429 * t - 1.453152027) * t + 1.421413741) * t - 0.284496736) * t + 0.254829592) * t * Math.exp(-x * x);
+  return x < 0 ? -y : y;
+}
+const probOf = (m) => { const [l, r] = state.outlook?.sigma || [5, 7.5]; return 0.5 * (1 + erf(m / (m < 0 ? l : r) / Math.SQRT2)); };
+const gradeOf = (m) => { const p = probOf(m); return p >= 0.9 ? "우세" : p >= 0.7 ? "경합우세" : p > 0.3 ? "경합" : p > 0.1 ? "경합열세" : "열세"; };
+const pct = (m) => { const p = Math.round(probOf(m) * 100); return p >= 99 ? "99% 이상" : p <= 1 ? "1% 미만" : p + "%"; };
+// 등급 경계를 예상 격차로: 확률 90·70·30·10% 지점
+const GRADE_CUTS = () => { const [l, r] = state.outlook?.sigma || [5, 7.5]; return [1.2816 * r, 0.5244 * r, -0.5244 * l, -1.2816 * l].map((x) => Math.round(x * 10) / 10); };
+function gradeRange(i) {
+  const c = GRADE_CUTS(), f = (x) => (x > 0 ? "+" : x < 0 ? "−" : "") + Math.abs(x).toFixed(1);
+  return ["격차 " + f(c[0]) + " 이상", f(c[1]) + " ~ " + f(c[0]), f(c[2]) + " ~ " + f(c[1]), f(c[3]) + " ~ " + f(c[2]), f(c[3]) + " 미만"][i];
+}
+const GRADE_PROB = ["90% 이상", "70~90%", "30~70%", "10~30%", "10% 미만"];
 function applyEnv(env) {
   state.env = env;
   for (const d of Object.values(state.outlook.district)) {
@@ -606,7 +622,7 @@ function openMethod(auto = false) {
       <i>+</i>
       <div><small>STEP 2</small><b>전국 분위기</b><em>스윙 계산 방식</em></div>
       <i>=</i>
-      <div class="m-res"><small>STEP 3</small><b>예상 격차</b><em>→ 등급</em></div>
+      <div class="m-res"><small>STEP 3</small><b>예상 격차</b><em>→ 승리 확률 → 등급</em></div>
     </div>
 
     <section>
@@ -626,20 +642,19 @@ function openMethod(auto = false) {
       </ul>
     </section>
     <section>
-      <h3><span>3</span>예상 격차 → 등급</h3>
-      <div class="m-grades">${GRADES.map(([g, c], i) => `<span style="--c:${c}"><b>${g}</b>${["+10 이상", "+5~10", "±5", "−5~−10", "−10 이하"][i]}</span>`).join("")}</div>
+      <h3><span>3</span>예상 격차 → 승리 확률 → 등급</h3>
+      <ul>
+        <li>승리 확률: 과거 총선에서 예상 격차가 이만큼이던 지역구가 실제로 몇 % 이겼는지를 공식으로 만든 값 (미국 FiveThirtyEight·Economist 예측 모델과 비슷한 원리 — 과거 예측 오차로 확률을 냄)</li>
+        <li>계산: 정규분포 Φ(예상 격차 ÷ σ) · σ = 예측이 빗나가는 정도 · 민주 불리 쪽 ${(o.sigma || [5, 7.5])[0]} · 유리 쪽 ${(o.sigma || [5, 7.5])[1]}(불리한 곳은 예상보다 더 크게 지는 일이 많아 따로 맞춤)</li>
+        <li>예: 예상 격차 +3 → ${pct(3)} · +6 → ${pct(6)} · −3 → ${pct(-3)}</li>
+      </ul>
+      <div class="m-grades">${GRADES.map(([g, c], i) => `<span style="--c:${c}"><b>${g}</b>${GRADE_PROB[i]}<small>${gradeRange(i)}</small></span>`).join("")}</div>
     </section>
 
     <section class="m-check">
       <h3>검증 — 과거 총선 두 번을 미리 맞혀 보기</h3>
       <p>과거 선거만으로 같은 방식으로 계산해 실제 총선 결과와 두 번 대조 · 1차 2020·2022 선거 → 2024 총선 · 2차 2016·2017·2018 선거 → 2020 총선</p>
-      <div class="m-stats">
-        <div><b>93<small>%</small></b><span>1차 · 2024 총선<br>254곳 중 237곳 적중</span></div>
-        <div><b>91<small>%</small></b><span>2차 · 2020 총선<br>252곳 중 229곳 적중</span></div>
-        <div><b>222<small>/227</small></b><span>우세로 본 곳<br>민주 승리</span></div>
-        <div><b>94<small>/95</small></b><span>열세로 본 곳<br>민주 패배</span></div>
-      </div>
-      <p class="m-note">경합으로 본 72곳은 37곳 민주 승리(51%) — 경합이 실제로 반반 · 단순 평균 방식은 80%·84% · 전국 분위기를 ±3%p 틀리게 넣어도 89~93%</p>
+      ${checkHTML(true)}
     </section>
 
     <section>
@@ -650,7 +665,8 @@ function openMethod(auto = false) {
         <dt>지역구 성향</dt><dd>그 지역구가 전국 평균보다 어느 당 쪽으로 기우는 정도 · 민+는 민주당 쪽, 국+는 국민의힘 쪽</dd>
         <dt>전국 분위기</dt><dd>그해 선거에서 전국적으로 민주당이 몇 %p 앞설지에 대한 가정 · 화면의 막대로 정함</dd>
         <dt>예상 격차</dt><dd>지역구 성향 + 전국 분위기 · 그 분위기라면 이 지역구에서 민주당이 몇 %p 앞설지</dd>
-        <dt>경합</dt><dd>예상 격차가 ±5%p 안인 접전 지역 · 경합우세는 +5~10, 경합열세는 −5~−10</dd>
+        <dt>승리 확률</dt><dd>그 전국 분위기라면 민주 계열 후보가 이길 가능성 · 과거 총선 결과로 맞춘 값</dd>
+        <dt>경합</dt><dd>승리 확률 30~70%인 접전 지역 · 경합우세 70~90%, 경합열세 10~30%</dd>
         <dt>적중</dt><dd>예상한 승패가 실제 결과와 맞은 비율</dd>
       </dl>
     </section>
@@ -663,7 +679,11 @@ function openMethod(auto = false) {
         <tr><td>전국 기준</td><td>실제 전국 득표</td><td>254개 지역구 단순 평균</td></tr>
         <tr><td>가중치</td><td>최근 75 · 직전 25</td><td>세 선거 같게</td></tr>
       </table></div>
-      <p class="m-note">대선·지방선거은 투표구·읍면동 결과를 22대 지역구로 다시 더한 추정치 · 여론조사·후보 요인은 들어가지 않음</p>
+      <p class="m-note">여론조사·후보 요인은 들어가지 않음</p>
+    </section>
+    <section>
+      <h3>대선·지방선거 숫자를 지역구에 맞춘 방법</h3>
+      ${accHTML()}
     </section>
 
     <p class="m-src">참고: <a href="https://www.cookpolitical.com/cook-pvi/2022-partisan-voting-index/state-map-and-list" target="_blank" rel="noopener">Cook Political Report — 2022 Cook PVI</a> · <a href="https://aceproject.org/ero-en/regions/pacific/AU/australia-antony-greens-house-of-reps-calculator" target="_blank" rel="noopener">Antony Green’s House of Reps Calculator (ABC)</a> · 자료: 중앙선거관리위원회 선거통계시스템</p>
@@ -681,6 +701,41 @@ function openMethod(auto = false) {
     else if (e.target === box || e.target.closest(".m-x, .m-close")) close();
   });
   box.querySelector(".m-close").focus({ preventScroll: true });
+}
+
+// 검증 결과: calibration.json (scripts/calibrate.py)
+function checkHTML(cards) {
+  const c = state.cal;
+  if (!c) return `<p class="m-note">검증 자료를 불러오지 못했어요</p>`;
+  const h = c.hit, g = c.grades, r = (a, b) => Math.round(a / b * 100);
+  if (cards) return `<div class="m-stats">
+        <div><b>${r(h.r2024, h.n2024)}<small>%</small></b><span>1차 · 2024 총선<br>${h.n2024}곳 중 ${h.r2024}곳 적중</span></div>
+        <div><b>${r(h.r2020, h.n2020)}<small>%</small></b><span>2차 · 2020 총선<br>${h.n2020}곳 중 ${h.r2020}곳 적중</span></div>
+        <div><b>${g["우세"][1]}<small>/${g["우세"][0]}</small></b><span>우세로 본 곳<br>민주 승리</span></div>
+        <div><b>${g["열세"][0] - g["열세"][1]}<small>/${g["열세"][0]}</small></b><span>열세로 본 곳<br>민주 패배</span></div>
+      </div>
+      <div class="m-tbl"><table>
+        <tr><th>등급</th><th>예상 승리 확률</th><th>실제 민주 승리</th></tr>
+        ${GRADES.map(([n], i) => g[n] ? `<tr><td>${n}</td><td>${GRADE_PROB[i]}</td><td>${g[n][0]}곳 중 ${g[n][1]}곳 (${Math.round(g[n][2])}%)</td></tr>` : "").join("")}
+      </table></div>
+      <p class="m-note">등급마다 실제 승률이 예상 확률 범위에 들어옴 · 세 선거를 그냥 평균 낸 방식은 ${h.simple2024}%·${h.simple2020}% 적중 · 전국 분위기를 ±3%p 틀리게 넣어도 ${h.env_err3[0]}~${h.env_err3[1]}%</p>`;
+  return `<ul>
+        <li>1차: 2020 총선·2022 대선·2022 지방선거만으로 2024 총선 예측 → ${h.n2024}곳 중 ${h.r2024}곳(${r(h.r2024, h.n2024)}%) 승패 적중</li>
+        <li>2차: 2016 총선·2017 대선·2018 지방선거만으로 2020 총선 예측 → ${h.n2020}곳 중 ${h.r2020}곳(${r(h.r2020, h.n2020)}%) 승패 적중</li>
+        <li>두 번 합친 등급별 실제 민주 승리: ${GRADES.map(([n]) => g[n] ? `${n} ${g[n][0]}곳 중 ${g[n][1]}곳(${Math.round(g[n][2])}%)` : "").filter(Boolean).join(" · ")}</li>
+        <li>그냥 평균 낸 방식은 ${h.simple2024}%·${h.simple2020}% 적중 · 전국 분위기를 ±3%p 틀리게 넣어도 ${h.env_err3[0]}~${h.env_err3[1]}%</li>
+      </ul>`;
+}
+// 재합산 정확도: accuracy.json (scripts/accuracy.py)
+function accHTML() {
+  const a = state.acc;
+  if (!a) return "";
+  const n = (x) => x.toLocaleString("ko-KR"), e = (x) => (100 - x.exact).toFixed(1);
+  return `<ul>
+        <li>표 보존: 지역구로 나눠 더한 유효표 합계가 선관위 공식 합계와 같음 — 대선 ${n(a.p21.summed)}표(차이 ${n(a.p21.diff)}) · 지방선거 ${n(a.l9.summed)}표(차이 ${n(a.l9.diff)})</li>
+        <li>그대로 배정: 유효표의 ${a.p21.exact}%(대선)·${a.l9.exact}%(지방선거)는 동·투표구 단위로 정확히 한 지역구에 들어감 · 22대 선거구는 동 하나가 둘로 나뉜 곳이 없음</li>
+        <li>비율로 나눈 표: 관외사전·거소·재외처럼 구 단위로만 나오는 ${e(a.p21)}%·${e(a.l9)}%는 구 하나가 여러 지역구인 곳에서 동 득표 비율로 나눔 · 이로 인한 지역구 격차 오차는 평균 ${a.p21.town_error.mean_abs}%p, 가장 큰 곳 ${Math.max(a.p21.town_error.max, a.l9.town_error.max)}%p 추정</li>
+      </ul>`;
 }
 
 function showOutlookOverview() {
@@ -716,6 +771,7 @@ function showOutlookOverview() {
         <li><b>격차</b>: 선거마다 민주당 득표율 − 상대 1위 득표율<br><small>2024 총선(지역구 후보) · 2025 대선 · 2026 지방선거(광역의원 비례대표 정당 투표)</small></li>
         <li><b>지역구 성향</b>: 그 격차가 전국 평균보다 몇 %p 높은지(낮은지)를 세 선거 평균<br><small>전국 평균 격차: 2024 총선 ${signed(o.national.g22)} · 2025 대선 ${signed(o.national.p21)} · 2026 지방선거 ${signed(o.national.l9)}</small></li>
         <li><b>예상 격차</b>: 지역구 성향 + 전국 분위기</li>
+        <li><b>승리 확률 → 등급</b>: 과거 총선에서 같은 예상 격차의 지역구가 실제로 이긴 비율로 계산</li>
       </ol>
       <p class="src"><b>전국 분위기란</b></p>
       <ul>
@@ -731,12 +787,13 @@ function showOutlookOverview() {
             + `<tr class="sum"><td colspan="3">지역구 성향 = (${es.map((e) => signed(df(e))).join(" ")}) ÷ ${es.length}</td><td>${signed(z.lean)}</td></tr>
       </table>
       <ul>
-        <li>전국 분위기 ${envLabel(o.env_default)}이면 → ${signed(z.lean)} + ${o.env_default.toFixed(1)} = <b>${signed(z.lean + o.env_default)} ${gradeOf(z.lean + o.env_default)}</b></li>
-        <li>전국 분위기 양당 같음(0)이면 → ${signed(z.lean)} + 0 = <b>${signed(z.lean)} ${gradeOf(z.lean)}</b></li>
+        <li>전국 분위기 ${envLabel(o.env_default)}이면 → ${signed(z.lean)} + ${o.env_default.toFixed(1)} = <b>${signed(z.lean + o.env_default)} → 승리 확률 ${pct(z.lean + o.env_default)} ${gradeOf(z.lean + o.env_default)}</b></li>
+        <li>전국 분위기 양당 같음(0)이면 → ${signed(z.lean)} + 0 = <b>${signed(z.lean)} → 승리 확률 ${pct(z.lean)} ${gradeOf(z.lean)}</b></li>
       </ul>`; })()}
-      <p class="src"><b>등급 기준</b>(예상 격차)</p>
+      <p class="src"><b>등급 기준</b>(민주 계열 승리 확률)</p>
       <ul>
-        <li>+10%p 이상 우세 · +5~10 경합우세 · ±5 안 경합 · −5~−10 경합열세 · −10 이하 열세</li>
+        ${GRADES.map(([g], i) => `<li>${g}: ${GRADE_PROB[i]} <small>(예상 ${gradeRange(i)})</small></li>`).join("")}
+        <li>승리 확률 = 정규분포 Φ(예상 격차 ÷ σ) · σ 민주 불리 쪽 ${(o.sigma || [5, 7.5])[0]} · 유리 쪽 ${(o.sigma || [5, 7.5])[1]} — 과거 총선 두 번(503곳)의 실제 승패로 맞춘 값</li>
       </ul>
       <p class="src"><b>이렇게 계산하는 이유</b></p>
       <ul>
@@ -744,19 +801,15 @@ function showOutlookOverview() {
         <li>지역구 고유의 성향만 뽑고, 전국 분위기는 막대로 따로 정함</li>
       </ul>
       <p class="src"><b>검증</b></p>
-      <ul>
-        <li>1차: 2020 총선·2022 대선·2022 지방선거만으로 2024 총선 예측 → 254곳 중 237곳(93%) 승패 적중</li>
-        <li>2차: 2016 총선·2017 대선·2018 지방선거만으로 2020 총선 예측 → 252곳 중 229곳(91%) 승패 적중</li>
-        <li>두 번 합쳐 우세로 본 227곳 중 222곳 민주 승리, 열세로 본 95곳 중 94곳 패배, 경합 72곳은 37곳 승리(51%, 실제로 반반)</li>
-        <li>그냥 평균 낸 방식은 80%·84% 적중</li>
-      </ul>
+      ${checkHTML(false)}
+      <p class="src"><b>대선·지방선거 숫자를 지역구에 맞춘 정확도</b></p>
+      ${accHTML()}
       <p class="src"><b>참고 사항</b></p>
       <ul>
-        <li>대선·지방선거 숫자는 지역구에 맞춰 다시 더한 추정치</li>
         <li>민주당이 후보를 안 낸 곳은 같은 계열 후보로 계산</li>
         <li>민주 계열 후보가 없던 3곳(세종갑·대구 서구·경북 의성청송영덕울진)은 총선 빼고 두 선거만으로 성향 계산</li>
         <li>전국 평균 격차는 254개 지역구 단순 평균</li>
-        <li>검증 때 전국 분위기는 그해 실제 값 입력(±3%p 틀려도 89~93%) · 이전 총선은 선거구 경계가 같은 곳만 사용(1차 199곳·2차 210곳)</li>
+        <li>검증 때 전국 분위기는 그해 실제 값 입력 · 이전 총선은 선거구 경계가 같은 곳만 사용(1차 199곳·2차 210곳) · 민주 계열 후보가 없던 곳은 대조에서 뺌</li>
         <li>지방선거는 시·도지사보다 정당 투표가 더 정확해 정당 투표를 씀(2차 검증 89% → 91%)</li>
         <li>여론조사·후보 인지도·현역 여부는 들어가지 않음</li>
       </ul>
@@ -834,6 +887,7 @@ function leanHTML(o) {
       ${rows}
       <tr class="sum"><td colspan="3">성향 = (${sum}) ÷ ${used.length}</td><td>${signed(o.lean)}</td></tr>
       <tr class="sum"><td colspan="3">예상 격차 = 성향 ${signed(o.lean)} + 전국 분위기 ${signed(state.env)}</td><td>${signed(o.exp)}</td></tr>
+      <tr class="sum"><td colspan="3">민주 계열 승리 확률 → ${o.grade}</td><td>${pct(o.exp)}</td></tr>
     </table>
   </div>`;
 }
@@ -852,11 +906,11 @@ function outlookHTML(key) {
       ${r.note ? `<small class="note">${esc(r.note)}</small>` : ""}</li>`;
   };
   return `<section class="outlook">
-    <div class="grade-badge" style="--c:${GRADE_COLOR[o.grade]}"><b>${o.grade}</b><span>예상 격차 <b>${signed(o.exp)}%p</b> <small>= 성향 ${signed(o.lean)} + 전국 분위기 ${signed(state.env)}</small></span></div>
+    <div class="grade-badge" style="--c:${GRADE_COLOR[o.grade]}"><b>${o.grade}</b><span>승리 확률 <b>${pct(o.exp)}</b> · 예상 격차 <b>${signed(o.exp)}%p</b> <small>= 성향 ${signed(o.lean)} + 전국 분위기 ${signed(state.env)}</small></span></div>
     <ul class="mrows">${state.outlook.elections.map(row).join("")}</ul>
     ${leanHTML(o)}
     ${o.trend != null ? `<p class="trend">2024 총선 → 2026 지방선거: 민주당 격차 <b class="${o.trend >= 0 ? "pos" : "neg"}">${o.trend >= 0 ? "▲" : "▼"} ${Math.abs(o.trend).toFixed(1)}%p</b> ${o.trend >= 0 ? "좋아짐" : "나빠짐"}</p>` : ""}
-    <p class="src">대선·지방선거은 투표구·읍면동 결과를 이 지역구로 다시 더한 값(일부 나뉜 동은 비율로 추정)</p>
+    <p class="src">대선·지방선거는 투표구·읍면동 결과를 이 지역구로 다시 더한 값(관외사전·재외 등 구 단위 표만 비율로 나눔)</p>
   </section>`;
 }
 
@@ -910,7 +964,7 @@ function showTip(key, ev) {
   const tip = $("#tip");
   const o = state.outlook?.district[key];
   tip.innerHTML = `<div class="k">${esc(key)}</div>` + (state.mode === "outlook" && o
-    ? `<i style="background:${GRADE_COLOR[o.grade]}"></i><b>${o.grade}</b> · 예상 ${signed(o.exp)}%p${chairName(key) ? `<div class="k2">민주당 ${esc(chairName(key))}</div>` : ""}`
+    ? `<i style="background:${GRADE_COLOR[o.grade]}"></i><b>${o.grade}</b> · 승리 확률 ${pct(o.exp)} · 예상 ${signed(o.exp)}%p${chairName(key) ? `<div class="k2">민주당 ${esc(chairName(key))}</div>` : ""}`
     : (m ? `<i style="background:${colorOf(m.party)}"></i><b>${esc(m.name)}</b> · ${esc(m.party)}` : "공석"));
   tip.hidden = false;
   tip.style.left = Math.min(ev.clientX + 14, innerWidth - tip.offsetWidth - 8) + "px";

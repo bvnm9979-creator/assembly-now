@@ -450,6 +450,7 @@ b.hi, .rk.hi { color: #C4252D; }
 .m-grades { display: flex; gap: 6px; flex-wrap: wrap; }
 .m-grades span { flex: 1; min-width: 88px; padding: 8px 6px; border-radius: 10px; background: color-mix(in srgb, var(--c) 16%, white); border-top: 4px solid var(--c); text-align: center; font-size: 13px; font-variant-numeric: tabular-nums; }
 .m-grades b { display: block; font-size: 14px; color: var(--ink); }
+.m-grades small { display: block; margin-top: 2px; font-size: 11px; color: var(--ink-2); }
 .m-check { }
 .m-check > p { margin: 0 0 12px; font-size: 14px; }
 .m-stats { display: grid; grid-template-columns: repeat(4, 1fr); gap: 8px; }

@@ -8,7 +8,7 @@
  - 구시군 단위로만 나오는 표(관외사전·거소·재외): 그 구시군 안 지역구별 동 득표 비율로 나눈다.
 결과 → web/data/outlook.json
 """
-import json, os, re, collections
+import json, math, os, re, collections
 from collections import Counter
 
 ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
@@ -78,8 +78,11 @@ for code, pages in json.load(open(os.path.join(RAW, "nec_22_precinct_raw.json"))
                 prec_map[(code, b, r[1])] = sgg
 
 # ── 2) 대선·지선 표를 지역구별로 더하기 ───────────────────────────────
-def aggregate(src, precinct_level):
-    """{시도: {'코드|구시군': rows}} → ({지역구: Counter(D,R,valid)}, {짝 못 찾은 곳: 유효표})"""
+def aggregate(src, precinct_level, stats=None, with_town=True):
+    """{시도: {'코드|구시군': rows}} → ({지역구: Counter(D,R,valid)}, {짝 못 찾은 곳: 유효표})
+    stats(Counter)를 주면 유효표가 어떻게 배정됐는지 센다 — official(선관위 합계), exact(한 지역구에 그대로),
+    split(두 지역구에 나뉜 동), town(관외사전·거소·재외 등 구시군 단위 표), unknown(짝 못 찾은 새 동)
+    with_town=False 면 구시군 단위 표를 빼고 더한다(그 표를 나누는 방식이 결과를 얼마나 움직이는지 점검용)."""
     acc, lost = collections.defaultdict(Counter), Counter()
     for code, pages in src.items():
         for page, rows in pages.items():
@@ -109,6 +112,7 @@ def aggregate(src, precinct_level):
                 return None
             local = collections.defaultdict(Counter)   # 이 구시군 안 지역구별 동 득표
             town_rows, unknown = Counter(), Counter()
+            st = Counter()                             # 이 구시군의 배정 방식별 유효표
             split = None                               # 지금 읽는 '나뉜 동': [동 전체, {지역구: 투표구 합}]
 
             def close_split():
@@ -122,17 +126,18 @@ def aggregate(src, precinct_level):
                 if len(r) < 5 + n or r[0] == "합계":
                     continue
                 if r[0] in TOWN_ROWS:
-                    town_rows += vec(r)
+                    town_rows += vec(r); st["town"] += vec(r)["valid"]
                 elif r[0] and r[1] == "계":                            # 동 합계 줄
                     if split:
                         close_split(); split = None
                     m = find(r[0])
                     if not m:                                          # 새로 생긴 동: 아래에서 구시군 비율로 나눔
                         lost[f"{CITY[code]} {town} {r[0]}"] += vec(r)["valid"]
-                        unknown += vec(r)
+                        unknown += vec(r); st["unknown"] += vec(r)["valid"]
                     elif precinct_level and len(m) > 1:
-                        split = [vec(r), collections.defaultdict(Counter)]
+                        split = [vec(r), collections.defaultdict(Counter)]; st["split"] += vec(r)["valid"]
                     else:
+                        st["exact" if len(m) == 1 else "split"] += vec(r)["valid"]
                         tot = sum(m.values()) or 1
                         for s, w in m.items():
                             local[s] += scale(vec(r), w / tot)
@@ -142,16 +147,32 @@ def aggregate(src, precinct_level):
                         split[1][s] += vec(r)
             if split:
                 close_split()
+            if stats is not None:
+                stats["official"] += vec(total)["valid"]
+                if len(sggs) <= 1:                     # 구시군 전체가 한 지역구면 모든 표가 그대로 들어감
+                    stats["exact"] += sum(st.values())
+                else:
+                    stats.update(st)
             tv = sum(v["valid"] for v in local.values()) or 1
             for s, v in local.items():
-                acc[s] += v + scale(town_rows + unknown, v["valid"] / tv)
+                acc[s] += v + scale((town_rows if with_town else Counter()) + unknown, v["valid"] / tv)
     return acc, lost
 
+# 민주 계열 승리 확률 = Φ(예상 격차 / σ). σ는 scripts/calibrate.py 가 2024·2020 총선 검증(503곳)으로 정한 값:
+# 민주 불리 쪽 5.0, 유리 쪽 7.5 (불리한 곳은 예상보다 더 크게 지는 일이 많아 흩어짐이 작다)
+SIGMA = (5.0, 7.5)
+
+def win_prob(m):
+    return 0.5 * (1 + math.erf(m / (SIGMA[0] if m < 0 else SIGMA[1]) / math.sqrt(2)))
+
 def grade(m):
-    if m >= 10: return "우세"
-    if m >= 5: return "경합우세"
-    if m > -5: return "경합"
-    if m > -10: return "경합열세"
+    """등급 = 승리 확률 구간: 우세 90%↑ · 경합우세 70~90 · 경합 30~70 · 경합열세 10~30 · 열세 10%↓
+    (예상 격차로는 대략 +9.6↑ · +3.9~9.6 · −2.6~+3.9 · −6.4~−2.6 · −6.4↓)"""
+    p = win_prob(m)
+    if p >= 0.9: return "우세"
+    if p >= 0.7: return "경합우세"
+    if p > 0.3: return "경합"
+    if p > 0.1: return "경합열세"
     return "열세"
 
 
@@ -201,13 +222,14 @@ def main():
         v["lean"] = round(sum(ls) / len(ls), 1)
         v["exp"] = round(v["lean"] + env, 1)
         v["grade"] = grade(v["exp"])
+        v["prob"] = round(win_prob(v["exp"]) * 100)
 
     json.dump({"source": "중앙선거관리위원회 선거통계시스템 투표구·읍면동별 개표결과를 22대 지역구로 다시 합산",
                "elections": [{"id": "g22", "name": "2024 총선", "desc": "지역구 후보"},
                              {"id": "p21", "name": "2025 대선", "desc": "이재명 · 김문수"},
                              {"id": "l9", "name": "2026 지방선거", "desc": "광역비례 정당 투표"}],
-               "national": nat, "env_default": env,
-               "rule": "예상 격차 = 지역구 성향(선거별 지역구 격차 − 전국 평균 격차의 평균) + 전국 분위기 · +10%p 이상 우세 · +5~10 경합우세 · ±5 안 경합 · −5~−10 경합열세 · −10 이하 열세",
+               "national": nat, "env_default": env, "sigma": SIGMA,
+               "rule": "예상 격차 = 지역구 성향(선거별 지역구 격차 − 전국 평균 격차의 평균) + 전국 분위기 · 승리 확률 = Φ(예상 격차 / σ), σ 불리 5.0·유리 7.5 · 우세 90%↑ · 경합우세 70~90 · 경합 30~70 · 경합열세 10~30 · 열세 10%↓",
                "district": out},
               open(os.path.join(OUT, "outlook.json"), "w"), ensure_ascii=False, separators=(",", ":"))
 
