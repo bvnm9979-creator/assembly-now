@@ -1,0 +1,6081 @@
+{
+ "서울 종로구": {
+  "method": "단수공천",
+  "cands": [
+   {
+    "name": "곽상언",
+    "career": "변호사",
+    "round": "1차",
+    "won": true,
+    "note": ""
+   },
+   {
+    "name": "이종걸",
+    "career": "전 국회의원",
+    "round": "7차",
+    "won": false,
+    "note": "컷오프"
+   }
+  ]
+ },
+ "서울 중구성동구갑": {
+  "method": "전략공천",
+  "cands": [
+   {
+    "name": "전현희",
+    "career": "전 국민권익위원장",
+    "round": "10차",
+    "won": true,
+    "note": ""
+   },
+   {
+    "name": "박양숙",
+    "career": "전 서울특별시의원",
+    "round": "2차",
+    "won": false,
+    "note": "컷오프"
+   },
+   {
+    "name": "임종석",
+    "career": "전 대통령비서실장",
+    "round": "10차",
+    "won": false,
+    "note": "컷오프"
+   }
+  ]
+ },
+ "서울 중구성동구을": {
+  "method": "8차 경선",
+  "cands": [
+   {
+    "name": "박성준",
+    "career": "국회의원",
+    "round": "6차",
+    "won": true,
+    "note": ""
+   },
+   {
+    "name": "정호준",
+    "career": "전 국회의원",
+    "round": "10차",
+    "won": false,
+    "note": ""
+   }
+  ]
+ },
+ "서울 용산구": {
+  "method": "4차 경선",
+  "cands": [
+   {
+    "name": "강태웅",
+    "career": "전 서울특별시 행정1부시장",
+    "round": "1차",
+    "won": true,
+    "note": ""
+   },
+   {
+    "name": "성장현",
+    "career": "전 용산구청장",
+    "round": "8차",
+    "won": false,
+    "note": ""
+   }
+  ]
+ },
+ "서울 광진구갑": {
+  "method": "6차 경선",
+  "cands": [
+   {
+    "name": "김선갑",
+    "career": "전 광진구청장",
+    "round": "1차",
+    "won": false,
+    "note": "컷오프"
+   },
+   {
+    "name": "김성수",
+    "career": "광진구상공회 이사",
+    "round": "1차",
+    "won": false,
+    "note": "컷오프"
+   },
+   {
+    "name": "문종철",
+    "career": "전 서울특별시의원",
+    "round": "1차",
+    "won": false,
+    "note": "컷오프"
+   },
+   {
+    "name": "이정헌",
+    "career": "전 JTBC 뉴스제작2부장",
+    "round": "1차",
+    "won": true,
+    "note": ""
+   },
+   {
+    "name": "오현정",
+    "career": "전 서울특별시의원",
+    "round": "3차",
+    "won": false,
+    "note": "컷오프"
+   },
+   {
+    "name": "김용한",
+    "career": "전 대통령직인수위원회 자문위원",
+    "round": "6차",
+    "won": false,
+    "note": "컷오프"
+   },
+   {
+    "name": "박성오",
+    "career": "전 대통령비서실 선임행정관",
+    "round": "6차",
+    "won": false,
+    "note": "컷오프"
+   },
+   {
+    "name": "전혜숙",
+    "career": "국회의원",
+    "round": "7차",
+    "won": false,
+    "note": ""
+   }
+  ]
+ },
+ "서울 광진구을": {
+  "method": "단수공천",
+  "cands": [
+   {
+    "name": "김상진",
+    "career": "전 대통령비서실 행정관",
+    "round": "1차",
+    "won": false,
+    "note": "컷오프"
+   },
+   {
+    "name": "고민정",
+    "career": "국회의원",
+    "round": "10차",
+    "won": true,
+    "note": ""
+   }
+  ]
+ },
+ "서울 동대문구갑": {
+  "method": "단수공천",
+  "cands": [
+   {
+    "name": "안규백",
+    "career": "국회의원",
+    "round": "7차",
+    "won": true,
+    "note": ""
+   }
+  ]
+ },
+ "서울 동대문구을": {
+  "method": "단수공천",
+  "cands": [
+   {
+    "name": "김인호",
+    "career": "전 서울특별시의회 의장",
+    "round": "2차",
+    "won": false,
+    "note": "컷오프"
+   },
+   {
+    "name": "장경태",
+    "career": "국회의원",
+    "round": "10차",
+    "won": true,
+    "note": ""
+   }
+  ]
+ },
+ "서울 중랑구갑": {
+  "method": "단수공천",
+  "cands": [
+   {
+    "name": "서영교",
+    "career": "국회의원",
+    "round": "7차",
+    "won": true,
+    "note": ""
+   }
+  ]
+ },
+ "서울 중랑구을": {
+  "method": "단수공천",
+  "cands": [
+   {
+    "name": "박홍근",
+    "career": "국회의원",
+    "round": "10차",
+    "won": true,
+    "note": ""
+   }
+  ]
+ },
+ "서울 성북구갑": {
+  "method": "단수공천",
+  "cands": [
+   {
+    "name": "김영배",
+    "career": "국회의원",
+    "round": "7차",
+    "won": true,
+    "note": ""
+   }
+  ]
+ },
+ "서울 성북구을": {
+  "method": "전략공천",
+  "cands": [
+   {
+    "name": "김남근",
+    "career": "변호사",
+    "round": "",
+    "won": true,
+    "note": ""
+   },
+   {
+    "name": "기동민",
+    "career": "국회의원",
+    "round": "1차",
+    "won": false,
+    "note": "컷오프"
+   },
+   {
+    "name": "김성진",
+    "career": "전 대통령비서실 사회혁신비서관",
+    "round": "6차",
+    "won": false,
+    "note": "컷오프"
+   },
+   {
+    "name": "지남섭",
+    "career": "고려대학교 겸임교수",
+    "round": "7차",
+    "won": false,
+    "note": "컷오프"
+   }
+  ]
+ },
+ "서울 강북구갑": {
+  "method": "단수공천",
+  "cands": [
+   {
+    "name": "민우기",
+    "career": "변호사",
+    "round": "2차",
+    "won": false,
+    "note": "컷오프"
+   },
+   {
+    "name": "임형균",
+    "career": "전 서울특별시의원",
+    "round": "2차",
+    "won": false,
+    "note": "컷오프"
+   },
+   {
+    "name": "천준호",
+    "career": "국회의원",
+    "round": "6차",
+    "won": true,
+    "note": ""
+   }
+  ]
+ },
+ "서울 강북구을": {
+  "method": "전략공천[21]",
+  "cands": [
+   {
+    "name": "한민수",
+    "career": "당 원외 대변인",
+    "round": "",
+    "won": true,
+    "note": ""
+   },
+   {
+    "name": "박용진",
+    "career": "국회의원",
+    "round": "",
+    "won": false,
+    "note": ""
+   },
+   {
+    "name": "조수진",
+    "career": "노무현재단 이사",
+    "round": "",
+    "won": false,
+    "note": "사퇴"
+   },
+   {
+    "name": "이승훈",
+    "career": "변호사",
+    "round": "1차",
+    "won": false,
+    "note": "탈락"
+   },
+   {
+    "name": "정봉주",
+    "career": "전 국회의원",
+    "round": "10차",
+    "won": false,
+    "note": "공천취소"
+   }
+  ]
+ },
+ "서울 도봉구갑": {
+  "method": "전략공천",
+  "cands": [
+   {
+    "name": "안귀령",
+    "career": "전 YTN 앵커",
+    "round": "",
+    "won": true,
+    "note": ""
+   },
+   {
+    "name": "이동진",
+    "career": "전 도봉구청장",
+    "round": "1차",
+    "won": false,
+    "note": "컷오프"
+   },
+   {
+    "name": "인재근",
+    "career": "국회의원",
+    "round": "6차",
+    "won": false,
+    "note": "불출마"
+   }
+  ]
+ },
+ "서울 도봉구을": {
+  "method": "5차 경선",
+  "cands": [
+   {
+    "name": "오기형",
+    "career": "국회의원",
+    "round": "10차",
+    "won": true,
+    "note": ""
+   },
+   {
+    "name": "강민석",
+    "career": "전 대통령비서실 대변인",
+    "round": "14차",
+    "won": false,
+    "note": ""
+   }
+  ]
+ },
+ "서울 노원구갑": {
+  "method": "10차 경선",
+  "cands": [
+   {
+    "name": "고용진",
+    "career": "국회의원",
+    "round": "7차",
+    "won": false,
+    "note": ""
+   },
+   {
+    "name": "우원식",
+    "career": "국회의원",
+    "round": "7차",
+    "won": true,
+    "note": ""
+   }
+  ]
+ },
+ "서울 노원구을": {
+  "method": "단수공천",
+  "cands": [
+   {
+    "name": "김성환",
+    "career": "국회의원",
+    "round": "1차",
+    "won": true,
+    "note": ""
+   }
+  ]
+ },
+ "서울 은평구갑": {
+  "method": "단수공천",
+  "cands": [
+   {
+    "name": "김신호",
+    "career": "전 서울특별시의원",
+    "round": "7차",
+    "won": false,
+    "note": "컷오프"
+   },
+   {
+    "name": "박주민",
+    "career": "국회의원",
+    "round": "10차",
+    "won": true,
+    "note": ""
+   }
+  ]
+ },
+ "서울 은평구을": {
+  "method": "6차 경선",
+  "cands": [
+   {
+    "name": "김종욱",
+    "career": "전 통일부장관 정책보좌관",
+    "round": "1차",
+    "won": false,
+    "note": "컷오프"
+   },
+   {
+    "name": "고연호",
+    "career": "김대중재단 은평지회장",
+    "round": "2차",
+    "won": false,
+    "note": "컷오프"
+   },
+   {
+    "name": "강병원",
+    "career": "국회의원",
+    "round": "7차",
+    "won": false,
+    "note": ""
+   },
+   {
+    "name": "김우영",
+    "career": "전 은평구청장",
+    "round": "12차",
+    "won": true,
+    "note": ""
+   }
+  ]
+ },
+ "서울 서대문구갑": {
+  "method": "전략경선(청년)",
+  "cands": [
+   {
+    "name": "권지웅",
+    "career": "전 비상대책위원",
+    "round": "10차",
+    "won": false,
+    "note": ""
+   },
+   {
+    "name": "김규현",
+    "career": "변호사",
+    "round": "",
+    "won": false,
+    "note": ""
+   },
+   {
+    "name": "김동아",
+    "career": "법무법인 태평양 변호사",
+    "round": "",
+    "won": true,
+    "note": ""
+   },
+   {
+    "name": "성치훈",
+    "career": "전 대통령비서실 행정관",
+    "round": "",
+    "won": false,
+    "note": ""
+   },
+   {
+    "name": "전수미",
+    "career": "변호사",
+    "round": "",
+    "won": false,
+    "note": ""
+   },
+   {
+    "name": "황두영",
+    "career": "전 대통령비서실 행정관",
+    "round": "1차",
+    "won": false,
+    "note": "컷오프"
+   },
+   {
+    "name": "윤창환",
+    "career": "전 국회의장 정책수석",
+    "round": "8차",
+    "won": false,
+    "note": "컷오프"
+   },
+   {
+    "name": "구본기",
+    "career": "촛불행동 공동대표",
+    "round": "",
+    "won": false,
+    "note": "컷오프"
+   },
+   {
+    "name": "정수연",
+    "career": "약사",
+    "round": "",
+    "won": false,
+    "note": "컷오프"
+   }
+  ]
+ },
+ "서울 서대문구을": {
+  "method": "1차 경선",
+  "cands": [
+   {
+    "name": "문석진",
+    "career": "전 서대문구청장",
+    "round": "1차",
+    "won": false,
+    "note": ""
+   },
+   {
+    "name": "김영호",
+    "career": "국회의원",
+    "round": "7차",
+    "won": true,
+    "note": ""
+   },
+   {
+    "name": "원경환",
+    "career": "대한석탄공사 사장",
+    "round": "14차",
+    "won": false,
+    "note": "컷오프"
+   }
+  ]
+ },
+ "서울 마포구갑": {
+  "method": "전략공천",
+  "cands": [
+   {
+    "name": "이지은",
+    "career": "전 중앙경찰학교 교무과장",
+    "round": "",
+    "won": true,
+    "note": ""
+   },
+   {
+    "name": "유창오",
+    "career": "전 국무총리비서실 비서관",
+    "round": "1차",
+    "won": false,
+    "note": "컷오프"
+   },
+   {
+    "name": "이로문",
+    "career": "전 당 정책위원회 전문위원",
+    "round": "1차",
+    "won": false,
+    "note": "컷오프"
+   },
+   {
+    "name": "이지수",
+    "career": "전 대통령비서실 해외언론비서관",
+    "round": "1차",
+    "won": false,
+    "note": "컷오프"
+   },
+   {
+    "name": "박경수",
+    "career": "전 BBS 보도국장",
+    "round": "2차",
+    "won": false,
+    "note": "컷오프"
+   },
+   {
+    "name": "오성규",
+    "career": "전 서울시설공단 이사장",
+    "round": "2차",
+    "won": false,
+    "note": "컷오프"
+   },
+   {
+    "name": "이은희",
+    "career": "전 대통령비서실 제2부속실장",
+    "round": "2차",
+    "won": false,
+    "note": "컷오프"
+   },
+   {
+    "name": "홍성문",
+    "career": "노무현재단 마포구지회장",
+    "round": "3차",
+    "won": false,
+    "note": "컷오프"
+   },
+   {
+    "name": "노웅래",
+    "career": "국회의원",
+    "round": "10차",
+    "won": false,
+    "note": "컷오프"
+   },
+   {
+    "name": "김빈",
+    "career": "전 대통령비서실 행정관",
+    "round": "12차",
+    "won": false,
+    "note": "사퇴"
+   }
+  ]
+ },
+ "서울 마포구을": {
+  "method": "단수공천",
+  "cands": [
+   {
+    "name": "정청래",
+    "career": "국회의원",
+    "round": "7차",
+    "won": true,
+    "note": ""
+   }
+  ]
+ },
+ "서울 양천구갑": {
+  "method": "단수공천",
+  "cands": [
+   {
+    "name": "하석태",
+    "career": "전 코레일네트워크 대표이사",
+    "round": "3차",
+    "won": false,
+    "note": "컷오프"
+   },
+   {
+    "name": "황희",
+    "career": "국회의원",
+    "round": "6차",
+    "won": true,
+    "note": ""
+   },
+   {
+    "name": "이나영",
+    "career": "전 경기도지사직인수위원회 전문위원",
+    "round": "10차",
+    "won": false,
+    "note": "자격상실"
+   }
+  ]
+ },
+ "서울 양천구을": {
+  "method": "3차 경선",
+  "cands": [
+   {
+    "name": "김영문",
+    "career": "전 대통령비서실 사회통합비서관",
+    "round": "1차",
+    "won": false,
+    "note": "컷오프"
+   },
+   {
+    "name": "김수영",
+    "career": "전 양천구청장",
+    "round": "2차",
+    "won": false,
+    "note": ""
+   },
+   {
+    "name": "이용선",
+    "career": "국회의원",
+    "round": "7차",
+    "won": true,
+    "note": ""
+   }
+  ]
+ },
+ "서울 강서구갑": {
+  "method": "단수공천",
+  "cands": [
+   {
+    "name": "나채용",
+    "career": "전 당 정책위원회 부의장",
+    "round": "3차",
+    "won": false,
+    "note": "컷오프"
+   },
+   {
+    "name": "강선우",
+    "career": "국회의원",
+    "round": "7차",
+    "won": true,
+    "note": ""
+   },
+   {
+    "name": "윤유선",
+    "career": "전 강서구의원",
+    "round": "14차",
+    "won": false,
+    "note": "컷오프"
+   }
+  ]
+ },
+ "서울 강서구을": {
+  "method": "단수공천",
+  "cands": [
+   {
+    "name": "양대웅",
+    "career": "전 학교법인 한국폴리텍 운영이사",
+    "round": "1차",
+    "won": false,
+    "note": "컷오프"
+   },
+   {
+    "name": "진성준",
+    "career": "국회의원",
+    "round": "10차",
+    "won": true,
+    "note": ""
+   }
+  ]
+ },
+ "서울 강서구병": {
+  "method": "단수공천",
+  "cands": [
+   {
+    "name": "한정애",
+    "career": "국회의원",
+    "round": "6차",
+    "won": true,
+    "note": ""
+   }
+  ]
+ },
+ "서울 구로구갑": {
+  "method": "단수공천",
+  "cands": [
+   {
+    "name": "김종욱",
+    "career": "전 서울특별시 정무부시장",
+    "round": "2차",
+    "won": false,
+    "note": "컷오프"
+   },
+   {
+    "name": "임영택",
+    "career": "행정사",
+    "round": "2차",
+    "won": false,
+    "note": "컷오프"
+   },
+   {
+    "name": "이인영",
+    "career": "국회의원",
+    "round": "7차",
+    "won": true,
+    "note": ""
+   }
+  ]
+ },
+ "서울 구로구을": {
+  "method": "단수공천",
+  "cands": [
+   {
+    "name": "윤건영",
+    "career": "국회의원",
+    "round": "1차",
+    "won": true,
+    "note": ""
+   }
+  ]
+ },
+ "서울 금천구": {
+  "method": "4차 경선",
+  "cands": [
+   {
+    "name": "박진환",
+    "career": "전 금천구청장 비서실장",
+    "round": "1차",
+    "won": false,
+    "note": "컷오프"
+   },
+   {
+    "name": "최기상",
+    "career": "국회의원",
+    "round": "6차",
+    "won": true,
+    "note": ""
+   },
+   {
+    "name": "조상호",
+    "career": "변호사",
+    "round": "7차",
+    "won": false,
+    "note": ""
+   },
+   {
+    "name": "조승현",
+    "career": "전 대통령비서실 행정관",
+    "round": "7차",
+    "won": false,
+    "note": "컷오프"
+   },
+   {
+    "name": "최규엽",
+    "career": "전 서울시립대학교 초빙교수",
+    "round": "10차",
+    "won": false,
+    "note": "컷오프"
+   },
+   {
+    "name": "한정우",
+    "career": "전 대통령비서실 홍보기획비서관",
+    "round": "10차",
+    "won": false,
+    "note": "컷오프"
+   },
+   {
+    "name": "이목희",
+    "career": "전 국회의원",
+    "round": "14차",
+    "won": false,
+    "note": "컷오프"
+   }
+  ]
+ },
+ "서울 영등포구갑": {
+  "method": "전략공천",
+  "cands": [
+   {
+    "name": "채현일",
+    "career": "전 영등포구청장",
+    "round": "1차",
+    "won": true,
+    "note": ""
+   },
+   {
+    "name": "김영주",
+    "career": "국회의원",
+    "round": "7차",
+    "won": false,
+    "note": "탈당"
+   }
+  ]
+ },
+ "서울 영등포구을": {
+  "method": "단수공천",
+  "cands": [
+   {
+    "name": "양민규",
+    "career": "전 서울특별시의원",
+    "round": "6차",
+    "won": false,
+    "note": "컷오프"
+   },
+   {
+    "name": "김민석",
+    "career": "국회의원",
+    "round": "12차",
+    "won": true,
+    "note": ""
+   }
+  ]
+ },
+ "서울 동작구갑": {
+  "method": "단수공천",
+  "cands": [
+   {
+    "name": "김병기",
+    "career": "국회의원",
+    "round": "10차",
+    "won": true,
+    "note": ""
+   }
+  ]
+ },
+ "서울 동작구을": {
+  "method": "전략공천",
+  "cands": [
+   {
+    "name": "류삼영",
+    "career": "전 울산중부경찰서장",
+    "round": "",
+    "won": true,
+    "note": ""
+   },
+   {
+    "name": "강희용",
+    "career": "전 서울특별시의원",
+    "round": "10차",
+    "won": false,
+    "note": "컷오프"
+   },
+   {
+    "name": "이수진",
+    "career": "국회의원",
+    "round": "10차",
+    "won": false,
+    "note": "탈당"
+   },
+   {
+    "name": "이연희",
+    "career": "민주연구원 상근부원장",
+    "round": "10차",
+    "won": false,
+    "note": "컷오프"
+   }
+  ]
+ },
+ "서울 관악구갑": {
+  "method": "3차 경선",
+  "cands": [
+   {
+    "name": "김기영",
+    "career": "변호사",
+    "round": "2차",
+    "won": false,
+    "note": "컷오프"
+   },
+   {
+    "name": "박민규",
+    "career": "전 서울대학교 BK조교수",
+    "round": "2차",
+    "won": true,
+    "note": ""
+   },
+   {
+    "name": "서윤기",
+    "career": "전 서울특별시의원",
+    "round": "7차",
+    "won": false,
+    "note": "컷오프"
+   },
+   {
+    "name": "유기홍",
+    "career": "국회의원",
+    "round": "7차",
+    "won": false,
+    "note": ""
+   }
+  ]
+ },
+ "서울 관악구을": {
+  "method": "단수공천",
+  "cands": [
+   {
+    "name": "이강훈",
+    "career": "전 에스엠타운플래너 상무",
+    "round": "10차",
+    "won": false,
+    "note": "컷오프"
+   },
+   {
+    "name": "임세은",
+    "career": "전 대통령비서실 부대변인",
+    "round": "10차",
+    "won": false,
+    "note": "컷오프"
+   },
+   {
+    "name": "정태호",
+    "career": "국회의원",
+    "round": "10차",
+    "won": true,
+    "note": ""
+   }
+  ]
+ },
+ "서울 서초구갑": {
+  "method": "전략공천",
+  "cands": [
+   {
+    "name": "김한나",
+    "career": "변호사",
+    "round": "",
+    "won": true,
+    "note": ""
+   },
+   {
+    "name": "김경영",
+    "career": "전 서울특별시의원",
+    "round": "2차",
+    "won": false,
+    "note": "공천취소"
+   },
+   {
+    "name": "최은상",
+    "career": "세무사",
+    "round": "8차",
+    "won": false,
+    "note": "컷오프"
+   }
+  ]
+ },
+ "서울 서초구을": {
+  "method": "단수공천",
+  "cands": [
+   {
+    "name": "홍익표",
+    "career": "국회의원",
+    "round": "6차",
+    "won": true,
+    "note": ""
+   }
+  ]
+ },
+ "서울 강남구갑": {
+  "method": "단수공천",
+  "cands": [
+   {
+    "name": "김태형",
+    "career": "교육연수원 부원장",
+    "round": "1차",
+    "won": true,
+    "note": ""
+   }
+  ]
+ },
+ "서울 강남구을": {
+  "method": "전략공천",
+  "cands": [
+   {
+    "name": "강청희",
+    "career": "전 대한의사협회 상근부회장",
+    "round": "",
+    "won": true,
+    "note": ""
+   }
+  ]
+ },
+ "서울 강남구병": {
+  "method": "전략공천",
+  "cands": [
+   {
+    "name": "박경미",
+    "career": "전 국회의원",
+    "round": "10차",
+    "won": true,
+    "note": ""
+   }
+  ]
+ },
+ "서울 송파구갑": {
+  "method": "단수공천",
+  "cands": [
+   {
+    "name": "조재희",
+    "career": "전 한국폴리텍대학교 이사장",
+    "round": "3차",
+    "won": true,
+    "note": ""
+   }
+  ]
+ },
+ "서울 송파구을": {
+  "method": "1차 경선",
+  "cands": [
+   {
+    "name": "송기호",
+    "career": "변호사",
+    "round": "1차",
+    "won": true,
+    "note": ""
+   },
+   {
+    "name": "홍성룡",
+    "career": "전 서울특별시의원",
+    "round": "3차",
+    "won": false,
+    "note": ""
+   },
+   {
+    "name": "박지현",
+    "career": "전 비상대책위원장",
+    "round": "10차",
+    "won": false,
+    "note": ""
+   }
+  ]
+ },
+ "서울 송파구병": {
+  "method": "1차 경선",
+  "cands": [
+   {
+    "name": "박성수",
+    "career": "전 송파구청장",
+    "round": "1차",
+    "won": false,
+    "note": ""
+   },
+   {
+    "name": "남인순",
+    "career": "국회의원",
+    "round": "7차",
+    "won": true,
+    "note": ""
+   }
+  ]
+ },
+ "서울 강동구갑": {
+  "method": "단수공천",
+  "cands": [
+   {
+    "name": "진선미",
+    "career": "국회의원",
+    "round": "7차",
+    "won": true,
+    "note": ""
+   }
+  ]
+ },
+ "서울 강동구을": {
+  "method": "단수공천",
+  "cands": [
+   {
+    "name": "이해식",
+    "career": "국회의원",
+    "round": "10차",
+    "won": true,
+    "note": ""
+   }
+  ]
+ },
+ "부산 중구영도구": {
+  "method": "4차 경선",
+  "cands": [
+   {
+    "name": "김의성",
+    "career": "전 대통령비서실 행정관",
+    "round": "1차",
+    "won": false,
+    "note": "컷오프"
+   },
+   {
+    "name": "박영미",
+    "career": "전 부산광역시 인재평생교육진흥원장",
+    "round": "1차",
+    "won": true,
+    "note": ""
+   },
+   {
+    "name": "김비오",
+    "career": "전 대통령비서실 행정관",
+    "round": "3차",
+    "won": false,
+    "note": ""
+   }
+  ]
+ },
+ "부산 서구동구": {
+  "method": "단수공천",
+  "cands": [
+   {
+    "name": "정도영",
+    "career": "전 국회입법조사처 입법조사관",
+    "round": "1차",
+    "won": false,
+    "note": "컷오프"
+   },
+   {
+    "name": "최형욱",
+    "career": "전 동구청장",
+    "round": "1차",
+    "won": true,
+    "note": ""
+   }
+  ]
+ },
+ "부산 부산진구갑": {
+  "method": "단수공천",
+  "cands": [
+   {
+    "name": "서은숙",
+    "career": "전 부산진구청장",
+    "round": "1차",
+    "won": true,
+    "note": ""
+   }
+  ]
+ },
+ "부산 부산진구을": {
+  "method": "단수공천",
+  "cands": [
+   {
+    "name": "이상호",
+    "career": "전 대통령비서실 행정관",
+    "round": "1차",
+    "won": false,
+    "note": "컷오프"
+   },
+   {
+    "name": "이현",
+    "career": "전 부산광역시의원",
+    "round": "1차",
+    "won": true,
+    "note": ""
+   },
+   {
+    "name": "김명미",
+    "career": "전 정의당 부산광역시당위원장",
+    "round": "7차",
+    "won": false,
+    "note": "컷오프"
+   },
+   {
+    "name": "조영진",
+    "career": "전 남부공항서비스 대표이사",
+    "round": "12차",
+    "won": false,
+    "note": "컷오프"
+   }
+  ]
+ },
+ "부산 동래구": {
+  "method": "단수공천",
+  "cands": [
+   {
+    "name": "박성현",
+    "career": "전 대통령비서실 행정관",
+    "round": "2차",
+    "won": true,
+    "note": ""
+   }
+  ]
+ },
+ "부산 남구": {
+  "method": "단수공천",
+  "cands": [
+   {
+    "name": "이강영",
+    "career": "전 남구의회 의장",
+    "round": "1차",
+    "won": false,
+    "note": "컷오프"
+   },
+   {
+    "name": "박재범",
+    "career": "전 남구청장",
+    "round": "2차",
+    "won": false,
+    "note": "사퇴"
+   },
+   {
+    "name": "박재호",
+    "career": "국회의원",
+    "round": "2차",
+    "won": true,
+    "note": ""
+   }
+  ]
+ },
+ "부산 북구갑": {
+  "method": "단수공천",
+  "cands": [
+   {
+    "name": "전재수",
+    "career": "국회의원",
+    "round": "10차",
+    "won": true,
+    "note": ""
+   }
+  ]
+ },
+ "부산 북구을": {
+  "method": "단수공천",
+  "cands": [
+   {
+    "name": "정명희",
+    "career": "전 북구청장",
+    "round": "",
+    "won": true,
+    "note": ""
+   },
+   {
+    "name": "박창근",
+    "career": "가톨릭관동대학교 교수",
+    "round": "12차",
+    "won": false,
+    "note": "컷오프"
+   }
+  ]
+ },
+ "부산 해운대구갑": {
+  "method": "단수공천",
+  "cands": [
+   {
+    "name": "홍순헌",
+    "career": "전 해운대구청장",
+    "round": "3차",
+    "won": true,
+    "note": ""
+   },
+   {
+    "name": "양승하",
+    "career": "당원",
+    "round": "12차",
+    "won": false,
+    "note": "컷오프"
+   }
+  ]
+ },
+ "부산 해운대구을": {
+  "method": "4차 경선",
+  "cands": [
+   {
+    "name": "윤준호",
+    "career": "전 국회의원",
+    "round": "1차",
+    "won": true,
+    "note": ""
+   },
+   {
+    "name": "이명원",
+    "career": "전 해운대구의회 의장",
+    "round": "1차",
+    "won": false,
+    "note": ""
+   },
+   {
+    "name": "김삼수",
+    "career": "전 부산광역시의원",
+    "round": "10차",
+    "won": false,
+    "note": "컷오프"
+   },
+   {
+    "name": "윤용조",
+    "career": "전 경기도청 평화대변인",
+    "round": "10차",
+    "won": false,
+    "note": ""
+   }
+  ]
+ },
+ "부산 사하구갑": {
+  "method": "단수공천",
+  "cands": [
+   {
+    "name": "최인호",
+    "career": "국회의원",
+    "round": "1차",
+    "won": true,
+    "note": ""
+   }
+  ]
+ },
+ "부산 사하구을": {
+  "method": "전략공천",
+  "cands": [
+   {
+    "name": "이재성",
+    "career": "전 엔씨소프트 전무",
+    "round": "",
+    "won": true,
+    "note": ""
+   },
+   {
+    "name": "김태석",
+    "career": "전 사하구청장",
+    "round": "2차",
+    "won": false,
+    "note": "컷오프"
+   },
+   {
+    "name": "강문봉",
+    "career": "전 사하구의원",
+    "round": "7차",
+    "won": false,
+    "note": "사퇴"
+   }
+  ]
+ },
+ "부산 금정구": {
+  "method": "1차 경선",
+  "cands": [
+   {
+    "name": "박인영",
+    "career": "전 부산광역시의회 의장",
+    "round": "1차",
+    "won": true,
+    "note": ""
+   },
+   {
+    "name": "김경지",
+    "career": "변호사",
+    "round": "12차",
+    "won": false,
+    "note": ""
+   }
+  ]
+ },
+ "부산 강서구": {
+  "method": "단수공천",
+  "cands": [
+   {
+    "name": "변성완",
+    "career": "전 부산광역시 행정부시장",
+    "round": "1차",
+    "won": true,
+    "note": ""
+   }
+  ]
+ },
+ "부산 연제구": {
+  "method": "단수공천",
+  "cands": [
+   {
+    "name": "이성문",
+    "career": "전 연제구청장",
+    "round": "2차",
+    "won": true,
+    "note": "탈락"
+   }
+  ]
+ },
+ "부산 수영구": {
+  "method": "전략공천",
+  "cands": [
+   {
+    "name": "유동철",
+    "career": "동의대학교 교수",
+    "round": "",
+    "won": true,
+    "note": ""
+   },
+   {
+    "name": "강윤경",
+    "career": "변호사",
+    "round": "1차",
+    "won": false,
+    "note": "컷오프"
+   },
+   {
+    "name": "박병염",
+    "career": "전 민주평화통일자문회의 수영구협의회장",
+    "round": "1차",
+    "won": false,
+    "note": "컷오프"
+   }
+  ]
+ },
+ "부산 사상구": {
+  "method": "4차 경선",
+  "cands": [
+   {
+    "name": "서태경",
+    "career": "전 대통령비서실 행정관",
+    "round": "1차",
+    "won": false,
+    "note": ""
+   },
+   {
+    "name": "신상해",
+    "career": "전 부산광역시의회 의장",
+    "round": "1차",
+    "won": false,
+    "note": "컷오프"
+   },
+   {
+    "name": "배재정",
+    "career": "전 국회의원",
+    "round": "2차",
+    "won": true,
+    "note": ""
+   },
+   {
+    "name": "김부민",
+    "career": "전 부산광역시의원",
+    "round": "10차",
+    "won": false,
+    "note": ""
+   }
+  ]
+ },
+ "부산 기장군": {
+  "method": "단수공천",
+  "cands": [
+   {
+    "name": "최택용",
+    "career": "전 서울특별시 정무수석",
+    "round": "1차",
+    "won": true,
+    "note": ""
+   }
+  ]
+ },
+ "대구 중구남구": {
+  "method": "단수공천",
+  "cands": [
+   {
+    "name": "허소",
+    "career": "전 대통령비서실 행정관",
+    "round": "10차",
+    "won": true,
+    "note": ""
+   }
+  ]
+ },
+ "대구 동구군위군갑": {
+  "method": "단수공천",
+  "cands": [
+   {
+    "name": "신효철",
+    "career": "전 동구의원",
+    "round": "7차",
+    "won": true,
+    "note": ""
+   }
+  ]
+ },
+ "대구 동구군위군을": {
+  "method": "무공천[84]",
+  "cands": [
+   {
+    "name": "이승천",
+    "career": "전 한국장학재단 상임감사",
+    "round": "2차",
+    "won": false,
+    "note": "탈락"
+   }
+  ]
+ },
+ "대구 북구갑": {
+  "method": "단수공천",
+  "cands": [
+   {
+    "name": "박정희",
+    "career": "전 북구의원",
+    "round": "",
+    "won": true,
+    "note": ""
+   }
+  ]
+ },
+ "대구 북구을": {
+  "method": "단수공천",
+  "cands": [
+   {
+    "name": "신동환",
+    "career": "지역위원장",
+    "round": "1차",
+    "won": true,
+    "note": ""
+   }
+  ]
+ },
+ "대구 수성구갑": {
+  "method": "단수공천",
+  "cands": [
+   {
+    "name": "강민구",
+    "career": "전 대구광역시의회 부의장",
+    "round": "1차",
+    "won": true,
+    "note": ""
+   }
+  ]
+ },
+ "대구 수성구을": {
+  "method": "무공천[85]",
+  "cands": []
+ },
+ "대구 달서구갑": {
+  "method": "단수공천",
+  "cands": [
+   {
+    "name": "권택흥",
+    "career": "지역위원장",
+    "round": "1차",
+    "won": true,
+    "note": ""
+   }
+  ]
+ },
+ "대구 달서구을": {
+  "method": "단수공천",
+  "cands": [
+   {
+    "name": "김성태",
+    "career": "전 대구광역시의원",
+    "round": "1차",
+    "won": true,
+    "note": ""
+   },
+   {
+    "name": "박순연",
+    "career": "지역위원회 대의원",
+    "round": "12차",
+    "won": false,
+    "note": "컷오프"
+   }
+  ]
+ },
+ "대구 달서구병": {
+  "method": "무공천[87]",
+  "cands": [
+   {
+    "name": "남원환",
+    "career": "소설가",
+    "round": "10차",
+    "won": false,
+    "note": "컷오프"
+   }
+  ]
+ },
+ "대구 달성군": {
+  "method": "단수공천",
+  "cands": [
+   {
+    "name": "박형룡",
+    "career": "전 국가균형발전위원회 정책조정실장",
+    "round": "2차",
+    "won": true,
+    "note": ""
+   },
+   {
+    "name": "이대곤",
+    "career": "전 달성군의원",
+    "round": "7차",
+    "won": false,
+    "note": "컷오프"
+   },
+   {
+    "name": "전유진",
+    "career": "전 달성문화재단 비상임이사",
+    "round": "12차",
+    "won": false,
+    "note": "컷오프"
+   }
+  ]
+ },
+ "인천 중구강화군옹진군": {
+  "method": "5차 경선",
+  "cands": [
+   {
+    "name": "조택상",
+    "career": "전 인천광역시 균형발전정무부시장",
+    "round": "2차",
+    "won": true,
+    "note": ""
+   },
+   {
+    "name": "조광휘",
+    "career": "전 인천광역시의원",
+    "round": "3차",
+    "won": false,
+    "note": ""
+   },
+   {
+    "name": "홍인성",
+    "career": "전 중구청장",
+    "round": "7차",
+    "won": false,
+    "note": "컷오프"
+   },
+   {
+    "name": "이동학",
+    "career": "전 최고위원",
+    "round": "14차",
+    "won": false,
+    "note": ""
+   }
+  ]
+ },
+ "인천 동구미추홀구갑": {
+  "method": "5차 경선",
+  "cands": [
+   {
+    "name": "손호범",
+    "career": "전 금속노조 인천지부 현대제철지회 교섭대의원",
+    "round": "1차",
+    "won": false,
+    "note": ""
+   },
+   {
+    "name": "허종식",
+    "career": "국회의원",
+    "round": "7차",
+    "won": true,
+    "note": ""
+   },
+   {
+    "name": "안광훈",
+    "career": "법무사",
+    "round": "14차",
+    "won": false,
+    "note": "컷오프"
+   }
+  ]
+ },
+ "인천 동구미추홀구을": {
+  "method": "단수공천",
+  "cands": [
+   {
+    "name": "김정식",
+    "career": "전 미추홀구청장",
+    "round": "2차",
+    "won": false,
+    "note": "컷오프"
+   },
+   {
+    "name": "남영희",
+    "career": "전 민주연구원 부원장",
+    "round": "3차",
+    "won": true,
+    "note": ""
+   }
+  ]
+ },
+ "인천 연수구갑": {
+  "method": "단수공천",
+  "cands": [
+   {
+    "name": "박찬대",
+    "career": "국회의원",
+    "round": "6차",
+    "won": true,
+    "note": ""
+   }
+  ]
+ },
+ "인천 연수구을": {
+  "method": "1차 경선",
+  "cands": [
+   {
+    "name": "정일영",
+    "career": "국회의원",
+    "round": "6차",
+    "won": true,
+    "note": ""
+   },
+   {
+    "name": "고남석",
+    "career": "전 연수구청장",
+    "round": "7차",
+    "won": false,
+    "note": ""
+   }
+  ]
+ },
+ "인천 남동구갑": {
+  "method": "1차 경선",
+  "cands": [
+   {
+    "name": "고존수",
+    "career": "전 인천광역시의원",
+    "round": "1차",
+    "won": false,
+    "note": ""
+   },
+   {
+    "name": "맹성규",
+    "career": "국회의원",
+    "round": "6차",
+    "won": true,
+    "note": ""
+   }
+  ]
+ },
+ "인천 남동구을": {
+  "method": "전략경선",
+  "cands": [
+   {
+    "name": "고영만",
+    "career": "당 정책위원회 부의장",
+    "round": "1차",
+    "won": false,
+    "note": "컷오프"
+   },
+   {
+    "name": "배태준",
+    "career": "변호사",
+    "round": "1차",
+    "won": false,
+    "note": "사퇴"
+   },
+   {
+    "name": "이병래",
+    "career": "전 인천광역시의원",
+    "round": "1차",
+    "won": false,
+    "note": ""
+   },
+   {
+    "name": "이훈기",
+    "career": "전 OBS경인TV 정책국장",
+    "round": "",
+    "won": true,
+    "note": ""
+   }
+  ]
+ },
+ "인천 부평구갑": {
+  "method": "전략공천",
+  "cands": [
+   {
+    "name": "노종면",
+    "career": "전 YTN 기자",
+    "round": "",
+    "won": true,
+    "note": ""
+   },
+   {
+    "name": "노현진",
+    "career": "전 국회의원 비서관",
+    "round": "1차",
+    "won": false,
+    "note": "컷오프"
+   },
+   {
+    "name": "신은호",
+    "career": "전 인천광역시의회 의장",
+    "round": "7차",
+    "won": false,
+    "note": "컷오프"
+   },
+   {
+    "name": "홍미영",
+    "career": "전 부평구청장",
+    "round": "12차",
+    "won": false,
+    "note": "컷오프"
+   }
+  ]
+ },
+ "인천 부평구을": {
+  "method": "전략경선",
+  "cands": [
+   {
+    "name": "유길종",
+    "career": "전 지엠대우 사무노조 위원장",
+    "round": "1차",
+    "won": false,
+    "note": "컷오프"
+   },
+   {
+    "name": "홍영표",
+    "career": "국회의원",
+    "round": "7차",
+    "won": false,
+    "note": "탈당"
+   },
+   {
+    "name": "이동주",
+    "career": "국회의원",
+    "round": "10차",
+    "won": false,
+    "note": ""
+   },
+   {
+    "name": "박선원",
+    "career": "전 국가정보원 제1차장",
+    "round": "",
+    "won": true,
+    "note": ""
+   }
+  ]
+ },
+ "인천 계양구갑": {
+  "method": "단수공천",
+  "cands": [
+   {
+    "name": "유동수",
+    "career": "국회의원",
+    "round": "10차",
+    "won": true,
+    "note": ""
+   }
+  ]
+ },
+ "인천 계양구을": {
+  "method": "단수공천",
+  "cands": [
+   {
+    "name": "박성민",
+    "career": "전 인천광역시의원",
+    "round": "10차",
+    "won": false,
+    "note": "컷오프"
+   },
+   {
+    "name": "박형우",
+    "career": "전 계양구청장",
+    "round": "10차",
+    "won": false,
+    "note": "컷오프"
+   },
+   {
+    "name": "이재명",
+    "career": "국회의원",
+    "round": "10차",
+    "won": true,
+    "note": ""
+   }
+  ]
+ },
+ "인천 서구갑": {
+  "method": "전략공천",
+  "cands": [
+   {
+    "name": "김교흥",
+    "career": "국회의원",
+    "round": "",
+    "won": true,
+    "note": ""
+   },
+   {
+    "name": "김대환",
+    "career": "노동법무사",
+    "round": "1차",
+    "won": false,
+    "note": "컷오프"
+   }
+  ]
+ },
+ "인천 서구을": {
+  "method": "전략공천",
+  "cands": [
+   {
+    "name": "이용우",
+    "career": "변호사",
+    "round": "",
+    "won": true,
+    "note": ""
+   },
+   {
+    "name": "강남규",
+    "career": "전 서구의원",
+    "round": "1차",
+    "won": false,
+    "note": "컷오프"
+   },
+   {
+    "name": "김종인",
+    "career": "전 인천광역시의원",
+    "round": "7차",
+    "won": false,
+    "note": "컷오프"
+   },
+   {
+    "name": "서원선",
+    "career": "인천광역시당 대변인",
+    "round": "8차",
+    "won": false,
+    "note": "컷오프"
+   }
+  ]
+ },
+ "인천 서구병": {
+  "method": "전략경선",
+  "cands": [
+   {
+    "name": "허숙정",
+    "career": "국회의원",
+    "round": "1차",
+    "won": false,
+    "note": ""
+   },
+   {
+    "name": "신동근",
+    "career": "국회의원",
+    "round": "7차",
+    "won": false,
+    "note": ""
+   },
+   {
+    "name": "모경종",
+    "career": "전 경기도 청년비서관",
+    "round": "10차",
+    "won": true,
+    "note": ""
+   }
+  ]
+ },
+ "광주 동구남구갑": {
+  "method": "1차 경선",
+  "cands": [
+   {
+    "name": "오경훈",
+    "career": "전 남구청 정책보좌관",
+    "round": "1차",
+    "won": false,
+    "note": "컷오프"
+   },
+   {
+    "name": "정진욱",
+    "career": "당대표 정무특보",
+    "round": "1차",
+    "won": true,
+    "note": ""
+   },
+   {
+    "name": "노형욱",
+    "career": "전 국토교통부장관",
+    "round": "7차",
+    "won": false,
+    "note": "컷오프"
+   },
+   {
+    "name": "윤영덕",
+    "career": "국회의원",
+    "round": "7차",
+    "won": false,
+    "note": ""
+   }
+  ]
+ },
+ "광주 동구남구을": {
+  "method": "3차 경선",
+  "cands": [
+   {
+    "name": "김해경",
+    "career": "전 남부대학교 초빙교수",
+    "round": "1차",
+    "won": false,
+    "note": "컷오프"
+   },
+   {
+    "name": "김성환",
+    "career": "전 동구청장",
+    "round": "2차",
+    "won": false,
+    "note": "탈당"
+   },
+   {
+    "name": "노희용",
+    "career": "전 동구청장",
+    "round": "2차",
+    "won": false,
+    "note": "컷오프"
+   },
+   {
+    "name": "이정락",
+    "career": "당 사회적경제위원회 부위원장",
+    "round": "2차",
+    "won": false,
+    "note": "컷오프"
+   },
+   {
+    "name": "양형일",
+    "career": "전 국회의원",
+    "round": "3차",
+    "won": false,
+    "note": "컷오프"
+   },
+   {
+    "name": "이병훈",
+    "career": "국회의원",
+    "round": "6차",
+    "won": false,
+    "note": ""
+   },
+   {
+    "name": "김병우",
+    "career": "민주혁신연구원장",
+    "round": "7차",
+    "won": false,
+    "note": "컷오프"
+   },
+   {
+    "name": "안도걸",
+    "career": "전 기획재정부 제2차관",
+    "round": "7차",
+    "won": true,
+    "note": ""
+   }
+  ]
+ },
+ "광주 서구갑": {
+  "method": "7차 경선",
+  "cands": [
+   {
+    "name": "송갑석",
+    "career": "국회의원",
+    "round": "1차",
+    "won": false,
+    "note": ""
+   },
+   {
+    "name": "조인철",
+    "career": "전 광주광역시 문화경제부시장",
+    "round": "1차",
+    "won": true,
+    "note": ""
+   },
+   {
+    "name": "김명진",
+    "career": "전 대통령비서실 행정관",
+    "round": "",
+    "won": false,
+    "note": "컷오프"
+   },
+   {
+    "name": "박혜자",
+    "career": "전 국회의원",
+    "round": "2차",
+    "won": false,
+    "note": "컷오프"
+   }
+  ]
+ },
+ "광주 서구을": {
+  "method": "전략경선",
+  "cands": [
+   {
+    "name": "양부남",
+    "career": "전 광주지방검찰청 검사장",
+    "round": "2차",
+    "won": true,
+    "note": ""
+   },
+   {
+    "name": "천정배",
+    "career": "전 법무부장관",
+    "round": "6차",
+    "won": false,
+    "note": "사퇴"
+   },
+   {
+    "name": "김경만",
+    "career": "국회의원",
+    "round": "7차",
+    "won": false,
+    "note": ""
+   },
+   {
+    "name": "김광진",
+    "career": "전 국회의원",
+    "round": "10차",
+    "won": false,
+    "note": ""
+   }
+  ]
+ },
+ "광주 북구갑": {
+  "method": "1차 경선",
+  "cands": [
+   {
+    "name": "문상필",
+    "career": "전 광주광역시의원",
+    "round": "1차",
+    "won": false,
+    "note": "컷오프"
+   },
+   {
+    "name": "정준호",
+    "career": "변호사",
+    "round": "1차",
+    "won": true,
+    "note": ""
+   },
+   {
+    "name": "진선기",
+    "career": "전 광주광역시의회 부의장",
+    "round": "2차",
+    "won": false,
+    "note": "컷오프"
+   },
+   {
+    "name": "조오섭",
+    "career": "국회의원",
+    "round": "7차",
+    "won": false,
+    "note": ""
+   }
+  ]
+ },
+ "광주 북구을": {
+  "method": "1차 경선",
+  "cands": [
+   {
+    "name": "전진숙",
+    "career": "전 광주광역시의원",
+    "round": "1차",
+    "won": true,
+    "note": ""
+   },
+   {
+    "name": "조현환",
+    "career": "당 동북아평화협특위 부위원장",
+    "round": "1차",
+    "won": false,
+    "note": "컷오프"
+   },
+   {
+    "name": "김세미가",
+    "career": "전 국회 정책비서관",
+    "round": "6차",
+    "won": false,
+    "note": "컷오프"
+   },
+   {
+    "name": "이형석",
+    "career": "국회의원",
+    "round": "7차",
+    "won": false,
+    "note": ""
+   }
+  ]
+ },
+ "광주 광산구갑": {
+  "method": "4차 경선",
+  "cands": [
+   {
+    "name": "박균택",
+    "career": "전 광주고등검찰청 검사장",
+    "round": "1차",
+    "won": true,
+    "note": ""
+   },
+   {
+    "name": "이용빈",
+    "career": "국회의원",
+    "round": "1차",
+    "won": false,
+    "note": ""
+   }
+  ]
+ },
+ "광주 광산구을": {
+  "method": "3차 경선",
+  "cands": [
+   {
+    "name": "정재혁",
+    "career": "전 대통령비서실 선임행정관",
+    "round": "1차",
+    "won": false,
+    "note": ""
+   },
+   {
+    "name": "최치현",
+    "career": "전 대통령비서실 행정관",
+    "round": "1차",
+    "won": false,
+    "note": "컷오프"
+   },
+   {
+    "name": "김성진",
+    "career": "전 산업통상자원부 대변인",
+    "round": "2차",
+    "won": false,
+    "note": "재심인용"
+   },
+   {
+    "name": "민형배",
+    "career": "국회의원",
+    "round": "7차",
+    "won": true,
+    "note": ""
+   }
+  ]
+ },
+ "대전 동구": {
+  "method": "1차 경선",
+  "cands": [
+   {
+    "name": "황인호",
+    "career": "전 동구청장",
+    "round": "1차",
+    "won": false,
+    "note": ""
+   },
+   {
+    "name": "정경수",
+    "career": "변호사",
+    "round": "2차",
+    "won": false,
+    "note": "재심인용"
+   },
+   {
+    "name": "장철민",
+    "career": "국회의원",
+    "round": "7차",
+    "won": true,
+    "note": ""
+   }
+  ]
+ },
+ "대전 중구": {
+  "method": "단수공천",
+  "cands": [
+   {
+    "name": "오상택",
+    "career": "전 대통령비서실 행정관",
+    "round": "1차",
+    "won": true,
+    "note": ""
+   },
+   {
+    "name": "박태완",
+    "career": "전 중구청장",
+    "round": "2차",
+    "won": false,
+    "note": "컷오프"
+   }
+  ]
+ },
+ "대전 서구갑": {
+  "method": "전략경선",
+  "cands": [
+   {
+    "name": "안필용",
+    "career": "전 대전광역시장 비서실장",
+    "round": "1차",
+    "won": false,
+    "note": "탈당"
+   },
+   {
+    "name": "이용수",
+    "career": "전 국회의장비서실 정책수석비서관",
+    "round": "1차",
+    "won": false,
+    "note": ""
+   },
+   {
+    "name": "이지혜",
+    "career": "전 국회의원 보좌관",
+    "round": "1차",
+    "won": false,
+    "note": ""
+   },
+   {
+    "name": "유지곤",
+    "career": "당 보건의료특별위원회 부위원장",
+    "round": "7차",
+    "won": false,
+    "note": "탈당"
+   },
+   {
+    "name": "장종태",
+    "career": "전 서구청장",
+    "round": "7차",
+    "won": true,
+    "note": ""
+   },
+   {
+    "name": "전병덕",
+    "career": "전 대통령비서실 행정관",
+    "round": "14차",
+    "won": false,
+    "note": "컷오프"
+   }
+  ]
+ },
+ "대전 서구을": {
+  "method": "단수공천",
+  "cands": [
+   {
+    "name": "박범계",
+    "career": "국회의원",
+    "round": "1차",
+    "won": true,
+    "note": ""
+   }
+  ]
+ },
+ "대전 유성구갑": {
+  "method": "1차 경선",
+  "cands": [
+   {
+    "name": "오광영",
+    "career": "전 대전광역시의원",
+    "round": "1차",
+    "won": false,
+    "note": ""
+   },
+   {
+    "name": "조승래",
+    "career": "국회의원",
+    "round": "1차",
+    "won": true,
+    "note": ""
+   }
+  ]
+ },
+ "대전 유성구을": {
+  "method": "전략공천",
+  "cands": [
+   {
+    "name": "황정아",
+    "career": "한국천문연구원 책임연구원",
+    "round": "",
+    "won": true,
+    "note": ""
+   },
+   {
+    "name": "정기현",
+    "career": "전 대전광역시의원",
+    "round": "1차",
+    "won": false,
+    "note": "컷오프"
+   },
+   {
+    "name": "허태정",
+    "career": "전 대전광역시장",
+    "round": "1차",
+    "won": false,
+    "note": "사퇴"
+   },
+   {
+    "name": "이경",
+    "career": "중앙당 상근부대변인",
+    "round": "5차",
+    "won": false,
+    "note": "부적격"
+   },
+   {
+    "name": "김혜민",
+    "career": "전 국회의원 보좌관",
+    "round": "6차",
+    "won": false,
+    "note": "컷오프"
+   },
+   {
+    "name": "김찬훈",
+    "career": "대전YMCA 이사장",
+    "round": "7차",
+    "won": false,
+    "note": "컷오프"
+   }
+  ]
+ },
+ "대전 대덕구": {
+  "method": "단수공천",
+  "cands": [
+   {
+    "name": "박영순",
+    "career": "국회의원",
+    "round": "10차",
+    "won": false,
+    "note": "탈당"
+   },
+   {
+    "name": "박정현",
+    "career": "전 대덕구청장",
+    "round": "14차",
+    "won": true,
+    "note": ""
+   }
+  ]
+ },
+ "울산 남구갑": {
+  "method": "전략공천",
+  "cands": [
+   {
+    "name": "전은수",
+    "career": "변호사",
+    "round": "",
+    "won": true,
+    "note": ""
+   },
+   {
+    "name": "손종학",
+    "career": "전 울산광역시의회 부의장",
+    "round": "2차",
+    "won": false,
+    "note": "컷오프"
+   }
+  ]
+ },
+ "울산 남구을": {
+  "method": "1차 경선",
+  "cands": [
+   {
+    "name": "박성진",
+    "career": "전 남구의원",
+    "round": "1차",
+    "won": true,
+    "note": ""
+   },
+   {
+    "name": "김형근",
+    "career": "전 울산광역시 사회일자리에너지 특별보좌관",
+    "round": "3차",
+    "won": false,
+    "note": "컷오프"
+   },
+   {
+    "name": "심규명",
+    "career": "변호사",
+    "round": "14차",
+    "won": false,
+    "note": ""
+   }
+  ]
+ },
+ "울산 동구": {
+  "method": "단수공천",
+  "cands": [
+   {
+    "name": "김태선",
+    "career": "전 울산광역시장 정무수석",
+    "round": "1차",
+    "won": true,
+    "note": ""
+   },
+   {
+    "name": "황명필",
+    "career": "전 문재인 정부 국정자문위원",
+    "round": "1차",
+    "won": false,
+    "note": "컷오프"
+   },
+   {
+    "name": "김종환",
+    "career": "전 지역위원장 직무대행",
+    "round": "3차",
+    "won": false,
+    "note": "컷오프"
+   }
+  ]
+ },
+ "울산 북구": {
+  "method": "무공천[140]",
+  "cands": [
+   {
+    "name": "백운찬",
+    "career": "전 울산광역시의원",
+    "round": "2차",
+    "won": false,
+    "note": "탈락"
+   },
+   {
+    "name": "박병석",
+    "career": "전 울산광역시의회 의장",
+    "round": "3차",
+    "won": false,
+    "note": "탈락"
+   },
+   {
+    "name": "이상헌",
+    "career": "국회의원",
+    "round": "7차",
+    "won": false,
+    "note": "탈당"
+   },
+   {
+    "name": "이동권",
+    "career": "전 북구청장",
+    "round": "10차",
+    "won": false,
+    "note": "탈락"
+   }
+  ]
+ },
+ "울산 울주군": {
+  "method": "단수공천",
+  "cands": [
+   {
+    "name": "이선호",
+    "career": "전 울주군수",
+    "round": "2차",
+    "won": true,
+    "note": ""
+   }
+  ]
+ },
+ "세종 세종특별자치시갑": {
+  "method": "후보 무공천[142]",
+  "cands": [
+   {
+    "name": "노종용",
+    "career": "전 세종특별자치시의회 부의장",
+    "round": "1차",
+    "won": false,
+    "note": ""
+   },
+   {
+    "name": "박범종",
+    "career": "세종특별자치시당 청년위원장",
+    "round": "1차",
+    "won": false,
+    "note": ""
+   },
+   {
+    "name": "배선호",
+    "career": "전 세종특별자치시당 부위원장",
+    "round": "1차",
+    "won": false,
+    "note": "컷오프"
+   },
+   {
+    "name": "이영선",
+    "career": "변호사",
+    "round": "1차",
+    "won": true,
+    "note": "공천취소"
+   },
+   {
+    "name": "이강진",
+    "career": "전 세종특별자치시 정무부시장",
+    "round": "2차",
+    "won": false,
+    "note": ""
+   },
+   {
+    "name": "봉정현",
+    "career": "변호사",
+    "round": "10차",
+    "won": false,
+    "note": "컷오프"
+   }
+  ]
+ },
+ "세종 세종특별자치시을": {
+  "method": "단수공천",
+  "cands": [
+   {
+    "name": "서금택",
+    "career": "전 세종특별자치시의회 의장",
+    "round": "1차",
+    "won": false,
+    "note": "컷오프"
+   },
+   {
+    "name": "강준현",
+    "career": "국회의원",
+    "round": "10차",
+    "won": true,
+    "note": ""
+   }
+  ]
+ },
+ "경기 수원시갑": {
+  "method": "단수공천",
+  "cands": [
+   {
+    "name": "김승원",
+    "career": "국회의원",
+    "round": "7차",
+    "won": true,
+    "note": ""
+   },
+   {
+    "name": "강신영",
+    "career": "권리당원",
+    "round": "12차",
+    "won": false,
+    "note": "컷오프"
+   }
+  ]
+ },
+ "경기 수원시을": {
+  "method": "단수공천",
+  "cands": [
+   {
+    "name": "김호진",
+    "career": "전 수원시의원",
+    "round": "2차",
+    "won": false,
+    "note": "컷오프"
+   },
+   {
+    "name": "유문종",
+    "career": "전 수원시 제2부시장",
+    "round": "2차",
+    "won": false,
+    "note": "컷오프"
+   },
+   {
+    "name": "백혜련",
+    "career": "국회의원",
+    "round": "7차",
+    "won": true,
+    "note": ""
+   }
+  ]
+ },
+ "경기 수원시병": {
+  "method": "단수공천",
+  "cands": [
+   {
+    "name": "김영진",
+    "career": "국회의원",
+    "round": "10차",
+    "won": true,
+    "note": ""
+   }
+  ]
+ },
+ "경기 수원시정": {
+  "method": "6차 경선",
+  "cands": [
+   {
+    "name": "김준혁",
+    "career": "한신대학교 교수",
+    "round": "2차",
+    "won": true,
+    "note": ""
+   },
+   {
+    "name": "박광온",
+    "career": "국회의원",
+    "round": "6차",
+    "won": false,
+    "note": ""
+   }
+  ]
+ },
+ "경기 수원시무": {
+  "method": "전략공천",
+  "cands": [
+   {
+    "name": "염태영",
+    "career": "전 수원시장",
+    "round": "10차",
+    "won": true,
+    "note": ""
+   },
+   {
+    "name": "이병진",
+    "career": "전 지역위원장 직무대행",
+    "round": "1차",
+    "won": false,
+    "note": "컷오프"
+   },
+   {
+    "name": "임진",
+    "career": "전 경기도시장상권진흥원장",
+    "round": "10차",
+    "won": false,
+    "note": "컷오프"
+   },
+   {
+    "name": "이재영",
+    "career": "전국대의원",
+    "round": "",
+    "won": false,
+    "note": "컷오프"
+   }
+  ]
+ },
+ "경기 성남시수정구": {
+  "method": "단수공천",
+  "cands": [
+   {
+    "name": "박영기",
+    "career": "공인노무사",
+    "round": "1차",
+    "won": false,
+    "note": "컷오프"
+   },
+   {
+    "name": "박창순",
+    "career": "전 경기도의원",
+    "round": "1차",
+    "won": false,
+    "note": "컷오프"
+   },
+   {
+    "name": "김태년",
+    "career": "국회의원",
+    "round": "7차",
+    "won": true,
+    "note": ""
+   }
+  ]
+ },
+ "경기 성남시중원구": {
+  "method": "6차 경선",
+  "cands": [
+   {
+    "name": "이수진",
+    "career": "국회의원",
+    "round": "6차",
+    "won": true,
+    "note": ""
+   },
+   {
+    "name": "윤영찬",
+    "career": "국회의원",
+    "round": "",
+    "won": false,
+    "note": ""
+   },
+   {
+    "name": "윤창근",
+    "career": "전 성남시의회 의장",
+    "round": "2차",
+    "won": false,
+    "note": "컷오프"
+   },
+   {
+    "name": "현근택",
+    "career": "변호사",
+    "round": "2차",
+    "won": false,
+    "note": "사퇴"
+   },
+   {
+    "name": "조광주",
+    "career": "전 경기도의원",
+    "round": "7차",
+    "won": false,
+    "note": "컷오프"
+   },
+   {
+    "name": "이석주",
+    "career": "당 보건의료특별위원회 부위원장",
+    "round": "12차",
+    "won": false,
+    "note": "컷오프"
+   },
+   {
+    "name": "고재남",
+    "career": "국립외교원 교수",
+    "round": "14차",
+    "won": false,
+    "note": "컷오프"
+   }
+  ]
+ },
+ "경기 성남시분당구갑": {
+  "method": "전략공천",
+  "cands": [
+   {
+    "name": "이광재",
+    "career": "전 국회의원",
+    "round": "",
+    "won": true,
+    "note": ""
+   },
+   {
+    "name": "추승우",
+    "career": "전 서울특별시의원",
+    "round": "6차",
+    "won": false,
+    "note": "컷오프"
+   },
+   {
+    "name": "권락용",
+    "career": "전 경기도의원",
+    "round": "7차",
+    "won": false,
+    "note": "컷오프"
+   },
+   {
+    "name": "여선웅",
+    "career": "전 대통령비서실 선임행정관",
+    "round": "10차",
+    "won": false,
+    "note": "사퇴"
+   },
+   {
+    "name": "김지호",
+    "career": "전 경기도지사 비서관",
+    "round": "14차",
+    "won": false,
+    "note": "컷오프"
+   }
+  ]
+ },
+ "경기 성남시분당구을": {
+  "method": "단수공천",
+  "cands": [
+   {
+    "name": "김병욱",
+    "career": "국회의원",
+    "round": "12차",
+    "won": true,
+    "note": ""
+   }
+  ]
+ },
+ "경기 의정부시갑": {
+  "method": "전략경선",
+  "cands": [
+   {
+    "name": "최경자",
+    "career": "전 경기도의원",
+    "round": "1차",
+    "won": false,
+    "note": "컷오프"
+   },
+   {
+    "name": "문석균",
+    "career": "김대중재단 의정부지회장",
+    "round": "7차",
+    "won": false,
+    "note": ""
+   },
+   {
+    "name": "장수봉",
+    "career": "전 의정부시의회 부의장",
+    "round": "10차",
+    "won": false,
+    "note": "컷오프"
+   },
+   {
+    "name": "박지혜",
+    "career": "변호사",
+    "round": "",
+    "won": true,
+    "note": ""
+   }
+  ]
+ },
+ "경기 의정부시을": {
+  "method": "전략경선",
+  "cands": [
+   {
+    "name": "이재강",
+    "career": "전 경기도 평화부지사",
+    "round": "1차",
+    "won": true,
+    "note": ""
+   },
+   {
+    "name": "임근재",
+    "career": "전 경기도경제과학진흥원 상임이사",
+    "round": "1차",
+    "won": false,
+    "note": ""
+   },
+   {
+    "name": "권혁기",
+    "career": "전 대통령비서실 춘추관장",
+    "round": "",
+    "won": false,
+    "note": ""
+   }
+  ]
+ },
+ "경기 안양시만안구": {
+  "method": "단수공천",
+  "cands": [
+   {
+    "name": "김종찬",
+    "career": "전 경기도의원",
+    "round": "7차",
+    "won": false,
+    "note": "컷오프"
+   },
+   {
+    "name": "강득구",
+    "career": "국회의원",
+    "round": "10차",
+    "won": true,
+    "note": ""
+   }
+  ]
+ },
+ "경기 안양시동안구갑": {
+  "method": "단수공천",
+  "cands": [
+   {
+    "name": "임채호",
+    "career": "전 경기도의회 부의장",
+    "round": "1차",
+    "won": false,
+    "note": "컷오프"
+   },
+   {
+    "name": "정기열",
+    "career": "전 경기도의회 의장",
+    "round": "2차",
+    "won": false,
+    "note": "컷오프"
+   },
+   {
+    "name": "백종주",
+    "career": "전 바른미래당 지역위원장",
+    "round": "6차",
+    "won": false,
+    "note": "컷오프"
+   },
+   {
+    "name": "심규순",
+    "career": "전 경기도의원",
+    "round": "6차",
+    "won": false,
+    "note": "컷오프"
+   },
+   {
+    "name": "민병덕",
+    "career": "국회의원",
+    "round": "7차",
+    "won": true,
+    "note": ""
+   }
+  ]
+ },
+ "경기 안양시동안구을": {
+  "method": "단수공천",
+  "cands": [
+   {
+    "name": "임성룡",
+    "career": "변호사",
+    "round": "1차",
+    "won": false,
+    "note": "컷오프"
+   },
+   {
+    "name": "박용진",
+    "career": "전 경기도의원",
+    "round": "2차",
+    "won": false,
+    "note": "컷오프"
+   },
+   {
+    "name": "송일찬",
+    "career": "서울대학교 인권센터 운영위원",
+    "round": "7차",
+    "won": false,
+    "note": "컷오프"
+   },
+   {
+    "name": "이재정",
+    "career": "국회의원",
+    "round": "7차",
+    "won": true,
+    "note": ""
+   },
+   {
+    "name": "이정국",
+    "career": "전 지역위원장",
+    "round": "7차",
+    "won": false,
+    "note": "컷오프"
+   }
+  ]
+ },
+ "경기 부천시갑": {
+  "method": "10차 경선(결선)",
+  "cands": [
+   {
+    "name": "박연숙",
+    "career": "전 경기도교육청 시민감사관",
+    "round": "1차",
+    "won": false,
+    "note": "컷오프"
+   },
+   {
+    "name": "정은혜",
+    "career": "전 국회의원",
+    "round": "1차",
+    "won": false,
+    "note": "컷오프"
+   },
+   {
+    "name": "김영태",
+    "career": "김대중재단 부천중부지회장",
+    "round": "3차",
+    "won": false,
+    "note": "컷오프"
+   },
+   {
+    "name": "이진연",
+    "career": "전 경기도의원",
+    "round": "6차",
+    "won": false,
+    "note": "컷오프"
+   },
+   {
+    "name": "서영석",
+    "career": "국회의원",
+    "round": "7차",
+    "won": true,
+    "note": "결선"
+   },
+   {
+    "name": "서헌성",
+    "career": "전 부천시의원",
+    "round": "7차",
+    "won": false,
+    "note": "컷오프"
+   },
+   {
+    "name": "유정주",
+    "career": "국회의원",
+    "round": "7차",
+    "won": false,
+    "note": "결선"
+   },
+   {
+    "name": "백종훈",
+    "career": "전 부천시의원",
+    "round": "8차",
+    "won": false,
+    "note": "컷오프"
+   },
+   {
+    "name": "정재현",
+    "career": "전 부천시의원",
+    "round": "8차",
+    "won": false,
+    "note": "컷오프"
+   },
+   {
+    "name": "김경협",
+    "career": "국회의원",
+    "round": "10차",
+    "won": false,
+    "note": ""
+   }
+  ]
+ },
+ "경기 부천시을": {
+  "method": "10차 경선",
+  "cands": [
+   {
+    "name": "김기표",
+    "career": "전 대통령비서실 반부패비서관",
+    "round": "1차",
+    "won": true,
+    "note": ""
+   },
+   {
+    "name": "박정산",
+    "career": "전 부천시의원",
+    "round": "1차",
+    "won": false,
+    "note": "컷오프"
+   },
+   {
+    "name": "한병환",
+    "career": "전 부천시의원",
+    "round": "1차",
+    "won": false,
+    "note": "컷오프"
+   },
+   {
+    "name": "서진웅",
+    "career": "전 경기도의원",
+    "round": "2차",
+    "won": false,
+    "note": ""
+   },
+   {
+    "name": "설훈",
+    "career": "국회의원",
+    "round": "7차",
+    "won": false,
+    "note": "탈당"
+   }
+  ]
+ },
+ "경기 부천시병": {
+  "method": "10차 경선",
+  "cands": [
+   {
+    "name": "권정선",
+    "career": "전 경기도의원",
+    "round": "1차",
+    "won": false,
+    "note": "컷오프"
+   },
+   {
+    "name": "이건태",
+    "career": "변호사",
+    "round": "1차",
+    "won": true,
+    "note": ""
+   },
+   {
+    "name": "장덕천",
+    "career": "전 부천시장",
+    "round": "6차",
+    "won": false,
+    "note": "탈당"
+   },
+   {
+    "name": "김상희",
+    "career": "국회의원",
+    "round": "7차",
+    "won": false,
+    "note": ""
+   },
+   {
+    "name": "강병일",
+    "career": "전 부천시의회 의장",
+    "round": "12차",
+    "won": false,
+    "note": "컷오프"
+   },
+   {
+    "name": "박효균",
+    "career": "지역위원회 고문",
+    "round": "12차",
+    "won": false,
+    "note": "컷오프"
+   }
+  ]
+ },
+ "경기 광명시갑": {
+  "method": "1차 경선",
+  "cands": [
+   {
+    "name": "유재성",
+    "career": "사단법인 기본사회 경기 공동대표",
+    "round": "1차",
+    "won": false,
+    "note": "컷오프"
+   },
+   {
+    "name": "임혜자",
+    "career": "전 대통령비서실 선임행정관",
+    "round": "1차",
+    "won": false,
+    "note": ""
+   },
+   {
+    "name": "임오경",
+    "career": "국회의원",
+    "round": "10차",
+    "won": true,
+    "note": ""
+   }
+  ]
+ },
+ "경기 광명시을": {
+  "method": "전략경선",
+  "cands": [
+   {
+    "name": "강신성",
+    "career": "전 대한봅슬레이스켈레톤경기연맹 회장",
+    "round": "2차",
+    "won": false,
+    "note": "컷오프"
+   },
+   {
+    "name": "양기대",
+    "career": "국회의원",
+    "round": "12차",
+    "won": false,
+    "note": ""
+   },
+   {
+    "name": "양이원영",
+    "career": "국회의원",
+    "round": "12차",
+    "won": false,
+    "note": "컷오프"
+   },
+   {
+    "name": "김남희",
+    "career": "변호사",
+    "round": "",
+    "won": true,
+    "note": ""
+   }
+  ]
+ },
+ "경기 평택시갑": {
+  "method": "9차 경선",
+  "cands": [
+   {
+    "name": "조용덕",
+    "career": "평택지속가능균형발전연구소 이사장",
+    "round": "2차",
+    "won": false,
+    "note": "컷오프"
+   },
+   {
+    "name": "홍기원",
+    "career": "국회의원",
+    "round": "6차",
+    "won": true,
+    "note": ""
+   },
+   {
+    "name": "이해금",
+    "career": "전 평택시의원",
+    "round": "10차",
+    "won": false,
+    "note": "컷오프"
+   },
+   {
+    "name": "임승근",
+    "career": "전 평택시의회 부의장",
+    "round": "14차",
+    "won": false,
+    "note": ""
+   }
+  ]
+ },
+ "경기 평택시을": {
+  "method": "전략공천",
+  "cands": [
+   {
+    "name": "이병진",
+    "career": "평택대학교 교수",
+    "round": "",
+    "won": true,
+    "note": ""
+   },
+   {
+    "name": "김기성",
+    "career": "전 평택시의회 부의장",
+    "round": "1차",
+    "won": false,
+    "note": "컷오프"
+   },
+   {
+    "name": "공성경",
+    "career": "전 창조한국당 대표",
+    "round": "2차",
+    "won": false,
+    "note": "컷오프"
+   },
+   {
+    "name": "유병만",
+    "career": "전 정책위원회 부의장",
+    "round": "2차",
+    "won": false,
+    "note": "컷오프"
+   },
+   {
+    "name": "오명근",
+    "career": "전 경기도의원",
+    "round": "3차",
+    "won": false,
+    "note": "컷오프"
+   },
+   {
+    "name": "오세호",
+    "career": "전 경기도의원",
+    "round": "3차",
+    "won": false,
+    "note": "컷오프"
+   },
+   {
+    "name": "김경자",
+    "career": "전 서울특별시의원",
+    "round": "7차",
+    "won": false,
+    "note": "컷오프"
+   },
+   {
+    "name": "유성",
+    "career": "평택자치연대 대표",
+    "round": "10차",
+    "won": false,
+    "note": "컷오프"
+   }
+  ]
+ },
+ "경기 평택시병": {
+  "method": "단수공천",
+  "cands": [
+   {
+    "name": "김현정",
+    "career": "전 전국사무금융노동조합연맹 위원장",
+    "round": "1차",
+    "won": true,
+    "note": ""
+   }
+  ]
+ },
+ "경기 동두천시양주시연천군갑": {
+  "method": "단수공천",
+  "cands": [
+   {
+    "name": "정성호",
+    "career": "국회의원",
+    "round": "6차",
+    "won": true,
+    "note": ""
+   }
+  ]
+ },
+ "경기 동두천시양주시연천군을": {
+  "method": "단수공천",
+  "cands": [
+   {
+    "name": "남병근",
+    "career": "전 경기북부지방경찰청 차장",
+    "round": "1차",
+    "won": true,
+    "note": ""
+   }
+  ]
+ },
+ "경기 안산시갑": {
+  "method": "9차 경선",
+  "cands": [
+   {
+    "name": "전해철",
+    "career": "국회의원",
+    "round": "7차",
+    "won": false,
+    "note": ""
+   },
+   {
+    "name": "박천광",
+    "career": "안산제일장례식장 대표",
+    "round": "10차",
+    "won": false,
+    "note": "컷오프"
+   },
+   {
+    "name": "양문석",
+    "career": "전 방송통신위원회 상임위원",
+    "round": "12차",
+    "won": true,
+    "note": ""
+   }
+  ]
+ },
+ "경기 안산시을": {
+  "method": "전략경선(결선)[안산]",
+  "cands": [
+   {
+    "name": "김현",
+    "career": "전 국회의원",
+    "round": "1차",
+    "won": true,
+    "note": "결선"
+   },
+   {
+    "name": "서한석",
+    "career": "전 경기테크노파크 원장직무대행",
+    "round": "1차",
+    "won": false,
+    "note": "컷오프"
+   },
+   {
+    "name": "김철민",
+    "career": "국회의원",
+    "round": "7차",
+    "won": false,
+    "note": "결선"
+   },
+   {
+    "name": "박지영",
+    "career": "전 경기남부지방경찰청장",
+    "round": "14차",
+    "won": false,
+    "note": "컷오프"
+   }
+  ]
+ },
+ "경기 안산시병": {
+  "method": "전략경선[안산]",
+  "cands": [
+   {
+    "name": "고영인",
+    "career": "국회의원",
+    "round": "",
+    "won": false,
+    "note": ""
+   },
+   {
+    "name": "박해철",
+    "career": "전국공공산업노동조합연맹 위원장",
+    "round": "",
+    "won": true,
+    "note": ""
+   }
+  ]
+ },
+ "경기 고양시갑": {
+  "method": "3차 경선",
+  "cands": [
+   {
+    "name": "문명순",
+    "career": "전 지역위원장",
+    "round": "1차",
+    "won": false,
+    "note": ""
+   },
+   {
+    "name": "윤종은",
+    "career": "경기도당 민주화혁신특별위원장",
+    "round": "1차",
+    "won": false,
+    "note": "컷오프"
+   },
+   {
+    "name": "김성회",
+    "career": "전 국회의원 보좌관",
+    "round": "2차",
+    "won": true,
+    "note": ""
+   },
+   {
+    "name": "이재준",
+    "career": "전 고양시장",
+    "round": "7차",
+    "won": false,
+    "note": "컷오프"
+   }
+  ]
+ },
+ "경기 고양시을": {
+  "method": "단수공천",
+  "cands": [
+   {
+    "name": "서누리",
+    "career": "변호사",
+    "round": "2차",
+    "won": false,
+    "note": "컷오프"
+   },
+   {
+    "name": "한준호",
+    "career": "국회의원",
+    "round": "7차",
+    "won": true,
+    "note": ""
+   }
+  ]
+ },
+ "경기 고양시병": {
+  "method": "3차 경선(결선)",
+  "cands": [
+   {
+    "name": "김재준",
+    "career": "전 대통령비서실 춘추관장",
+    "round": "1차",
+    "won": false,
+    "note": "재심인용"
+   },
+   {
+    "name": "이기헌",
+    "career": "전 대통령비서실 비서관",
+    "round": "1차",
+    "won": true,
+    "note": "결선"
+   },
+   {
+    "name": "정진경",
+    "career": "전 대통령비서실 행정관",
+    "round": "1차",
+    "won": false,
+    "note": "컷오프"
+   },
+   {
+    "name": "홍정민",
+    "career": "국회의원",
+    "round": "7차",
+    "won": false,
+    "note": "결선"
+   }
+  ]
+ },
+ "경기 고양시정": {
+  "method": "7차 경선",
+  "cands": [
+   {
+    "name": "김영환",
+    "career": "전 경기도의원",
+    "round": "1차",
+    "won": true,
+    "note": ""
+   },
+   {
+    "name": "장철영",
+    "career": "전 대통령비서실 행정관",
+    "round": "1차",
+    "won": false,
+    "note": "컷오프"
+   },
+   {
+    "name": "이용우",
+    "career": "국회의원",
+    "round": "6차",
+    "won": false,
+    "note": ""
+   },
+   {
+    "name": "신정현",
+    "career": "전 경기도의원",
+    "round": "7차",
+    "won": false,
+    "note": "탈당"
+   }
+  ]
+ },
+ "경기 의왕시과천시": {
+  "method": "단수공천",
+  "cands": [
+   {
+    "name": "윤재관",
+    "career": "전 대통령비서실 국정홍보비서관",
+    "round": "2차",
+    "won": false,
+    "note": "컷오프"
+   },
+   {
+    "name": "오동현",
+    "career": "변호사",
+    "round": "3차",
+    "won": false,
+    "note": "컷오프"
+   },
+   {
+    "name": "조성은",
+    "career": "전 여성가족부 국장",
+    "round": "3차",
+    "won": false,
+    "note": "컷오프"
+   },
+   {
+    "name": "이소영",
+    "career": "국회의원",
+    "round": "",
+    "won": true,
+    "note": ""
+   },
+   {
+    "name": "이은영",
+    "career": "전 대통령비서실 행정관",
+    "round": "7차",
+    "won": false,
+    "note": "컷오프"
+   }
+  ]
+ },
+ "경기 구리시": {
+  "method": "단수공천",
+  "cands": [
+   {
+    "name": "윤호중",
+    "career": "국회의원",
+    "round": "7차",
+    "won": true,
+    "note": ""
+   }
+  ]
+ },
+ "경기 남양주시갑": {
+  "method": "4차 경선",
+  "cands": [
+   {
+    "name": "임윤태",
+    "career": "변호사",
+    "round": "1차",
+    "won": false,
+    "note": ""
+   },
+   {
+    "name": "최민희",
+    "career": "전 국회의원",
+    "round": "7차",
+    "won": true,
+    "note": ""
+   }
+  ]
+ },
+ "경기 남양주시을": {
+  "method": "6차 경선",
+  "cands": [
+   {
+    "name": "김병주",
+    "career": "국회의원",
+    "round": "1차",
+    "won": true,
+    "note": ""
+   },
+   {
+    "name": "김한정",
+    "career": "국회의원",
+    "round": "8차",
+    "won": false,
+    "note": ""
+   },
+   {
+    "name": "경성석",
+    "career": "전 당 해양수산특별위원회 부위원장",
+    "round": "1차",
+    "won": false,
+    "note": "컷오프"
+   },
+   {
+    "name": "이인화",
+    "career": "전 국토교통부장관 정책보좌관",
+    "round": "2차",
+    "won": false,
+    "note": "재심인용"
+   }
+  ]
+ },
+ "경기 남양주시병": {
+  "method": "단수공천",
+  "cands": [
+   {
+    "name": "박성훈",
+    "career": "전 경기도의원",
+    "round": "1차",
+    "won": false,
+    "note": "컷오프"
+   },
+   {
+    "name": "김용민",
+    "career": "국회의원",
+    "round": "10차",
+    "won": true,
+    "note": ""
+   }
+  ]
+ },
+ "경기 오산시": {
+  "method": "전략공천",
+  "cands": [
+   {
+    "name": "차지호",
+    "career": "한국과학기술원 교수",
+    "round": "",
+    "won": true,
+    "note": ""
+   },
+   {
+    "name": "이신남",
+    "career": "전 대통령비서실 비서관",
+    "round": "1차",
+    "won": false,
+    "note": "컷오프"
+   },
+   {
+    "name": "조재훈",
+    "career": "전 경기도의원",
+    "round": "3차",
+    "won": false,
+    "note": "컷오프"
+   },
+   {
+    "name": "안민석",
+    "career": "국회의원",
+    "round": "10차",
+    "won": false,
+    "note": "컷오프"
+   }
+  ]
+ },
+ "경기 시흥시갑": {
+  "method": "단수공천",
+  "cands": [
+   {
+    "name": "문정복",
+    "career": "국회의원",
+    "round": "7차",
+    "won": true,
+    "note": ""
+   }
+  ]
+ },
+ "경기 시흥시을": {
+  "method": "단수공천",
+  "cands": [
+   {
+    "name": "김봉호",
+    "career": "변호사",
+    "round": "2차",
+    "won": false,
+    "note": "컷오프"
+   },
+   {
+    "name": "조정식",
+    "career": "국회의원",
+    "round": "10차",
+    "won": true,
+    "note": ""
+   },
+   {
+    "name": "김상욱",
+    "career": "전 국가정보원 부이사관",
+    "round": "",
+    "won": false,
+    "note": "탈당"
+   }
+  ]
+ },
+ "경기 군포시": {
+  "method": "1차 경선",
+  "cands": [
+   {
+    "name": "정희시",
+    "career": "전 경기도의원",
+    "round": "1차",
+    "won": false,
+    "note": "컷오프"
+   },
+   {
+    "name": "김정우",
+    "career": "전 국회의원",
+    "round": "2차",
+    "won": false,
+    "note": ""
+   },
+   {
+    "name": "조경호",
+    "career": "전 국회의장비서실장",
+    "round": "10차",
+    "won": false,
+    "note": "컷오프"
+   },
+   {
+    "name": "이학영",
+    "career": "국회의원",
+    "round": "12차",
+    "won": true,
+    "note": ""
+   }
+  ]
+ },
+ "경기 하남시갑": {
+  "method": "전략공천",
+  "cands": [
+   {
+    "name": "추미애",
+    "career": "전 법무부장관",
+    "round": "",
+    "won": true,
+    "note": ""
+   },
+   {
+    "name": "강병덕",
+    "career": "전 강릉영동대학교 부총장",
+    "round": "1차",
+    "won": false,
+    "note": "컷오프"
+   },
+   {
+    "name": "이희청",
+    "career": "전 서울시농수산식품공사 감사",
+    "round": "1차",
+    "won": false,
+    "note": "컷오프"
+   },
+   {
+    "name": "오수봉",
+    "career": "전 하남시장",
+    "round": "2차",
+    "won": false,
+    "note": "컷오프"
+   },
+   {
+    "name": "최종윤",
+    "career": "국회의원",
+    "round": "10차",
+    "won": false,
+    "note": "불출마"
+   }
+  ]
+ },
+ "경기 하남시을": {
+  "method": "전략공천",
+  "cands": [
+   {
+    "name": "김용만",
+    "career": "대한민국임시정부기념사업회 이사",
+    "round": "",
+    "won": true,
+    "note": ""
+   },
+   {
+    "name": "추민규",
+    "career": "전 경기도의원",
+    "round": "1차",
+    "won": false,
+    "note": "탈당"
+   },
+   {
+    "name": "민병선",
+    "career": "전 동아일보 기자",
+    "round": "3차",
+    "won": false,
+    "note": "컷오프"
+   }
+  ]
+ },
+ "경기 용인시갑": {
+  "method": "전략경선",
+  "cands": [
+   {
+    "name": "이우일",
+    "career": "전 지역위원장 직무대행",
+    "round": "1차",
+    "won": false,
+    "note": ""
+   },
+   {
+    "name": "이상식",
+    "career": "전 국무총리비서실 민정실장",
+    "round": "2차",
+    "won": true,
+    "note": ""
+   },
+   {
+    "name": "백군기",
+    "career": "전 용인시장",
+    "round": "3차",
+    "won": false,
+    "note": "컷오프"
+   },
+   {
+    "name": "엄교섭",
+    "career": "전 경기도의원",
+    "round": "6차",
+    "won": false,
+    "note": "컷오프"
+   },
+   {
+    "name": "한영수",
+    "career": "전 경기도일자리재단 굿잡노조위원장",
+    "round": "7차",
+    "won": false,
+    "note": "컷오프"
+   },
+   {
+    "name": "권인숙",
+    "career": "국회의원",
+    "round": "10차",
+    "won": false,
+    "note": ""
+   },
+   {
+    "name": "지석환",
+    "career": "전 경기도의원",
+    "round": "12차",
+    "won": false,
+    "note": "컷오프"
+   }
+  ]
+ },
+ "경기 용인시을": {
+  "method": "전략공천",
+  "cands": [
+   {
+    "name": "손명수",
+    "career": "전 국토교통부 제2차관",
+    "round": "",
+    "won": true,
+    "note": ""
+   },
+   {
+    "name": "김민기",
+    "career": "국회의원",
+    "round": "10차",
+    "won": false,
+    "note": "불출마"
+   },
+   {
+    "name": "정원영",
+    "career": "전 국민권익위원회 전문위원",
+    "round": "12차",
+    "won": false,
+    "note": "컷오프"
+   }
+  ]
+ },
+ "경기 용인시병": {
+  "method": "4차 경선",
+  "cands": [
+   {
+    "name": "부승찬",
+    "career": "전 국방부 대변인",
+    "round": "7차",
+    "won": true,
+    "note": ""
+   },
+   {
+    "name": "정춘숙",
+    "career": "국회의원",
+    "round": "7차",
+    "won": false,
+    "note": ""
+   }
+  ]
+ },
+ "경기 용인시정": {
+  "method": "전략경선",
+  "cands": [
+   {
+    "name": "박성민",
+    "career": "전 대통령비서실 청년비서관",
+    "round": "10차",
+    "won": false,
+    "note": ""
+   },
+   {
+    "name": "이헌욱",
+    "career": "전 경기주택도시공사 사장",
+    "round": "10차",
+    "won": false,
+    "note": ""
+   },
+   {
+    "name": "이언주",
+    "career": "전 국회의원",
+    "round": "",
+    "won": true,
+    "note": ""
+   }
+  ]
+ },
+ "경기 파주시갑": {
+  "method": "1차 경선",
+  "cands": [
+   {
+    "name": "윤후덕",
+    "career": "국회의원",
+    "round": "2차",
+    "won": true,
+    "note": ""
+   },
+   {
+    "name": "황세영",
+    "career": "노무사",
+    "round": "3차",
+    "won": false,
+    "note": "컷오프"
+   },
+   {
+    "name": "조일출",
+    "career": "전북대학교 특임교수",
+    "round": "6차",
+    "won": false,
+    "note": ""
+   },
+   {
+    "name": "서용주",
+    "career": "중앙당 상근부대변인",
+    "round": "7차",
+    "won": false,
+    "note": "컷오프"
+   }
+  ]
+ },
+ "경기 파주시을": {
+  "method": "단수공천",
+  "cands": [
+   {
+    "name": "박정",
+    "career": "국회의원",
+    "round": "7차",
+    "won": true,
+    "note": ""
+   }
+  ]
+ },
+ "경기 이천시": {
+  "method": "단수공천",
+  "cands": [
+   {
+    "name": "엄태준",
+    "career": "전 이천시장",
+    "round": "3차",
+    "won": true,
+    "note": ""
+   }
+  ]
+ },
+ "경기 안성시": {
+  "method": "3차 경선",
+  "cands": [
+   {
+    "name": "윤종군",
+    "career": "전 경기도 정무수석",
+    "round": "2차",
+    "won": true,
+    "note": ""
+   },
+   {
+    "name": "송미찬",
+    "career": "전 안성시의원",
+    "round": "3차",
+    "won": false,
+    "note": "컷오프"
+   },
+   {
+    "name": "최혜영",
+    "career": "국회의원",
+    "round": "7차",
+    "won": false,
+    "note": ""
+   }
+  ]
+ },
+ "경기 김포시갑": {
+  "method": "3차 경선",
+  "cands": [
+   {
+    "name": "송지원",
+    "career": "전 국방부 정책기획관실 국방정책협력관",
+    "round": "1차",
+    "won": false,
+    "note": ""
+   },
+   {
+    "name": "김주영",
+    "career": "국회의원",
+    "round": "7차",
+    "won": true,
+    "note": ""
+   }
+  ]
+ },
+ "경기 김포시을": {
+  "method": "단수공천",
+  "cands": [
+   {
+    "name": "기경환",
+    "career": "정책위원회 부의장",
+    "round": "1차",
+    "won": false,
+    "note": "컷오프"
+   },
+   {
+    "name": "박상혁",
+    "career": "국회의원",
+    "round": "1차",
+    "won": true,
+    "note": ""
+   },
+   {
+    "name": "김준현",
+    "career": "전 경기도의원",
+    "round": "2차",
+    "won": false,
+    "note": "컷오프"
+   },
+   {
+    "name": "이회수",
+    "career": "전 경기교통공사 상임이사",
+    "round": "7차",
+    "won": false,
+    "note": "컷오프"
+   }
+  ]
+ },
+ "경기 화성시갑": {
+  "method": "단수공천",
+  "cands": [
+   {
+    "name": "김홍성",
+    "career": "전 화성시의회 의장",
+    "round": "1차",
+    "won": false,
+    "note": "컷오프"
+   },
+   {
+    "name": "배강욱",
+    "career": "전 화성시 균형발전기획단장",
+    "round": "2차",
+    "won": false,
+    "note": "컷오프"
+   },
+   {
+    "name": "송옥주",
+    "career": "국회의원",
+    "round": "6차",
+    "won": true,
+    "note": ""
+   },
+   {
+    "name": "홍경래",
+    "career": "전 농협중앙회 경기본부장",
+    "round": "10차",
+    "won": false,
+    "note": "컷오프"
+   }
+  ]
+ },
+ "경기 화성시을": {
+  "method": "전략공천",
+  "cands": [
+   {
+    "name": "공영운",
+    "career": "전 현대자동차 사장",
+    "round": "",
+    "won": true,
+    "note": ""
+   },
+   {
+    "name": "서철모",
+    "career": "전 화성시장",
+    "round": "1차",
+    "won": false,
+    "note": "컷오프"
+   },
+   {
+    "name": "오상호",
+    "career": "전 대통령비서실 의전비서관",
+    "round": "1차",
+    "won": false,
+    "note": "컷오프"
+   },
+   {
+    "name": "이원혁",
+    "career": "건국대학교 강의초빙교수",
+    "round": "1차",
+    "won": false,
+    "note": "컷오프"
+   },
+   {
+    "name": "장세환",
+    "career": "경기기본사회위원회 부위원장",
+    "round": "1차",
+    "won": false,
+    "note": "컷오프"
+   },
+   {
+    "name": "김하중",
+    "career": "전 국회입법조사처장",
+    "round": "3차",
+    "won": false,
+    "note": "컷오프"
+   },
+   {
+    "name": "이원욱",
+    "career": "국회의원",
+    "round": "7차",
+    "won": false,
+    "note": "탈당"
+   }
+  ]
+ },
+ "경기 화성시병": {
+  "method": "단수공천",
+  "cands": [
+   {
+    "name": "나원주",
+    "career": "전 대통령비서실 행정관",
+    "round": "1차",
+    "won": false,
+    "note": "컷오프"
+   },
+   {
+    "name": "이은주",
+    "career": "전 경기도의원",
+    "round": "2차",
+    "won": false,
+    "note": "컷오프"
+   },
+   {
+    "name": "권칠승",
+    "career": "국회의원",
+    "round": "6차",
+    "won": true,
+    "note": ""
+   }
+  ]
+ },
+ "경기 화성시정": {
+  "method": "전략경선",
+  "cands": [
+   {
+    "name": "전용기",
+    "career": "국회의원",
+    "round": "1차",
+    "won": true,
+    "note": ""
+   },
+   {
+    "name": "조대현",
+    "career": "전 국무총리비서실 민정실장",
+    "round": "1차",
+    "won": false,
+    "note": ""
+   },
+   {
+    "name": "진석범",
+    "career": "전 경기복지재단 대표이사",
+    "round": "2차",
+    "won": false,
+    "note": ""
+   }
+  ]
+ },
+ "경기 광주시갑": {
+  "method": "3차 경선",
+  "cands": [
+   {
+    "name": "소병훈",
+    "career": "국회의원",
+    "round": "1차",
+    "won": true,
+    "note": ""
+   },
+   {
+    "name": "이현철",
+    "career": "전 광주시의원",
+    "round": "14차",
+    "won": false,
+    "note": ""
+   }
+  ]
+ },
+ "경기 광주시을": {
+  "method": "전략경선",
+  "cands": [
+   {
+    "name": "문학진",
+    "career": "전 국회의원",
+    "round": "1차",
+    "won": false,
+    "note": "컷오프"
+   },
+   {
+    "name": "안태준",
+    "career": "전 경기주택도시공사 부사장",
+    "round": "1차",
+    "won": true,
+    "note": ""
+   },
+   {
+    "name": "박덕동",
+    "career": "전 경기도의원",
+    "round": "",
+    "won": false,
+    "note": "사퇴"
+   },
+   {
+    "name": "신동헌",
+    "career": "전 광주시장",
+    "round": "2차",
+    "won": false,
+    "note": ""
+   }
+  ]
+ },
+ "경기 포천시가평군": {
+  "method": "단수공천",
+  "cands": [
+   {
+    "name": "박윤국",
+    "career": "전 포천시장",
+    "round": "2차",
+    "won": true,
+    "note": ""
+   }
+  ]
+ },
+ "경기 여주시양평군": {
+  "method": "단수공천",
+  "cands": [
+   {
+    "name": "최재관",
+    "career": "전 대통령비서실 농어업비서관",
+    "round": "1차",
+    "won": true,
+    "note": ""
+   }
+  ]
+ },
+ "강원 춘천시철원군화천군양구군갑": {
+  "method": "단수공천",
+  "cands": [
+   {
+    "name": "허영",
+    "career": "국회의원",
+    "round": "10차",
+    "won": true,
+    "note": ""
+   },
+   {
+    "name": "김창수",
+    "career": "남북강원주민연대 대표",
+    "round": "12차",
+    "won": false,
+    "note": "컷오프"
+   }
+  ]
+ },
+ "강원 춘천시철원군화천군양구군을": {
+  "method": "8차 경선",
+  "cands": [
+   {
+    "name": "유정배",
+    "career": "전 대한석탄공사 사장",
+    "round": "1차",
+    "won": false,
+    "note": ""
+   },
+   {
+    "name": "전성",
+    "career": "변호사",
+    "round": "1차",
+    "won": true,
+    "note": ""
+   }
+  ]
+ },
+ "강원 원주시갑": {
+  "method": "3차 경선",
+  "cands": [
+   {
+    "name": "여준성",
+    "career": "전 대통령비서실 사회정책비서관",
+    "round": "1차",
+    "won": false,
+    "note": ""
+   },
+   {
+    "name": "원창묵",
+    "career": "전 원주시장",
+    "round": "3차",
+    "won": true,
+    "note": ""
+   }
+  ]
+ },
+ "강원 원주시을": {
+  "method": "단수공천",
+  "cands": [
+   {
+    "name": "송기헌",
+    "career": "국회의원",
+    "round": "7차",
+    "won": true,
+    "note": ""
+   }
+  ]
+ },
+ "강원 강릉시": {
+  "method": "3차 경선",
+  "cands": [
+   {
+    "name": "배선식",
+    "career": "전 중부대학교 겸임교수",
+    "round": "1차",
+    "won": false,
+    "note": ""
+   },
+   {
+    "name": "김중남",
+    "career": "전 전국공무원노동조합 위원장",
+    "round": "3차",
+    "won": true,
+    "note": ""
+   },
+   {
+    "name": "최종윤",
+    "career": "지역위원회 부위원장",
+    "round": "12차",
+    "won": false,
+    "note": "컷오프"
+   }
+  ]
+ },
+ "강원 동해시태백시삼척시정선군": {
+  "method": "단수공천",
+  "cands": [
+   {
+    "name": "한호연",
+    "career": "전 소방산업공제조합 이사장",
+    "round": "3차",
+    "won": true,
+    "note": ""
+   }
+  ]
+ },
+ "강원 속초시인제군고성군양양군": {
+  "method": "단수공천",
+  "cands": [
+   {
+    "name": "김도균",
+    "career": "전 수도방위사령관",
+    "round": "1차",
+    "won": true,
+    "note": ""
+   }
+  ]
+ },
+ "강원 홍천군횡성군영월군평창군": {
+  "method": "단수공천",
+  "cands": [
+   {
+    "name": "허필홍",
+    "career": "전 홍천군수",
+    "round": "2차",
+    "won": true,
+    "note": ""
+   }
+  ]
+ },
+ "충북 청주시상당구": {
+  "method": "6차 경선",
+  "cands": [
+   {
+    "name": "이강일",
+    "career": "전 서울특별시의원",
+    "round": "1차",
+    "won": true,
+    "note": ""
+   },
+   {
+    "name": "노영민",
+    "career": "전 대통령비서실장",
+    "round": "10차",
+    "won": false,
+    "note": ""
+   },
+   {
+    "name": "이현웅",
+    "career": "전 한국문화정보원장",
+    "round": "10차",
+    "won": false,
+    "note": "컷오프"
+   }
+  ]
+ },
+ "충북 청주시서원구": {
+  "method": "전략경선",
+  "cands": [
+   {
+    "name": "안창현",
+    "career": "전 바른미래당 지역위원장",
+    "round": "1차",
+    "won": false,
+    "note": "컷오프"
+   },
+   {
+    "name": "이장섭",
+    "career": "국회의원",
+    "round": "6차",
+    "won": false,
+    "note": ""
+   },
+   {
+    "name": "이광희",
+    "career": "전 충청북도의원",
+    "round": "10차",
+    "won": true,
+    "note": ""
+   }
+  ]
+ },
+ "충북 청주시흥덕구": {
+  "method": "7차 경선",
+  "cands": [
+   {
+    "name": "도종환",
+    "career": "국회의원",
+    "round": "7차",
+    "won": false,
+    "note": ""
+   },
+   {
+    "name": "이연희",
+    "career": "민주연구원 상근부원장",
+    "round": "",
+    "won": true,
+    "note": ""
+   }
+  ]
+ },
+ "충북 청주시청원구": {
+  "method": "전략경선",
+  "cands": [
+   {
+    "name": "송재봉",
+    "career": "전 대통령비서실 행정관",
+    "round": "1차",
+    "won": true,
+    "note": ""
+   },
+   {
+    "name": "허창원",
+    "career": "전 충청북도의원",
+    "round": "2차",
+    "won": false,
+    "note": "컷오프"
+   },
+   {
+    "name": "유행열",
+    "career": "전 대통령비서실 선임행정관",
+    "round": "3차",
+    "won": false,
+    "note": "컷오프"
+   },
+   {
+    "name": "김제홍",
+    "career": "전 강릉영동대학교 총장",
+    "round": "7차",
+    "won": false,
+    "note": "컷오프"
+   },
+   {
+    "name": "변재일",
+    "career": "국회의원",
+    "round": "7차",
+    "won": false,
+    "note": "컷오프"
+   },
+   {
+    "name": "신용한",
+    "career": "전 서원대학교 석좌교수",
+    "round": "",
+    "won": false,
+    "note": ""
+   }
+  ]
+ },
+ "충북 충주시": {
+  "method": "5차 경선",
+  "cands": [
+   {
+    "name": "맹정섭",
+    "career": "전 성균관대학교 겸임교수",
+    "round": "6차",
+    "won": false,
+    "note": ""
+   },
+   {
+    "name": "박지우",
+    "career": "당 정책위원회 부의장",
+    "round": "6차",
+    "won": false,
+    "note": ""
+   },
+   {
+    "name": "이태성",
+    "career": "충북대학교 겸임교수",
+    "round": "7차",
+    "won": false,
+    "note": "컷오프"
+   },
+   {
+    "name": "김경욱",
+    "career": "전 국토교통부 제2차관",
+    "round": "14차",
+    "won": true,
+    "note": ""
+   }
+  ]
+ },
+ "충북 제천시단양군": {
+  "method": "단수공천",
+  "cands": [
+   {
+    "name": "이경용",
+    "career": "전 금강유역환경청장",
+    "round": "1차",
+    "won": true,
+    "note": ""
+   },
+   {
+    "name": "전원표",
+    "career": "전 충청북도의원",
+    "round": "7차",
+    "won": false,
+    "note": "컷오프"
+   }
+  ]
+ },
+ "충북 보은군옥천군영동군괴산군": {
+  "method": "단수공천",
+  "cands": [
+   {
+    "name": "이재한",
+    "career": "전 중소기업중앙회 부회장",
+    "round": "2차",
+    "won": true,
+    "note": ""
+   }
+  ]
+ },
+ "충북 증평군진천군음성군": {
+  "method": "단수공천",
+  "cands": [
+   {
+    "name": "임호선",
+    "career": "국회의원",
+    "round": "7차",
+    "won": true,
+    "note": ""
+   }
+  ]
+ },
+ "충남 천안시갑": {
+  "method": "단수공천",
+  "cands": [
+   {
+    "name": "문진석",
+    "career": "국회의원",
+    "round": "10차",
+    "won": true,
+    "note": ""
+   }
+  ]
+ },
+ "충남 천안시을": {
+  "method": "전략경선",
+  "cands": [
+   {
+    "name": "김영수",
+    "career": "충청남도당 청년위원장",
+    "round": "1차",
+    "won": false,
+    "note": ""
+   },
+   {
+    "name": "박기일",
+    "career": "충청남도당 대변인",
+    "round": "1차",
+    "won": false,
+    "note": "컷오프"
+   },
+   {
+    "name": "이규희",
+    "career": "전 국회의원",
+    "round": "1차",
+    "won": false,
+    "note": ""
+   },
+   {
+    "name": "김미화",
+    "career": "천안시의원",
+    "round": "2차",
+    "won": false,
+    "note": "컷오프"
+   },
+   {
+    "name": "이재관",
+    "career": "전 소청심사위원회 위원장",
+    "round": "",
+    "won": true,
+    "note": ""
+   }
+  ]
+ },
+ "충남 천안시병": {
+  "method": "3차 경선",
+  "cands": [
+   {
+    "name": "김연",
+    "career": "전 충청남도의원",
+    "round": "1차",
+    "won": false,
+    "note": ""
+   },
+   {
+    "name": "박남주",
+    "career": "전 천안시의원",
+    "round": "2차",
+    "won": false,
+    "note": "컷오프"
+   },
+   {
+    "name": "이정문",
+    "career": "국회의원",
+    "round": "6차",
+    "won": true,
+    "note": ""
+   },
+   {
+    "name": "장기수",
+    "career": "전 천안시의회 부의장",
+    "round": "10차",
+    "won": false,
+    "note": "컷오프"
+   }
+  ]
+ },
+ "충남 공주시부여군청양군": {
+  "method": "단수공천",
+  "cands": [
+   {
+    "name": "박수현",
+    "career": "전 국회의원",
+    "round": "7차",
+    "won": true,
+    "note": ""
+   },
+   {
+    "name": "이종운",
+    "career": "전 공주시의회 의장",
+    "round": "7차",
+    "won": false,
+    "note": "컷오프"
+   }
+  ]
+ },
+ "충남 보령시서천군": {
+  "method": "3차 경선",
+  "cands": [
+   {
+    "name": "나소열",
+    "career": "전 서천군수",
+    "round": "1차",
+    "won": true,
+    "note": ""
+   },
+   {
+    "name": "신현성",
+    "career": "변호사",
+    "round": "1차",
+    "won": false,
+    "note": ""
+   },
+   {
+    "name": "구자필",
+    "career": "전 경기도일자리재단 청년일자리본부장",
+    "round": "7차",
+    "won": false,
+    "note": ""
+   }
+  ]
+ },
+ "충남 아산시갑": {
+  "method": "단수공천",
+  "cands": [
+   {
+    "name": "복기왕",
+    "career": "전 아산시장",
+    "round": "1차",
+    "won": true,
+    "note": ""
+   }
+  ]
+ },
+ "충남 아산시을": {
+  "method": "단수공천",
+  "cands": [
+   {
+    "name": "강훈식",
+    "career": "국회의원",
+    "round": "10차",
+    "won": true,
+    "note": ""
+   }
+  ]
+ },
+ "충남 서산시태안군": {
+  "method": "단수공천",
+  "cands": [
+   {
+    "name": "조한기",
+    "career": "전 대통령비서실 비서관",
+    "round": "1차",
+    "won": true,
+    "note": ""
+   },
+   {
+    "name": "염주노",
+    "career": "단국대학교 교수",
+    "round": "7차",
+    "won": false,
+    "note": "컷오프"
+   }
+  ]
+ },
+ "충남 논산시계룡시금산군": {
+  "method": "단수공천",
+  "cands": [
+   {
+    "name": "황명선",
+    "career": "전 논산시장",
+    "round": "2차",
+    "won": true,
+    "note": ""
+   },
+   {
+    "name": "김종민",
+    "career": "국회의원",
+    "round": "7차",
+    "won": false,
+    "note": "탈당"
+   }
+  ]
+ },
+ "충남 당진시": {
+  "method": "1차 경선",
+  "cands": [
+   {
+    "name": "송노섭",
+    "career": "단국대학교 초빙교수",
+    "round": "1차",
+    "won": false,
+    "note": ""
+   },
+   {
+    "name": "어기구",
+    "career": "국회의원",
+    "round": "7차",
+    "won": true,
+    "note": ""
+   }
+  ]
+ },
+ "충남 홍성군예산군": {
+  "method": "전략공천",
+  "cands": [
+   {
+    "name": "양승조",
+    "career": "전 충청남도지사",
+    "round": "1차",
+    "won": true,
+    "note": ""
+   },
+   {
+    "name": "김학민",
+    "career": "순천향대학교 교수",
+    "round": "2차",
+    "won": false,
+    "note": "컷오프"
+   }
+  ]
+ },
+ "전북 전주시갑": {
+  "method": "단수공천",
+  "cands": [
+   {
+    "name": "신원식",
+    "career": "전 전라북도 정무부지사",
+    "round": "2차",
+    "won": false,
+    "note": "탈당"
+   },
+   {
+    "name": "김윤덕",
+    "career": "국회의원",
+    "round": "10차",
+    "won": true,
+    "note": ""
+   }
+  ]
+ },
+ "전북 전주시을": {
+  "method": "전략경선",
+  "cands": [
+   {
+    "name": "고종윤",
+    "career": "변호사",
+    "round": "1차",
+    "won": false,
+    "note": ""
+   },
+   {
+    "name": "이덕춘",
+    "career": "변호사",
+    "round": "1차",
+    "won": false,
+    "note": ""
+   },
+   {
+    "name": "최형재",
+    "career": "당 정책위원회 부의장",
+    "round": "1차",
+    "won": false,
+    "note": ""
+   },
+   {
+    "name": "박진만",
+    "career": "전 전주시의원",
+    "round": "3차",
+    "won": false,
+    "note": "컷오프"
+   },
+   {
+    "name": "성치두",
+    "career": "전 전북도당 청년소통협력위원장",
+    "round": "3차",
+    "won": false,
+    "note": "컷오프"
+   },
+   {
+    "name": "양경숙",
+    "career": "국회의원",
+    "round": "10차",
+    "won": false,
+    "note": ""
+   },
+   {
+    "name": "여운태",
+    "career": "전 육군참모차장",
+    "round": "12차",
+    "won": false,
+    "note": "컷오프"
+   },
+   {
+    "name": "김윤태",
+    "career": "우석대학교 교수",
+    "round": "",
+    "won": false,
+    "note": "사퇴"
+   },
+   {
+    "name": "이성윤",
+    "career": "전 서울중앙지방검찰청 검사장",
+    "round": "",
+    "won": true,
+    "note": ""
+   }
+  ]
+ },
+ "전북 전주시병": {
+  "method": "9차 경선",
+  "cands": [
+   {
+    "name": "황현선",
+    "career": "전 대통령비서실 선임행정관",
+    "round": "1차",
+    "won": false,
+    "note": "컷오프"
+   },
+   {
+    "name": "김성주",
+    "career": "국회의원",
+    "round": "7차",
+    "won": false,
+    "note": ""
+   },
+   {
+    "name": "김호성",
+    "career": "전 전주시의원",
+    "round": "7차",
+    "won": false,
+    "note": "컷오프"
+   },
+   {
+    "name": "정동영",
+    "career": "전 통일부장관",
+    "round": "10차",
+    "won": true,
+    "note": ""
+   }
+  ]
+ },
+ "전북 군산시김제시부안군갑": {
+  "method": "6차 경선",
+  "cands": [
+   {
+    "name": "신영대",
+    "career": "국회의원",
+    "round": "1차",
+    "won": true,
+    "note": ""
+   },
+   {
+    "name": "채이배",
+    "career": "전 국회의원",
+    "round": "1차",
+    "won": false,
+    "note": "사퇴"
+   },
+   {
+    "name": "김의겸",
+    "career": "국회의원",
+    "round": "10차",
+    "won": false,
+    "note": ""
+   }
+  ]
+ },
+ "전북 군산시김제시부안군을": {
+  "method": "단수공천",
+  "cands": [
+   {
+    "name": "박준배",
+    "career": "전 김제시장",
+    "round": "2차",
+    "won": false,
+    "note": "컷오프"
+   },
+   {
+    "name": "이원택",
+    "career": "국회의원",
+    "round": "7차",
+    "won": true,
+    "note": ""
+   }
+  ]
+ },
+ "전북 익산시갑": {
+  "method": "1차 경선",
+  "cands": [
+   {
+    "name": "고상진",
+    "career": "전 전북대학교 겸임교수",
+    "round": "1차",
+    "won": false,
+    "note": "컷오프"
+   },
+   {
+    "name": "이춘석",
+    "career": "전 국회의원",
+    "round": "1차",
+    "won": true,
+    "note": ""
+   },
+   {
+    "name": "성기청",
+    "career": "전 한국국토정보공사 상임감사",
+    "round": "2차",
+    "won": false,
+    "note": "컷오프"
+   },
+   {
+    "name": "김수흥",
+    "career": "국회의원",
+    "round": "6차",
+    "won": false,
+    "note": ""
+   }
+  ]
+ },
+ "전북 익산시을": {
+  "method": "단수공천",
+  "cands": [
+   {
+    "name": "이희성",
+    "career": "변호사",
+    "round": "2차",
+    "won": false,
+    "note": "컷오프"
+   },
+   {
+    "name": "한병도",
+    "career": "국회의원",
+    "round": "10차",
+    "won": true,
+    "note": ""
+   }
+  ]
+ },
+ "전북 정읍시고창군": {
+  "method": "9차 경선",
+  "cands": [
+   {
+    "name": "유성엽",
+    "career": "전 국회의원",
+    "round": "1차",
+    "won": false,
+    "note": ""
+   },
+   {
+    "name": "유재석",
+    "career": "전 경기도일자리재단 상임감사",
+    "round": "6차",
+    "won": false,
+    "note": "컷오프"
+   },
+   {
+    "name": "윤준병",
+    "career": "국회의원",
+    "round": "7차",
+    "won": true,
+    "note": ""
+   },
+   {
+    "name": "황치연",
+    "career": "전 헌법재판소 헌법연구관",
+    "round": "10차",
+    "won": false,
+    "note": "컷오프"
+   }
+  ]
+ },
+ "전북 남원시장수군임실군순창군": {
+  "method": "9차 경선",
+  "cands": [
+   {
+    "name": "김원종",
+    "career": "전 대통령비서실 선임행정관",
+    "round": "1차",
+    "won": false,
+    "note": "컷오프"
+   },
+   {
+    "name": "박희승",
+    "career": "전 서울중앙지방법원 부장판사",
+    "round": "1차",
+    "won": true,
+    "note": ""
+   },
+   {
+    "name": "이강래",
+    "career": "전 국회의원",
+    "round": "1차",
+    "won": false,
+    "note": "사퇴"
+   },
+   {
+    "name": "성준후",
+    "career": "중앙당 부대변인",
+    "round": "3차",
+    "won": false,
+    "note": ""
+   },
+   {
+    "name": "이환주",
+    "career": "전 남원시장",
+    "round": "7차",
+    "won": false,
+    "note": ""
+   }
+  ]
+ },
+ "전북 완주군진안군무주군": {
+  "method": "9차 경선",
+  "cands": [
+   {
+    "name": "두세훈",
+    "career": "전 전라북도의원",
+    "round": "1차",
+    "won": false,
+    "note": "컷오프"
+   },
+   {
+    "name": "김정호",
+    "career": "변호사",
+    "round": "2차",
+    "won": false,
+    "note": ""
+   },
+   {
+    "name": "정희균",
+    "career": "전 정책위원회 부의장",
+    "round": "2차",
+    "won": false,
+    "note": "재심인용"
+   },
+   {
+    "name": "안호영",
+    "career": "국회의원",
+    "round": "10차",
+    "won": true,
+    "note": ""
+   }
+  ]
+ },
+ "전남 목포시": {
+  "method": "8차 경선",
+  "cands": [
+   {
+    "name": "김원이",
+    "career": "국회의원",
+    "round": "1차",
+    "won": true,
+    "note": ""
+   },
+   {
+    "name": "문용진",
+    "career": "당 보건의료특별위원회 부위원장",
+    "round": "1차",
+    "won": false,
+    "note": "재심인용"
+   },
+   {
+    "name": "최일곤",
+    "career": "전 대통령비서실 행정관",
+    "round": "1차",
+    "won": false,
+    "note": "컷오프"
+   },
+   {
+    "name": "배종호",
+    "career": "한국정치평론가협회장",
+    "round": "3차",
+    "won": false,
+    "note": ""
+   }
+  ]
+ },
+ "전남 여수시갑": {
+  "method": "9차 경선",
+  "cands": [
+   {
+    "name": "주철현",
+    "career": "국회의원",
+    "round": "6차",
+    "won": true,
+    "note": ""
+   },
+   {
+    "name": "박기성",
+    "career": "전 성균관대학교 겸임교수",
+    "round": "7차",
+    "won": false,
+    "note": "컷오프"
+   },
+   {
+    "name": "이용주",
+    "career": "전 국회의원",
+    "round": "7차",
+    "won": false,
+    "note": ""
+   }
+  ]
+ },
+ "전남 여수시을": {
+  "method": "9차 경선",
+  "cands": [
+   {
+    "name": "권오봉",
+    "career": "전 여수시장",
+    "round": "1차",
+    "won": false,
+    "note": "탈당"
+   },
+   {
+    "name": "조계원",
+    "career": "중앙당 부대변인",
+    "round": "3차",
+    "won": true,
+    "note": ""
+   },
+   {
+    "name": "김회재",
+    "career": "국회의원",
+    "round": "7차",
+    "won": false,
+    "note": ""
+   }
+  ]
+ },
+ "전남 순천시광양시곡성군구례군갑": {
+  "method": "전략경선",
+  "cands": [
+   {
+    "name": "김문수",
+    "career": "전 서울특별시의원",
+    "round": "1차",
+    "won": true,
+    "note": ""
+   },
+   {
+    "name": "서갑원",
+    "career": "전 국회의원",
+    "round": "1차",
+    "won": false,
+    "note": "컷오프"
+   },
+   {
+    "name": "손훈모",
+    "career": "변호사",
+    "round": "1차",
+    "won": false,
+    "note": "공천취소"
+   },
+   {
+    "name": "조용우",
+    "career": "전 대통령비서실 국정기록비서관",
+    "round": "1차",
+    "won": false,
+    "note": "컷오프"
+   },
+   {
+    "name": "허석",
+    "career": "전 순천시장",
+    "round": "7차",
+    "won": false,
+    "note": "컷오프"
+   },
+   {
+    "name": "소병철",
+    "career": "국회의원",
+    "round": "10차",
+    "won": false,
+    "note": "불출마"
+   },
+   {
+    "name": "신성식",
+    "career": "전 수원지방검찰청 검사장",
+    "round": "10차",
+    "won": false,
+    "note": "컷오프"
+   }
+  ]
+ },
+ "전남 순천시광양시곡성군구례군을": {
+  "method": "전략경선",
+  "cands": [
+   {
+    "name": "권향엽",
+    "career": "전 대통령비서실 균형인사비서관",
+    "round": "1차",
+    "won": true,
+    "note": ""
+   },
+   {
+    "name": "유근기",
+    "career": "전 곡성군수",
+    "round": "2차",
+    "won": false,
+    "note": "컷오프"
+   },
+   {
+    "name": "이충재",
+    "career": "전 전국공무원노조 위원장",
+    "round": "2차",
+    "won": false,
+    "note": "컷오프"
+   },
+   {
+    "name": "서동용",
+    "career": "국회의원",
+    "round": "7차",
+    "won": false,
+    "note": ""
+   }
+  ]
+ },
+ "전남 나주시화순군": {
+  "method": "9차 경선(결선)",
+  "cands": [
+   {
+    "name": "손금주",
+    "career": "전 국회의원",
+    "round": "1차",
+    "won": false,
+    "note": "결선"
+   },
+   {
+    "name": "최용선",
+    "career": "전 대통령비서실 선임행정관",
+    "round": "1차",
+    "won": false,
+    "note": "컷오프"
+   },
+   {
+    "name": "구충곤",
+    "career": "전 화순군수",
+    "round": "2차",
+    "won": false,
+    "note": ""
+   },
+   {
+    "name": "신정훈",
+    "career": "국회의원",
+    "round": "12차",
+    "won": true,
+    "note": "결선"
+   }
+  ]
+ },
+ "전남 담양군함평군영광군장성군": {
+  "method": "단수공천",
+  "cands": [
+   {
+    "name": "김영미",
+    "career": "동신대학교 교수",
+    "round": "1차",
+    "won": false,
+    "note": "컷오프"
+   },
+   {
+    "name": "박노원",
+    "career": "전 대통령비서실 행정관",
+    "round": "2차",
+    "won": false,
+    "note": "컷오프"
+   },
+   {
+    "name": "이석형",
+    "career": "전 함평군수",
+    "round": "3차",
+    "won": false,
+    "note": "탈당"
+   },
+   {
+    "name": "이개호",
+    "career": "국회의원",
+    "round": "10차",
+    "won": true,
+    "note": ""
+   }
+  ]
+ },
+ "전남 고흥군보성군장흥군강진군": {
+  "method": "8차 경선",
+  "cands": [
+   {
+    "name": "최영호",
+    "career": "전 광주광역시 남구청장",
+    "round": "1차",
+    "won": false,
+    "note": "컷오프"
+   },
+   {
+    "name": "문금주",
+    "career": "전 전라남도 행정부지사",
+    "round": "2차",
+    "won": true,
+    "note": ""
+   },
+   {
+    "name": "조재환",
+    "career": "행정사",
+    "round": "2차",
+    "won": false,
+    "note": "컷오프"
+   },
+   {
+    "name": "한명진",
+    "career": "전 방위사업청 차장",
+    "round": "2차",
+    "won": false,
+    "note": "컷오프"
+   },
+   {
+    "name": "김수정",
+    "career": "정책위원회 부의장",
+    "round": "7차",
+    "won": false,
+    "note": "컷오프"
+   },
+   {
+    "name": "김승남",
+    "career": "국회의원",
+    "round": "7차",
+    "won": false,
+    "note": ""
+   }
+  ]
+ },
+ "전남 해남군완도군진도군": {
+  "method": "9차 경선",
+  "cands": [
+   {
+    "name": "박지원",
+    "career": "전 국가정보원장",
+    "round": "1차",
+    "won": true,
+    "note": ""
+   },
+   {
+    "name": "윤재갑",
+    "career": "국회의원",
+    "round": "1차",
+    "won": false,
+    "note": ""
+   },
+   {
+    "name": "윤광국",
+    "career": "전 한국감정원 호남지역본부장",
+    "round": "2차",
+    "won": false,
+    "note": "컷오프"
+   },
+   {
+    "name": "장환석",
+    "career": "전 대통령비서실 선임행정관",
+    "round": "2차",
+    "won": false,
+    "note": "컷오프"
+   },
+   {
+    "name": "정의찬",
+    "career": "전 경기도수원월드컵경기장관리재단 사무총장",
+    "round": "2차",
+    "won": false,
+    "note": "부적격"
+   },
+   {
+    "name": "김병구",
+    "career": "변호사",
+    "round": "7차",
+    "won": false,
+    "note": "컷오프"
+   },
+   {
+    "name": "이영호",
+    "career": "전 국회의원",
+    "round": "7차",
+    "won": false,
+    "note": "컷오프"
+   }
+  ]
+ },
+ "전남 영암군무안군신안군": {
+  "method": "9차 경선(결선)",
+  "cands": [
+   {
+    "name": "김병도",
+    "career": "정책위원회 부의장",
+    "round": "2차",
+    "won": false,
+    "note": "컷오프"
+   },
+   {
+    "name": "정승욱",
+    "career": "전 한국외국어대학교 겸임교수",
+    "round": "8차",
+    "won": false,
+    "note": "컷오프"
+   },
+   {
+    "name": "김태성",
+    "career": "전 제11기계화보병사단장",
+    "round": "10차",
+    "won": false,
+    "note": "결선"
+   },
+   {
+    "name": "서삼석",
+    "career": "국회의원",
+    "round": "10차",
+    "won": true,
+    "note": "결선"
+   },
+   {
+    "name": "이혜자",
+    "career": "전 전라남도의원",
+    "round": "10차",
+    "won": false,
+    "note": "컷오프"
+   },
+   {
+    "name": "천경배",
+    "career": "전 법무부장관 비서관",
+    "round": "14차",
+    "won": false,
+    "note": ""
+   }
+  ]
+ },
+ "경북 포항시북구": {
+  "method": "단수공천",
+  "cands": [
+   {
+    "name": "오중기",
+    "career": "전 한국도로공사시설관리 대표이사",
+    "round": "1차",
+    "won": true,
+    "note": ""
+   }
+  ]
+ },
+ "경북 포항시남구울릉군": {
+  "method": "1차 경선",
+  "cands": [
+   {
+    "name": "유성찬",
+    "career": "전 한국환경공단 상임이사 및 상임감사",
+    "round": "2차",
+    "won": false,
+    "note": ""
+   },
+   {
+    "name": "김상헌",
+    "career": "전 경상북도의원",
+    "round": "12차",
+    "won": true,
+    "note": ""
+   }
+  ]
+ },
+ "경북 경주시": {
+  "method": "단수공천",
+  "cands": [
+   {
+    "name": "한영태",
+    "career": "전 경주시의원",
+    "round": "6차",
+    "won": true,
+    "note": ""
+   },
+   {
+    "name": "이외우",
+    "career": "전 경주경실련 여성위원장",
+    "round": "12차",
+    "won": false,
+    "note": "컷오프"
+   }
+  ]
+ },
+ "경북 김천시": {
+  "method": "단수공천",
+  "cands": [
+   {
+    "name": "황태성",
+    "career": "지역위원장",
+    "round": "2차",
+    "won": true,
+    "note": ""
+   },
+   {
+    "name": "장춘호",
+    "career": "감문면 주민자치위원",
+    "round": "3차",
+    "won": false,
+    "note": "사퇴"
+   }
+  ]
+ },
+ "경북 안동시예천군": {
+  "method": "단수공천",
+  "cands": [
+   {
+    "name": "김상우",
+    "career": "안동대학교 교수",
+    "round": "",
+    "won": true,
+    "note": ""
+   },
+   {
+    "name": "정용채",
+    "career": "경상북도당 부위원장",
+    "round": "12차",
+    "won": false,
+    "note": "컷오프"
+   }
+  ]
+ },
+ "경북 구미시갑": {
+  "method": "단수공천",
+  "cands": [
+   {
+    "name": "김철호",
+    "career": "손해사정사",
+    "round": "1차",
+    "won": true,
+    "note": ""
+   }
+  ]
+ },
+ "경북 구미시을": {
+  "method": "1차 경선",
+  "cands": [
+   {
+    "name": "김현권",
+    "career": "전 국회의원",
+    "round": "3차",
+    "won": true,
+    "note": ""
+   },
+   {
+    "name": "장세용",
+    "career": "전 구미시장",
+    "round": "3차",
+    "won": false,
+    "note": ""
+   }
+  ]
+ },
+ "경북 영주시영양군봉화군": {
+  "method": "단수공천",
+  "cands": [
+   {
+    "name": "박규환",
+    "career": "전 숭실대학교 초빙교수",
+    "round": "",
+    "won": true,
+    "note": ""
+   }
+  ]
+ },
+ "경북 영천시청도군": {
+  "method": "단수공천",
+  "cands": [
+   {
+    "name": "이영수",
+    "career": "지역위원장",
+    "round": "2차",
+    "won": true,
+    "note": ""
+   }
+  ]
+ },
+ "경북 상주시문경시": {
+  "method": "단수공천",
+  "cands": [
+   {
+    "name": "이윤희",
+    "career": "경상북도당 부위원장",
+    "round": "7차",
+    "won": true,
+    "note": ""
+   }
+  ]
+ },
+ "경북 고령군성주군칠곡군": {
+  "method": "단수공천",
+  "cands": [
+   {
+    "name": "정석원",
+    "career": "신라대학교 겸임교수",
+    "round": "",
+    "won": true,
+    "note": ""
+   }
+  ]
+ },
+ "경남 창원시의창구": {
+  "method": "단수공천",
+  "cands": [
+   {
+    "name": "김기운",
+    "career": "전 세한대학교 초빙교수",
+    "round": "1차",
+    "won": false,
+    "note": "컷오프"
+   },
+   {
+    "name": "김지수",
+    "career": "전 경상남도의회 의장",
+    "round": "6차",
+    "won": true,
+    "note": ""
+   }
+  ]
+ },
+ "경남 창원시성산구": {
+  "method": "단수공천",
+  "cands": [
+   {
+    "name": "허성무",
+    "career": "전 창원시장",
+    "round": "1차",
+    "won": true,
+    "note": ""
+   }
+  ]
+ },
+ "경남 창원시마산합포구": {
+  "method": "단수공천",
+  "cands": [
+   {
+    "name": "이옥선",
+    "career": "전 경상남도의원",
+    "round": "1차",
+    "won": true,
+    "note": ""
+   }
+  ]
+ },
+ "경남 창원시마산회원구": {
+  "method": "단수공천",
+  "cands": [
+   {
+    "name": "송순호",
+    "career": "전 경상남도의원",
+    "round": "7차",
+    "won": true,
+    "note": ""
+   }
+  ]
+ },
+ "경남 창원시진해구": {
+  "method": "1차 경선",
+  "cands": [
+   {
+    "name": "김종길",
+    "career": "전 중소기업기술혁신협회 상근부회장",
+    "round": "2차",
+    "won": false,
+    "note": ""
+   },
+   {
+    "name": "황기철",
+    "career": "전 국가보훈처장",
+    "round": "6차",
+    "won": true,
+    "note": ""
+   },
+   {
+    "name": "서상일",
+    "career": "진해서병원 원장",
+    "round": "8차",
+    "won": false,
+    "note": "컷오프"
+   }
+  ]
+ },
+ "경남 진주시갑": {
+  "method": "단수공천",
+  "cands": [
+   {
+    "name": "갈상돈",
+    "career": "전 문화체육관광부장관 정책보좌관",
+    "round": "1차",
+    "won": true,
+    "note": ""
+   },
+   {
+    "name": "이승환",
+    "career": "한국산업기술원 정책지원연구소장",
+    "round": "1차",
+    "won": false,
+    "note": "컷오프"
+   }
+  ]
+ },
+ "경남 진주시을": {
+  "method": "단수공천",
+  "cands": [
+   {
+    "name": "한경호",
+    "career": "전 경상남도 행정부지사",
+    "round": "1차",
+    "won": true,
+    "note": ""
+   }
+  ]
+ },
+ "경남 통영시고성군": {
+  "method": "단수공천",
+  "cands": [
+   {
+    "name": "강석주",
+    "career": "전 통영시장",
+    "round": "15차",
+    "won": true,
+    "note": ""
+   }
+  ]
+ },
+ "경남 사천시남해군하동군": {
+  "method": "1차 경선",
+  "cands": [
+   {
+    "name": "고재성",
+    "career": "정책위원회 부의장",
+    "round": "1차",
+    "won": false,
+    "note": ""
+   },
+   {
+    "name": "제윤경",
+    "career": "전 국회의원",
+    "round": "14차",
+    "won": true,
+    "note": ""
+   }
+  ]
+ },
+ "경남 김해시갑": {
+  "method": "단수공천",
+  "cands": [
+   {
+    "name": "민홍철",
+    "career": "국회의원",
+    "round": "6차",
+    "won": true,
+    "note": ""
+   }
+  ]
+ },
+ "경남 김해시을": {
+  "method": "단수공천",
+  "cands": [
+   {
+    "name": "신상훈",
+    "career": "전 경상남도의원",
+    "round": "6차",
+    "won": false,
+    "note": "컷오프"
+   },
+   {
+    "name": "김정호",
+    "career": "국회의원",
+    "round": "7차",
+    "won": true,
+    "note": ""
+   },
+   {
+    "name": "김경수",
+    "career": "전 경상남도의원",
+    "round": "12차",
+    "won": false,
+    "note": "컷오프"
+   }
+  ]
+ },
+ "경남 밀양시의령군함안군창녕군": {
+  "method": "단수공천",
+  "cands": [
+   {
+    "name": "우서영",
+    "career": "경상남도당 대변인",
+    "round": "16차",
+    "won": true,
+    "note": ""
+   }
+  ]
+ },
+ "경남 거제시": {
+  "method": "단수공천",
+  "cands": [
+   {
+    "name": "변광용",
+    "career": "전 거제시장",
+    "round": "1차",
+    "won": true,
+    "note": ""
+   }
+  ]
+ },
+ "경남 양산시갑": {
+  "method": "단수공천",
+  "cands": [
+   {
+    "name": "이재영",
+    "career": "전 대외경제정책연구원장",
+    "round": "1차",
+    "won": true,
+    "note": ""
+   }
+  ]
+ },
+ "경남 양산시을": {
+  "method": "단수공천",
+  "cands": [
+   {
+    "name": "박대조",
+    "career": "전 양산시의원",
+    "round": "1차",
+    "won": false,
+    "note": "컷오프"
+   },
+   {
+    "name": "김두관",
+    "career": "국회의원",
+    "round": "7차",
+    "won": true,
+    "note": ""
+   }
+  ]
+ },
+ "경남 산청군함양군거창군합천군": {
+  "method": "단수공천",
+  "cands": [
+   {
+    "name": "김기태",
+    "career": "전 합천군의원",
+    "round": "",
+    "won": true,
+    "note": ""
+   }
+  ]
+ },
+ "제주 제주시갑": {
+  "method": "1차 경선",
+  "cands": [
+   {
+    "name": "문대림",
+    "career": "전 제주특별자치도의회 의장",
+    "round": "1차",
+    "won": true,
+    "note": ""
+   },
+   {
+    "name": "문윤택",
+    "career": "전 제주국제대학교 교수",
+    "round": "1차",
+    "won": false,
+    "note": "컷오프"
+   },
+   {
+    "name": "송재호",
+    "career": "국회의원",
+    "round": "7차",
+    "won": false,
+    "note": ""
+   }
+  ]
+ },
+ "제주 제주시을": {
+  "method": "단수공천",
+  "cands": [
+   {
+    "name": "김한규",
+    "career": "국회의원",
+    "round": "10차",
+    "won": true,
+    "note": ""
+   }
+  ]
+ },
+ "제주 서귀포시": {
+  "method": "단수공천",
+  "cands": [
+   {
+    "name": "위성곤",
+    "career": "국회의원",
+    "round": "10차",
+    "won": true,
+    "note": ""
+   }
+  ]
+ }
+}

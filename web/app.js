@@ -22,11 +22,22 @@ const KOREA = [[124.6, 33.1], [130.95, 38.65]];
 const colorOf = (p) => (p === "공석" ? VACANT : PARTY_COLOR[p] || "#B8BBC2");
 // 정당 필터를 반영한 실제 칠할 색
 const paint = (p) => (!state.party || state.party === p ? colorOf(p) : OFF);
+// 판세: 세 선거(2024 총선·2025 대선·2026 지선) 민주 득표율 − 상대 후보 득표율 평균
+const GRADES = [["우세", "#1F5BC4"], ["경합우세", "#8DB1EC"], ["경합", "#F0C24B"], ["경합열세", "#F3A3A7"], ["열세", "#E2333C"]];
+const GRADE_COLOR = Object.fromEntries(GRADES);
+const gpaint = (g) => (!state.grade || state.grade === g ? GRADE_COLOR[g] || "#B8BBC2" : OFF);
+// 지역구 칸 색: 지금 색칠 기준(현재 의원 / 판세)에 따라
+const cellColor = (key) => {
+  if (state.mode === "outlook") return gpaint(state.outlook?.district[key]?.grade);
+  const m = state.members.district[key];
+  return paint(m ? m.party : "공석");
+};
 
 const $ = (s) => document.querySelector(s);
 const $$ = (s) => document.querySelectorAll(s);
 const esc = (s) => String(s ?? "").replace(/[&<>"']/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]));
-const state = { members: null, hexes: null, geo: null, sido: null, party: null, sel: null, map: null, view: "geo", counts: [] };
+const state = { members: null, hexes: null, geo: null, sido: null, party: null, sel: null, map: null, view: "geo", counts: [],
+                mode: "seat", grade: null, outlook: null, chairs: null };
 
 init();
 
@@ -58,6 +69,13 @@ async function init() {
   Object.assign(state, { members, hexes, geo, sido });
   // 선거 결과는 없어도 지도는 보이게 따로 받음
   load("results.json").then((r) => { state.results = r; if (state.sel) select(state.sel, false); }).catch(() => {});
+  load("outlook.json").then((o) => {
+    state.outlook = o;
+    for (const f of state.geo.features) f.properties.grade = o.district[f.properties.key]?.grade || "";
+    state.map?.getSource("d")?.setData(state.geo);
+    if (state.mode === "outlook") refreshMode();
+  }).catch(() => {});
+  load("chairs.json").then((c) => { state.chairs = c; if (state.sel) select(state.sel, false); else if (state.mode === "outlook") showOverview(); }).catch(() => {});
   state.counts = partyCounts();
   $("#asof").textContent = members.fetched.replace(/-/g, ".") + " 기준";
   $("#prcount").textContent = members.pr.length;
@@ -70,7 +88,9 @@ async function init() {
   drawPR();
   setupSearch();
   setupTabs();
+  setupMode();
 
+  if (new URLSearchParams(location.search).get("mode") === "outlook") setMode("outlook");
   const fromHash = decodeURIComponent(location.hash.slice(1));
   if (fromHash && (members.district[fromHash] || members.vacant.includes(fromHash))) select(fromHash);
   else showOverview();
@@ -121,10 +141,64 @@ function drawParties() {
     `<button data-p="${esc(x.party)}" style="--c:${x.party === "공석" ? "#888" : colorOf(x.party)}" aria-pressed="false">
        <i style="background:${colorOf(x.party)};${x.party === "공석" ? "box-shadow:inset 0 0 0 1px #888" : ""}"></i>${esc(x.party)} <b>${x.total}</b>
      </button>`).join("");
-  $("#parties").addEventListener("click", (e) => {
+  $("#parties").onclick = (e) => {
     const b = e.target.closest("button"); if (!b) return;
     setParty(state.party === b.dataset.p ? null : b.dataset.p);
+  };
+}
+
+// 판세 모드의 띠: 우세~열세 버튼(누르면 그 등급만 표시)
+function drawGrades() {
+  const n = (g) => Object.values(state.outlook?.district || {}).filter((d) => d.grade === g).length;
+  $("#parties").innerHTML = GRADES.map(([g, c]) =>
+    `<button data-g="${g}" style="--c:${c}" aria-pressed="false"><i style="background:${c}"></i>${g} <b>${n(g)}</b></button>`).join("");
+  $("#parties").onclick = (e) => {
+    const b = e.target.closest("button"); if (!b) return;
+    setGrade(state.grade === b.dataset.g ? null : b.dataset.g);
+  };
+}
+
+function setGrade(g) {
+  state.grade = g;
+  $("#parties").classList.toggle("filtering", !!g);
+  $$("#parties button").forEach((b) => { b.classList.toggle("on", b.dataset.g === g); b.setAttribute("aria-pressed", b.dataset.g === g); });
+  repaint();
+  if (state.mode === "outlook" && !state.sel && state.outlook) { state.listScroll = 0; showOutlookOverview(); }
+}
+
+// ── 색칠 기준: 현재 의원 / 판세 ───────────────────────────
+document.addEventListener("keydown", (e) => {
+  if (state.mode !== "outlook" || !state.sel || e.target.closest("input")) return;
+  if (e.key === "Escape") clearSelection();
+  if (e.key === "ArrowLeft" || e.key === "ArrowUp") $("#prevK")?.click();
+  if (e.key === "ArrowRight" || e.key === "ArrowDown") { $("#nextK")?.click(); }
+});
+function setupMode() {
+  $(".seg.mode").addEventListener("click", (e) => {
+    const b = e.target.closest("button[data-mode]");
+    if (b) setMode(b.dataset.mode);
   });
+}
+function setMode(m) {
+  state.mode = m;
+  $$(".seg.mode button").forEach((b) => { b.classList.toggle("on", b.dataset.mode === m); b.setAttribute("aria-pressed", b.dataset.mode === m); });
+  const u = new URL(location.href);
+  m === "outlook" ? u.searchParams.set("mode", "outlook") : u.searchParams.delete("mode");
+  history.replaceState(null, "", u);
+  refreshMode();
+}
+function refreshMode() {
+  state.party = null; state.grade = null;
+  $("#parties").classList.remove("filtering");
+  state.mode === "outlook" ? drawGrades() : drawParties();
+  repaint();
+  paintScore();
+  state.sel ? select(state.sel, false) : showOverview();
+}
+// 지도·육각형 색 다시 칠하기
+function repaint() {
+  if (state.map?.getLayer("fill")) state.map.setPaintProperty("fill", "fill-color", fillExpr());
+  $$("#hex .cell").forEach((c) => c.setAttribute("fill", cellColor(c.dataset.key)));
 }
 
 function setParty(p) {
@@ -132,8 +206,7 @@ function setParty(p) {
   $("#parties").classList.toggle("filtering", !!p);
   $$("#parties button").forEach((b) => { b.classList.toggle("on", b.dataset.p === p); b.setAttribute("aria-pressed", b.dataset.p === p); });
   paintScore();
-  if (state.map?.getLayer("fill")) state.map.setPaintProperty("fill", "fill-color", fillExpr());
-  $$("#hex .cell").forEach((c) => c.setAttribute("fill", paint(c.dataset.party)));
+  repaint();
   $$("#view-pr .prgroup").forEach((g) => (g.hidden = !!p && g.dataset.p !== p));
   $$(".hemi circle").forEach((c) => c.setAttribute("fill", paint(c.dataset.p)));
   $$(".table tr[data-p]").forEach((r) => (r.style.opacity = !p || r.dataset.p === p ? 1 : 0.4));
@@ -141,6 +214,12 @@ function setParty(p) {
 
 // ── 실제 지도 ───────────────────────────────────────────
 function fillExpr() {
+  if (state.mode === "outlook") {
+    const g = ["match", ["get", "grade"]];
+    for (const [k] of GRADES) g.push(k, gpaint(k));
+    g.push("#B8BBC2");
+    return g;
+  }
   const e = ["match", ["get", "party"]];
   for (const p of [...Object.keys(PARTY_COLOR), "공석"]) e.push(p, paint(p));
   e.push(state.party ? OFF : "#B8BBC2");
@@ -255,7 +334,7 @@ function drawHex() {
     cells.map((c) => {
       const m = state.members.district[c.key];
       const party = m ? m.party : "공석";
-      return `<polygon class="cell" data-key="${esc(c.key)}" data-party="${esc(party)}" points="${c.pts.map((p) => p.map((v) => v.toFixed(1)).join(",")).join(" ")}" fill="${paint(party)}"${m ? "" : ' stroke-dasharray="3 2" style="stroke:#6b7079"'}/>`;
+      return `<polygon class="cell" data-key="${esc(c.key)}" data-party="${esc(party)}" points="${c.pts.map((p) => p.map((v) => v.toFixed(1)).join(",")).join(" ")}" fill="${cellColor(c.key)}"${m ? "" : ' stroke-dasharray="3 2" style="stroke:#6b7079"'}/>`;
     }).join("") +
     `<path class="sidoline" d="${edges.join("")}"/>` + labels.join("");
 
@@ -325,6 +404,7 @@ function hemicycle() {
 }
 
 function showOverview() {
+  if (state.mode === "outlook") return showOutlookOverview();
   const rows = [...state.counts].sort((a, b) => (a.party === "공석") - (b.party === "공석") || b.total - a.total);
   $("#panel").innerHTML = `
     <h2 class="ov-title">지금 국회는</h2>
@@ -348,6 +428,7 @@ function select(key, fly = true) {
   highlightHex(key);
   history.replaceState(null, "", "#" + encodeURIComponent(key));
   const m = state.members.district[key];
+  if (state.mode === "outlook") return showOutlook(key, m);
   if (m) return showMember(m, key);
   $("#panel").innerHTML = `${backBtn()}<p class="where"><span>지역구</span><b>${esc(key)}</b></p>
     <div class="vacant"><b>공석</b> — 재보궐선거 전까지 이 지역구의 국회의원이 없어요.</div>
@@ -379,6 +460,7 @@ function showMember(m, key) {
         <span class="party-tag"><i style="background:${colorOf(m.party)}"></i>${esc(m.party)}</span>
       </div>
     </div>
+    ${snsHTML(m.sns)}
     <ul class="facts">
       <li><span>당선</span>${esc(m.reele)}</li>
       ${age ? `<li><span>나이</span>${age}세 · ${esc(m.sex)}</li>` : ""}
@@ -387,12 +469,28 @@ function showMember(m, key) {
       ${m.tel ? `<li><span>전화</span>${esc(m.tel)}</li>` : ""}
       ${m.home ? `<li><span>홈페이지</span><a href="${esc(m.home)}" target="_blank" rel="noopener">${esc(m.home.replace(/^https?:\/\//, "").replace(/\/$/, ""))}</a></li>` : ""}
     </ul>
-    ${key ? electionHTML(key, m.name) : ""}`;
+    ${key ? electionHTML(key, m.name) : ""}
+    ${key && state.outlook ? `<button class="to-outlook" id="toOutlook">이 지역구 판세 · 민주당 지역위원장 보기 →</button>` : ""}`;
   bindBack();
+  $("#toOutlook")?.addEventListener("click", () => setMode("outlook"));
   if (window.matchMedia("(max-width: 1080px)").matches) {
     const y = $("#panel").getBoundingClientRect().top + scrollY - $("#bar").offsetHeight - 12;
     window.scrollTo({ top: y, behavior: "smooth" });
   }
+}
+
+// ── SNS ───────────────────────────────────────────────
+const SNS = [
+  ["youtube", "유튜브", "#FF0033", '<path d="M21.6 7.2a2.5 2.5 0 0 0-1.8-1.8C18.2 5 12 5 12 5s-6.2 0-7.8.4A2.5 2.5 0 0 0 2.4 7.2 26 26 0 0 0 2 12a26 26 0 0 0 .4 4.8 2.5 2.5 0 0 0 1.8 1.8C5.8 19 12 19 12 19s6.2 0 7.8-.4a2.5 2.5 0 0 0 1.8-1.8A26 26 0 0 0 22 12a26 26 0 0 0-.4-4.8zM10 15V9l5.2 3z"/>'],
+  ["facebook", "페이스북", "#0866FF", '<path d="M22 12a10 10 0 1 0-11.6 9.9v-7H7.9V12h2.5V9.8c0-2.5 1.5-3.9 3.8-3.9 1.1 0 2.2.2 2.2.2v2.5h-1.3c-1.2 0-1.6.8-1.6 1.6V12h2.8l-.4 2.9h-2.4v7A10 10 0 0 0 22 12z"/>'],
+  ["blog", "블로그", "#03C75A", '<path d="M4 3h16a1 1 0 0 1 1 1v13a1 1 0 0 1-1 1h-5.5L12 21l-2.5-3H4a1 1 0 0 1-1-1V4a1 1 0 0 1 1-1zm3.2 4.5v6h2.3c1.3 0 2.1-.7 2.1-1.7 0-.7-.4-1.2-1-1.4.5-.2.8-.7.8-1.2 0-1-.8-1.7-2-1.7zm1.4 1.1h.8c.4 0 .7.2.7.6s-.3.6-.7.6h-.8zm0 2.2h.9c.5 0 .8.3.8.7s-.3.7-.8.7h-.9zm4.6-3.3v6h1.4v-6z"/>'],
+  ["x", "X", "#111318", '<path d="M17.8 3h3.1l-6.8 7.7 8 10.3h-6.2l-4.9-6.3L5.4 21H2.3l7.2-8.3L1.8 3h6.4l4.4 5.8zm-1.1 16.2h1.7L7.4 4.7H5.6z"/>'],
+];
+function snsHTML(sns) {
+  const links = SNS.filter(([k]) => sns?.[k]);
+  if (!links.length) return "";
+  return `<div class="sns">${links.map(([k, label, c, path]) =>
+    `<a href="${esc(sns[k])}" target="_blank" rel="noopener" style="--c:${c}" title="${label}"><svg viewBox="0 0 24 24" aria-hidden="true">${path}</svg>${label}</a>`).join("")}</div>`;
 }
 
 // ── 선거 결과 ─────────────────────────────────────────
@@ -441,12 +539,162 @@ function raceHTML({ e, r }, main) {
     </div>` : ""}`;
 }
 
+// ── 판세 · 민주당 지역위원장 ────────────────────────────
+const signed = (x) => (x > 0 ? "+" : x < 0 ? "−" : "±") + Math.abs(x).toFixed(1);
+const chairOf = (key) => state.chairs?.district[key];
+const chairName = (key) => chairOf(key)?.chair?.name || "";
+const naverNews = (q) => "https://search.naver.com/search.naver?where=news&sort=1&query=" + encodeURIComponent(q);
+const highCount = (key) => (chairOf(key)?.news || []).filter((n) => n.level === "high").length;
+
+// 오른쪽 목록: 경합권 / 전체 / 리스크 탭. 지역구를 눌렀다 돌아와도 탭·스크롤 위치 유지
+const LIST_TABS = [["close", "경합권"], ["all", "전체"], ["risk", "리스크"]];
+function listKeys(tab) {
+  const d = state.outlook.district;
+  let keys = Object.keys(d);
+  if (state.grade) keys = keys.filter((k) => d[k].grade === state.grade);
+  if (tab === "close") return keys.filter((k) => ["경합우세", "경합", "경합열세"].includes(d[k].grade)).sort((a, b) => Math.abs(d[a].avg) - Math.abs(d[b].avg));
+  if (tab === "risk") return keys.filter((k) => highCount(k) || (chairOf(k)?.news || []).length)
+    .sort((a, b) => highCount(b) - highCount(a) || (chairOf(b)?.news.length || 0) - (chairOf(a)?.news.length || 0));
+  return keys.sort((a, b) => d[b].avg - d[a].avg);
+}
+
+function showOutlookOverview() {
+  const d = state.outlook?.district;
+  if (!d) { $("#panel").innerHTML = `<h2 class="ov-title">판세</h2><p class="ov-sub">판세 자료를 불러오는 중이에요…</p>`; return; }
+  state.listTab ??= "close";
+  const keys = Object.keys(d);
+  const cnt = Object.fromEntries(GRADES.map(([g]) => [g, keys.filter((k) => d[k].grade === g).length]));
+  const list = listKeys(state.listTab);
+  state.list = list;
+  const right = (k) => state.listTab === "risk"
+    ? `${esc(chairName(k))} · <b class="hi">${highCount(k)}</b>/${(chairOf(k)?.news || []).length}건`
+    : `<b class="${d[k].avg >= 0 ? "pos" : "neg"}">${signed(d[k].avg)}</b>`;
+  $("#panel").innerHTML = `
+    <h2 class="ov-title">판세 현황</h2>
+    <p class="ov-sub">2024 총선 · 2025 대선 · 2026 지선에서 민주당이 상대 후보보다 몇 %p 앞섰는지 평균 낸 값이에요.</p>
+    <div class="gradebar">${GRADES.map(([g, c]) => cnt[g] ? `<span data-g="${g}" style="flex:${cnt[g]};background:${c}" title="${g} ${cnt[g]}곳"></span>` : "").join("")}</div>
+    <ul class="gradelegend">${GRADES.map(([g, c]) => `<li data-g="${g}" class="${state.grade === g ? "on" : ""}"><i style="background:${c}"></i>${g} <b>${cnt[g]}</b></li>`).join("")}</ul>
+    <p class="rule">${esc(state.outlook.rule)}</p>
+    <div class="ltabs" role="tablist">${LIST_TABS.map(([t, n]) => `<button data-t="${t}" class="${state.listTab === t ? "on" : ""}">${n}</button>`).join("")}</div>
+    <p class="lmeta">${state.grade ? `<b>${state.grade}</b>만 · ` : ""}${list.length}곳 · ${state.listTab === "close" ? "차이가 작은 순" : state.listTab === "risk" ? "리스크 기사 많은 순(높음/전체)" : "민주당 우세한 순"}
+      ${state.grade ? `<button class="clear" id="clearGrade">등급 해제</button>` : ""}</p>
+    <ul class="klist" id="klist">${list.map((k, i) => `<li data-k="${esc(k)}"><em>${i + 1}</em><i style="background:${GRADE_COLOR[d[k].grade]}"></i><span>${esc(k.replace(/^(\S+) /, "$1 "))}</span><small>${right(k)}</small></li>`).join("") || "<li class='none'>해당 지역구가 없어요</li>"}</ul>
+    ${state.chairs ? `<p class="ov-hint">리스크 기사 갱신 ${esc(state.chairs.updated)}</p>` : ""}`;
+  $$("#klist li[data-k]").forEach((li) => li.addEventListener("click", () => {
+    state.listScroll = $("#panel").scrollTop;
+    select(li.dataset.k, true);
+  }));
+  $$(".ltabs button").forEach((b) => b.addEventListener("click", () => { state.listTab = b.dataset.t; state.listScroll = 0; showOutlookOverview(); }));
+  $$(".gradelegend li").forEach((li) => li.addEventListener("click", () => setGrade(state.grade === li.dataset.g ? null : li.dataset.g)));
+  $("#clearGrade")?.addEventListener("click", () => setGrade(null));
+  $("#panel").scrollTop = state.listScroll || 0;
+  $$(".gradebar span").forEach((sp) => (sp.style.opacity = !state.grade || sp.dataset.g === state.grade ? 1 : 0.25));
+}
+
+// 지역구 화면 위에 붙는 띠: 목록으로 / 이전 · 다음
+function navBar(key) {
+  const list = state.list || [];
+  const i = list.indexOf(key);
+  return `<div class="pnav">
+    <button class="pback" id="back">← ${LIST_TABS.find(([t]) => t === state.listTab)?.[1] || "지역구"} 목록</button>
+    ${i >= 0 ? `<span class="pstep"><button id="prevK" ${i === 0 ? "disabled" : ""} aria-label="이전 지역구">‹</button><b>${i + 1}</b>/${list.length}<button id="nextK" ${i === list.length - 1 ? "disabled" : ""} aria-label="다음 지역구">›</button></span>` : ""}
+  </div>`;
+}
+
+function showOutlook(key, m) {
+  $("#panel").innerHTML = `
+    ${navBar(key)}
+    <p class="where big"><span>지역구</span><b>${esc(key)}</b></p>
+    ${outlookHTML(key)}
+    ${chairHTML(key, m)}
+    ${primaryHTML(key)}
+    <details class="prev"><summary>현재 국회의원 · 2024 총선 결과 <small>${m ? `${esc(m.name)} (${esc(m.party)})` : "공석"}</small></summary>
+      ${electionHTML(key, m?.name) || ""}
+    </details>`;
+  bindBack();
+  $("#panel").scrollTop = 0;
+  const list = state.list || [], i = list.indexOf(key);
+  $("#prevK")?.addEventListener("click", () => select(list[i - 1], true));
+  $("#nextK")?.addEventListener("click", () => select(list[i + 1], true));
+  if (window.matchMedia("(max-width: 1080px)").matches) {
+    const y = $("#panel").getBoundingClientRect().top + scrollY - $("#bar").offsetHeight - 12;
+    window.scrollTo({ top: y, behavior: "smooth" });
+  }
+}
+
+function outlookHTML(key) {
+  const o = state.outlook?.district[key];
+  if (!o) return "";
+  const row = (e) => {
+    const r = o[e.id];
+    if (!r || r.m === undefined) return `<li><span class="el">${esc(e.name)}</span><span class="na">${esc(r?.none || "자료 없음")}</span></li>`;
+    const w = Math.min(Math.abs(r.m), 50) / 50 * 50;
+    return `<li><span class="el">${esc(e.name)}<small>${esc(e.desc)}</small></span>
+      <span class="mbar"><span class="${r.m >= 0 ? "pos" : "neg"}" style="width:${w}%"></span></span>
+      <b class="${r.m >= 0 ? "pos" : "neg"}">${signed(r.m)}</b>
+      <small class="dr">민주 ${r.d}% · 상대 ${r.r}%</small>
+      ${r.note ? `<small class="note">${esc(r.note)}</small>` : ""}</li>`;
+  };
+  return `<section class="outlook">
+    <div class="grade-badge" style="--c:${GRADE_COLOR[o.grade]}"><b>${o.grade}</b><span>세 선거 평균 <b>${signed(o.avg)}%p</b></span></div>
+    <ul class="mrows">${state.outlook.elections.map(row).join("")}</ul>
+    ${o.trend != null ? `<p class="trend">2024 총선 → 2026 지선: 민주당 격차 <b class="${o.trend >= 0 ? "pos" : "neg"}">${o.trend >= 0 ? "▲" : "▼"} ${Math.abs(o.trend).toFixed(1)}%p</b> ${o.trend >= 0 ? "좋아짐" : "나빠짐"}</p>` : ""}
+    <p class="src">대선·지선은 투표구·읍면동 결과를 이 지역구로 다시 더한 값(일부 나뉜 동은 비율로 추정)</p>
+  </section>`;
+}
+
+const STATUS_CLASS = { "현역 의원": "s-mp", "위원장": "s-chair", "직무대행": "s-acting", "확인필요": "s-unknown" };
+function chairHTML(key, m) {
+  const c = chairOf(key);
+  if (!state.chairs) return `<section class="chair"><h3 class="sec-h">민주당 지역위원장</h3><p class="ov-sub">불러오는 중…</p></section>`;
+  if (!c?.chair) return "";
+  const ch = c.chair;
+  const isMP = ch.status === "현역 의원" && m && m.name === ch.name;
+  const news = c.news || [];
+  const hi = news.filter((n) => n.level === "high"), lo = news.filter((n) => n.level === "low");
+  const li = (n) => `<li class="${n.level}"><a href="${esc(n.link)}" target="_blank" rel="noopener">${esc(n.title)}</a>
+      <small>${esc(n.date)} · ${esc(n.press)}${n.risk?.length ? ` · ${n.risk.map((w) => `<em>${esc(w)}</em>`).join("")}` : ""}</small></li>`;
+  const ordered = [...hi, ...lo, ...news.filter((n) => !n.level)];
+  return `<section class="chair">
+    <h3 class="sec-h">민주당 지역위원장</h3>
+    <div class="chair-card">
+      ${isMP && m.photo ? `<img src="${esc(m.photo)}" alt="">` : ""}
+      <div>
+        <p class="cn">${ch.name ? esc(ch.name) : "이름 확인 필요"}<span class="st ${STATUS_CLASS[ch.status] || ""}">${esc(ch.status)}</span></p>
+        ${ch.note ? `<p class="cnote">${esc(ch.note)}</p>` : ""}
+        ${ch.name ? `<a class="nlink" href="${naverNews(ch.name + " " + key.split(" ")[1].replace(/[갑을병정]$/, ""))}" target="_blank" rel="noopener">네이버 뉴스에서 더 보기 ↗</a>` : ""}
+      </div>
+    </div>
+    ${ch.name ? `<h4 class="risk-h">리스크 기사 <small>최근 90일</small></h4>
+    <div class="riskline"><span class="rk hi">높음 ${hi.length}</span><span class="rk lo">주의 ${lo.length}</span></div>
+    <ul class="news">${ordered.slice(0, 8).map(li).join("") || "<li class='none'>최근 90일 동안 리스크 기사가 없어요</li>"}</ul>
+    ${ordered.length > 8 ? `<details class="more"><summary>기사 ${ordered.length - 8}건 더 보기</summary><ul class="news">${ordered.slice(8).map(li).join("")}</ul></details>` : ""}
+    <p class="src">자동 수집 ${esc(state.chairs.updated)} · 높음: 고발·수사·입건·징계 등 / 주의: 논란·의혹·반발 등 — 단어로 고른 것이라 직접 확인이 필요해요</p>` : ""}
+  </section>`;
+}
+
+function primaryHTML(key) {
+  const p = chairOf(key)?.primary2024;
+  if (!p) return "";
+  const method = p.method.replace(/\[\d+\]/g, "");
+  return `<section class="primary">
+    <h3 class="sec-h">2024 총선 민주당 후보군 <small>${esc(method)}</small></h3>
+    <ul class="plist">${p.cands.map((c) => `<li class="${c.won ? "won" : ""}">
+      <a href="${naverNews(c.name + " " + key.split(" ")[1].replace(/[갑을병정]$/, ""))}" target="_blank" rel="noopener"><b>${esc(c.name)}</b></a>
+      ${c.won ? `<span class="tag w">공천</span>` : ""}${c.note ? `<span class="tag">${esc(c.note)}</span>` : ""}
+      <small>${esc(c.career)}</small></li>`).join("")}</ul>
+    <p class="src">예비후보·경선·컷오프 명단(나무위키 정리) · 이름을 누르면 최근 기사</p>
+  </section>`;
+}
+
 // ── 말풍선 ─────────────────────────────────────────────
 function showTip(key, ev) {
   const m = state.members.district[key];
   const tip = $("#tip");
-  tip.innerHTML = `<div class="k">${esc(key)}</div>` +
-    (m ? `<i style="background:${colorOf(m.party)}"></i><b>${esc(m.name)}</b> · ${esc(m.party)}` : "공석");
+  const o = state.outlook?.district[key];
+  tip.innerHTML = `<div class="k">${esc(key)}</div>` + (state.mode === "outlook" && o
+    ? `<i style="background:${GRADE_COLOR[o.grade]}"></i><b>${o.grade}</b> · 평균 ${signed(o.avg)}%p${chairName(key) ? `<div class="k2">민주당 ${esc(chairName(key))}</div>` : ""}`
+    : (m ? `<i style="background:${colorOf(m.party)}"></i><b>${esc(m.name)}</b> · ${esc(m.party)}` : "공석"));
   tip.hidden = false;
   tip.style.left = Math.min(ev.clientX + 14, innerWidth - tip.offsetWidth - 8) + "px";
   tip.style.top = Math.min(ev.clientY + 14, innerHeight - tip.offsetHeight - 8) + "px";

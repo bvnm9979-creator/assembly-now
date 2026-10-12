@@ -158,6 +158,16 @@ h1 { margin: 0; font-family: var(--serif); font-weight: 800; font-size: 31px; le
 .facts li span { color: var(--ink-3); font-size: 16px; }
 .facts a { color: var(--ink); text-decoration: underline; text-decoration-color: var(--hair-2); text-underline-offset: 3px; word-break: break-all; }
 .facts a:hover { text-decoration-color: var(--ink); }
+/* SNS */
+.sns { display: flex; flex-wrap: wrap; gap: 8px; padding: 14px 0; border-bottom: 1px solid var(--hair); }
+.sns a {
+  display: inline-flex; align-items: center; gap: 6px; padding: 7px 12px 7px 10px; border-radius: 999px;
+  border: 1px solid var(--hair-2); background: var(--surface); color: var(--ink); text-decoration: none;
+  font-size: 15px; font-weight: 600; transition: border-color .15s, background-color .15s;
+}
+.sns a:hover { border-color: var(--c); background: color-mix(in srgb, var(--c) 7%, var(--surface)); }
+.sns svg { width: 18px; height: 18px; fill: var(--c); flex: none; }
+
 /* 선거 결과 */
 .elec { margin-top: 26px; }
 .elec-head { display: flex; align-items: baseline; justify-content: space-between; gap: 10px; }
@@ -226,3 +236,151 @@ h1 { margin: 0; font-family: var(--serif); font-weight: 800; font-size: 31px; le
   .person { grid-template-columns: 112px 1fr; }
   .person img { width: 112px; height: 146px; }
 }
+
+/* ── 판세 · 지역위원장 ─────────────────────────── */
+.seg.mode { top: auto; bottom: 14px; }
+.tip .k2 { margin-top: 2px; font-size: 13px; color: var(--ink-3); }
+.to-outlook { margin-top: 22px; width: 100%; border: 1px solid var(--hair-2); background: var(--surface); border-radius: 10px; padding: 12px 14px; font-size: 16px; font-weight: 600; text-align: left; cursor: pointer; }
+.to-outlook:hover { border-color: var(--ink); }
+
+.gradebar { display: flex; height: 18px; border-radius: 5px; overflow: hidden; gap: 2px; margin: 6px 0 10px; }
+.gradebar span { transition: opacity .2s; }
+.gradelegend { list-style: none; margin: 0; padding: 0; display: flex; flex-wrap: wrap; gap: 6px 14px; font-size: 15px; color: var(--ink-2); }
+.gradelegend i, .klist i { display: inline-block; width: 10px; height: 10px; border-radius: 3px; margin-right: 6px; }
+.gradelegend b { color: var(--ink); font-variant-numeric: tabular-nums; }
+.rule { font-size: 13px; color: var(--ink-3); margin: 10px 0 0; line-height: 1.6; }
+.sub-h { margin: 24px 0 6px; font-size: 17px; font-weight: 700; }
+.sub-h small { font-weight: 400; color: var(--ink-3); font-size: 14px; margin-left: 4px; }
+.klist { list-style: none; margin: 0; padding: 0; }
+.klist li { display: flex; align-items: center; gap: 4px; padding: 8px 2px; border-bottom: 1px solid var(--hair); font-size: 15px; cursor: pointer; }
+.klist li:hover { background: rgba(17,19,24,.03); }
+.klist li span { flex: 1; min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.klist li small { color: var(--ink-2); font-variant-numeric: tabular-nums; white-space: nowrap; }
+.klist li.none { cursor: default; color: var(--ink-3); }
+b.hi, .rk.hi { color: #C4252D; }
+
+.outlook { margin-bottom: 8px; }
+.grade-badge { display: flex; align-items: baseline; gap: 12px; padding: 14px 16px; border-radius: 12px; background: color-mix(in srgb, var(--c) 14%, white); border-left: 6px solid var(--c); }
+.grade-badge > b { font-family: var(--serif); font-size: 28px; font-weight: 800; letter-spacing: -.02em; }
+.grade-badge span { color: var(--ink-2); font-size: 16px; }
+.grade-badge span b { color: var(--ink); font-variant-numeric: tabular-nums; }
+.mrows { list-style: none; margin: 12px 0 0; padding: 0; }
+.mrows li { display: grid; grid-template-columns: 110px 1fr 58px; grid-template-areas: "el bar val" "el dr dr" "note note note"; column-gap: 10px; align-items: center; padding: 9px 0; border-bottom: 1px solid var(--hair); }
+.mrows .el { grid-area: el; font-weight: 600; font-size: 15px; line-height: 1.3; }
+.mrows .el small { display: block; font-weight: 400; color: var(--ink-3); font-size: 12px; }
+.mrows .mbar { grid-area: bar; position: relative; height: 10px; background: var(--off); border-radius: 5px; }
+.mrows .mbar::after { content: ""; position: absolute; left: 50%; top: -3px; bottom: -3px; width: 1px; background: var(--ink-3); }
+.mrows .mbar span { position: absolute; top: 0; bottom: 0; border-radius: 5px; }
+.mrows .mbar .pos { left: 50%; background: #1F5BC4; }
+.mrows .mbar .neg { right: 50%; background: #E2333C; }
+.mrows > b { grid-area: val; text-align: right; font-variant-numeric: tabular-nums; font-size: 17px; }
+.mrows .dr { grid-area: dr; color: var(--ink-3); font-size: 13px; font-variant-numeric: tabular-nums; }
+.mrows .note { grid-area: note; color: var(--ink-3); font-size: 12px; }
+.mrows .na { grid-column: 2 / 4; color: var(--ink-3); font-size: 13px; }
+.pos { color: #1F5BC4; } .neg { color: #C4252D; }
+.mrows .mbar .pos, .mrows .mbar .neg { color: inherit; }
+.trend { margin: 10px 0 0; font-size: 15px; color: var(--ink-2); }
+
+.sec-h { margin: 26px 0 10px; font-family: var(--serif); font-size: 21px; font-weight: 800; letter-spacing: -.02em; }
+.sec-h small { font-family: var(--sans); font-size: 14px; font-weight: 500; color: var(--ink-3); margin-left: 6px; letter-spacing: 0; }
+.chair-card { display: flex; gap: 14px; align-items: flex-start; }
+.chair-card img { width: 64px; height: 84px; object-fit: cover; border-radius: 8px; background: var(--sea); }
+.chair-card .cn { margin: 0; font-family: var(--serif); font-size: 26px; font-weight: 800; letter-spacing: -.02em; display: flex; align-items: center; gap: 8px; flex-wrap: wrap; }
+.st { font-family: var(--sans); font-size: 13px; font-weight: 700; padding: 3px 8px; border-radius: 20px; letter-spacing: 0; }
+.s-mp { background: #E6EEFB; color: #1F5BC4; } .s-chair { background: #E9F6EE; color: #1E7B45; }
+.s-acting { background: #FFF3D6; color: #8A5A00; } .s-unknown { background: #F1F2F4; color: var(--ink-3); }
+.cnote { margin: 4px 0 6px; font-size: 15px; color: var(--ink-2); line-height: 1.5; }
+.nlink { font-size: 14px; color: var(--ink-2); }
+.riskline { display: flex; flex-wrap: wrap; gap: 6px; margin: 14px 0 6px; }
+.rk { font-size: 13px; font-weight: 600; padding: 4px 9px; border-radius: 6px; background: #F1F2F4; color: var(--ink-2); }
+.rk.hi { background: #FDE8E9; } .rk.lo { background: #FFF3D6; color: #8A5A00; }
+.news { list-style: none; margin: 0; padding: 0; }
+.news li { padding: 9px 0 9px 10px; border-bottom: 1px solid var(--hair); border-left: 3px solid transparent; }
+.news li.high { border-left-color: #E2333C; background: linear-gradient(90deg, rgba(226,51,60,.05), transparent 60%); }
+.news li.low { border-left-color: #F0C24B; }
+.news a { color: var(--ink); text-decoration: none; font-size: 15px; font-weight: 600; line-height: 1.45; }
+.news a:hover { text-decoration: underline; }
+.news small { display: block; margin-top: 2px; color: var(--ink-3); font-size: 13px; }
+.news em { font-style: normal; color: #C4252D; margin-right: 4px; }
+.news .none { color: var(--ink-3); font-size: 15px; border: 0; }
+.more summary { cursor: pointer; padding: 10px 0; font-size: 14px; color: var(--ink-2); }
+.plist { list-style: none; margin: 0; padding: 0; }
+.plist li { padding: 8px 0; border-bottom: 1px solid var(--hair); font-size: 15px; }
+.plist a { color: var(--ink); text-decoration: none; }
+.plist a:hover { text-decoration: underline; }
+.plist li.won b { color: #1F5BC4; }
+.plist small { display: block; color: var(--ink-3); font-size: 13px; }
+.tag { font-size: 12px; font-weight: 600; padding: 1px 6px; border-radius: 4px; background: #F1F2F4; color: var(--ink-2); margin-left: 6px; }
+.tag.w { background: #E6EEFB; color: #1F5BC4; }
+.risk-h { margin: 16px 0 0; font-size: 16px; font-weight: 700; }
+.risk-h small { font-weight: 400; color: var(--ink-3); font-size: 13px; margin-left: 4px; }
+
+/* ── 판세 화면 크게 + 목록 이동 띠 (10/12) ─────────────── */
+.panel { padding-top: 0; }
+.pnav { position: sticky; top: 0; z-index: 3; display: flex; align-items: center; justify-content: space-between; gap: 10px;
+  margin: 0 0 14px; padding: 10px 0; background: var(--paper); border-bottom: 1px solid var(--hair-2); }
+.pback { border: 1px solid var(--hair-2); background: var(--surface); border-radius: 10px; padding: 10px 16px; font-size: 18px; font-weight: 700; cursor: pointer; }
+.pback:hover { border-color: var(--ink); }
+.pstep { display: inline-flex; align-items: center; gap: 8px; font-size: 17px; color: var(--ink-3); font-variant-numeric: tabular-nums; }
+.pstep b { color: var(--ink); }
+.pstep button { width: 42px; height: 42px; border: 1px solid var(--hair-2); background: var(--surface); border-radius: 10px; font-size: 26px; line-height: 1; cursor: pointer; }
+.pstep button:hover:not(:disabled) { border-color: var(--ink); }
+.pstep button:disabled { opacity: .3; cursor: default; }
+.where.big b { font-family: var(--serif); font-size: 30px; font-weight: 800; letter-spacing: -.02em; }
+.where.big span { font-size: 15px; }
+
+.ov-title { font-size: 30px; }
+.ov-sub { font-size: 17px; }
+.gradebar { height: 26px; }
+.gradelegend { font-size: 18px; gap: 8px 18px; }
+.gradelegend li { cursor: pointer; padding: 2px 4px; border-radius: 6px; }
+.gradelegend li.on { background: rgba(17,19,24,.08); }
+.gradelegend i, .klist i { width: 13px; height: 13px; }
+.rule { font-size: 15px; }
+.ltabs { display: flex; gap: 4px; margin: 24px 0 8px; padding: 4px; background: #eef0f2; border-radius: 10px; position: sticky; top: 0; z-index: 2; }
+.ltabs button { flex: 1; border: 0; background: none; padding: 10px; border-radius: 8px; font-size: 18px; font-weight: 700; color: var(--ink-2); cursor: pointer; }
+.ltabs button.on { background: var(--surface); color: var(--ink); box-shadow: 0 1px 3px rgba(17,19,24,.12); }
+.lmeta { margin: 4px 0 4px; font-size: 15px; color: var(--ink-3); display: flex; align-items: center; gap: 8px; flex-wrap: wrap; }
+.lmeta b { color: var(--ink); }
+.clear { border: 1px solid var(--hair-2); background: var(--surface); border-radius: 6px; font-size: 14px; padding: 2px 8px; cursor: pointer; }
+.klist li { font-size: 18px; padding: 12px 4px; gap: 6px; }
+.klist li em { font-style: normal; width: 30px; color: var(--ink-3); font-size: 14px; font-variant-numeric: tabular-nums; }
+.klist li small { font-size: 17px; }
+.ov-hint { font-size: 15px; }
+
+.grade-badge { padding: 18px 20px; }
+.grade-badge > b { font-size: 36px; }
+.grade-badge span { font-size: 19px; }
+.mrows li { grid-template-columns: 128px 1fr 72px; padding: 13px 0; }
+.mrows .el { font-size: 18px; }
+.mrows .el small { font-size: 14px; }
+.mrows .mbar { height: 14px; border-radius: 7px; }
+.mrows > b { font-size: 22px; }
+.mrows .dr { font-size: 15px; }
+.mrows .note, .mrows .na { font-size: 14px; }
+.trend { font-size: 18px; }
+.src { font-size: 13px; }
+
+.sec-h { font-size: 26px; margin-top: 32px; }
+.sec-h small { font-size: 15px; }
+.chair-card img { width: 80px; height: 104px; }
+.chair-card .cn { font-size: 32px; }
+.st { font-size: 15px; padding: 4px 10px; }
+.cnote { font-size: 17px; }
+.nlink { font-size: 16px; }
+.risk-h { font-size: 19px; }
+.risk-h small { font-size: 15px; }
+.rk { font-size: 15px; padding: 5px 11px; }
+.news li { padding: 12px 0 12px 12px; }
+.news a { font-size: 17px; }
+.news small { font-size: 15px; }
+.news .none { font-size: 17px; }
+.more summary { font-size: 16px; }
+.plist li { font-size: 17px; padding: 11px 0; }
+.plist small { font-size: 15px; }
+.tag { font-size: 14px; }
+.prev summary { font-size: 18px; }
+.prev summary small { font-size: 15px; }
+.tip { font-size: 16px; }
+.tip .k2 { font-size: 14px; }
+@media (min-width: 1081px) { .stage { grid-template-columns: minmax(0, 1fr) 500px; } }

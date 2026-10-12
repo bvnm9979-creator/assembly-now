@@ -1,6 +1,11 @@
 # 로컬 백업·중간 파일
 /archive/
-/data/
+/data/*
+!/data/chairs_manual.json
+!/data/primary_2024.json
+# 검색 중간 결과·나무위키 저장본(로컬 전용)
+/raw/chair/
+/raw/namu/
 raw/members_try.json
 raw/members_22.json
 raw/missing.json

@@ -56,11 +56,16 @@ def to_key(orig):
         return "세종 " + orig
     return orig
 
+# SNS(없으면 빈 칸) — scripts/fetch_sns.py
+sns_path = os.path.join(ROOT, "data", "sns_raw.json")
+sns = json.load(open(sns_path)) if os.path.exists(sns_path) else {}
+
 def slim(r):
     return {"name": r["HG_NM"], "hanja": r["HJ_NM"], "party": r["POLY_NM"], "orig": r["ORIG_NM"],
             "reele": r["REELE_GBN_NM"], "sex": r["SEX_GBN_NM"], "birth": r["BTH_DATE"],
             "cmit": r["CMITS"] or r["CMIT_NM"] or "", "photo": r.get("PHOTO") or "",
-            "home": r.get("HOMEPAGE") or "", "office": r.get("ASSEM_ADDR") or "", "tel": r.get("TEL_NO") or ""}
+            "home": r.get("HOMEPAGE") or "", "office": r.get("ASSEM_ADDR") or "", "tel": r.get("TEL_NO") or "",
+            "sns": {k: v for k, v in sns.get(r["MONA_CD"], {}).items() if v}}
 
 district, pr = {}, []
 for r in raw["members"]:
