@@ -584,7 +584,7 @@ function showOutlookOverview() {
   const o = state.outlook, def = o.env_default;
   $("#panel").innerHTML = `
     <h2 class="ov-title">판세 현황</h2>
-    <p class="ov-sub">지역구 성향에 전국 분위기를 더한 예상 격차(민주 − 상대)로 등급을 매김</p>
+    <p class="ov-sub">이 지역구가 평소 전국보다 민주당에 얼마나 유리한지 + 전국 분위기 = 예상 격차</p>
     <div class="envbox">
       <label for="env">전국 분위기 <b id="envv" class="${state.env >= 0 ? "pos" : "neg"}">${envLabel(state.env)}</b></label>
       <input type="range" id="env" min="-15" max="15" step="0.5" value="${state.env}">
@@ -595,28 +595,48 @@ function showOutlookOverview() {
     <ul class="gradelegend">${GRADES.map(([g, c]) => `<li data-g="${g}" class="${state.grade === g ? "on" : ""}"><i style="background:${c}"></i>${g} <b>${cnt[g]}</b></li>`).join("")}</ul>
     <details class="notice">
       <summary>판세 기준</summary>
-      <p class="src"><b>계산 방법</b></p>
+      <p class="src"><b>한 줄 요약</b></p>
+      <p class="oneline">예상 격차 = <b>지역구 성향</b>(평소 전국보다 민주당이 몇 %p 더 나오는 곳인지) + <b>전국 분위기</b>(위 막대)</p>
+      <p class="src"><b>계산 순서</b></p>
       <ol class="formula">
-        <li><b>선거별 격차</b> = 민주당 득표율 − 상대 후보 중 최다 득표 후보 득표율<br><small>2024 총선(지역구 후보) · 2025 대선(이재명·김문수) · 2026 지선(시·도지사)</small></li>
-        <li><b>지역구 성향</b> = 세 선거의 (지역구 격차 − 전국 평균 격차) 평균<br><small>전국 평균 격차: 2024 총선 ${signed(o.national.g22)} · 2025 대선 ${signed(o.national.p21)} · 2026 지선 ${signed(o.national.l9)} (254개 지역구 단순 평균)</small></li>
-        <li><b>예상 격차</b> = 지역구 성향 + 전국 분위기(위 막대)</li>
+        <li><b>격차</b>: 선거마다 민주당 득표율 − 상대 1위 득표율<br><small>2024 총선 · 2025 대선 · 2026 지선</small></li>
+        <li><b>지역구 성향</b>: 그 격차가 전국 평균보다 몇 %p 높은지(낮은지)를 세 선거 평균<br><small>전국 평균 격차: 2024 총선 ${signed(o.national.g22)} · 2025 대선 ${signed(o.national.p21)} · 2026 지선 ${signed(o.national.l9)}</small></li>
+        <li><b>예상 격차</b>: 지역구 성향 + 전국 분위기</li>
       </ol>
+      <p class="src"><b>예시 — 서울 종로구</b></p>
+      <table class="ex">
+        <tr><th></th><th>종로구</th><th>전국</th><th>차이</th></tr>
+        <tr><td>2024 총선</td><td>+6.8</td><td>+6.4</td><td>+0.4</td></tr>
+        <tr><td>2025 대선</td><td>+8.3</td><td>+8.2</td><td>+0.1</td></tr>
+        <tr><td>2026 지선</td><td>+2.9</td><td>+8.4</td><td>−5.5</td></tr>
+        <tr class="sum"><td colspan="3">지역구 성향(세 차이 평균)</td><td>−1.7</td></tr>
+      </table>
       <ul>
-        <li><b>등급 기준</b>(예상 격차): +10%p 이상 우세 · +5~10 경합우세 · ±5 안 경합 · −5~−10 경합열세 · −10 이하 열세</li>
+        <li>전국 분위기 민주 +7.7이면 → −1.7 + 7.7 = <b>+6.0 경합우세</b></li>
+        <li>전국 분위기 양당 같음(0)이면 → −1.7 + 0 = <b>−1.7 경합</b></li>
+      </ul>
+      <p class="src"><b>등급 기준</b>(예상 격차)</p>
+      <ul>
+        <li>+10%p 이상 우세 · +5~10 경합우세 · ±5 안 경합 · −5~−10 경합열세 · −10 이하 열세</li>
+      </ul>
+      <p class="src"><b>이렇게 계산하는 이유</b></p>
+      <ul>
+        <li>선거마다 전국 분위기가 달라서, 세 선거 결과를 그냥 평균 내면 지도 전체가 한쪽으로 쏠림</li>
+        <li>지역구 고유의 성향만 뽑고, 전국 분위기는 막대로 따로 정함</li>
       </ul>
       <p class="src"><b>검증</b></p>
       <ul>
-        <li>같은 방식으로 2020 총선·2022 대선·2022 지선만 써서 2024 총선 예측(전국 분위기는 실제 값 +5.5 입력)</li>
-        <li>승패 적중 254곳 중 237곳(93%) · 우세 107곳 중 105곳 승리 · 열세 66곳 중 64곳 패배 · 경합 39곳 중 25곳 승리</li>
-        <li>전국 분위기를 ±3%p 틀리게 넣어도 적중 91~92%</li>
-        <li>성향 없이 세 선거 단순 평균만 쓰면 적중 80%(당시 2022년 선거가 국민의힘 쪽으로 기울어 전체가 7%p 밀림)</li>
+        <li>2020 총선·2022 대선·2022 지선만으로 2024 총선을 이 방식으로 예측 → 254곳 중 237곳(93%) 승패 적중</li>
+        <li>우세로 본 107곳 중 105곳 민주 승리, 열세로 본 66곳 중 64곳 패배</li>
+        <li>그냥 평균 낸 방식은 80% 적중</li>
       </ul>
       <p class="src"><b>참고 사항</b></p>
       <ul>
         <li>대선·지방선거 숫자는 지역구에 맞춰 다시 더한 추정치</li>
         <li>민주당이 후보를 안 낸 곳은 같은 계열 후보로 계산</li>
         <li>민주 계열 후보가 없던 3곳(세종갑·대구 서구·경북 의성청송영덕울진)은 총선 빼고 두 선거만으로 성향 계산</li>
-        <li>검증 때 2020 총선은 선거구 경계가 2024년과 같은 199곳만 사용</li>
+        <li>전국 평균 격차는 254개 지역구 단순 평균</li>
+        <li>검증 때 전국 분위기는 2024 실제 값(민주 +5.5) 입력, 2020 총선은 선거구 경계가 2024년과 같은 199곳만 사용</li>
         <li>여론조사·후보 인지도·현역 여부는 들어가지 않음</li>
       </ul>
     </details>

@@ -398,3 +398,9 @@ b.hi, .rk.hi { color: #C4252D; }
 .notice .formula li { margin: 6px 0; }
 .notice small { color: var(--ink-3); }
 .grade-badge small { font-weight: 400; color: var(--ink-3); font-size: 13px; margin-left: 4px; }
+.notice .oneline { margin: 6px 0 0; color: var(--ink); }
+.notice table.ex { margin: 8px 0 0; border-collapse: collapse; font-size: 13px; width: 100%; max-width: 360px; }
+.notice table.ex th, .notice table.ex td { padding: 3px 8px; text-align: right; border-bottom: 1px solid var(--hair); }
+.notice table.ex th:first-child, .notice table.ex td:first-child { text-align: left; }
+.notice table.ex th { font-weight: 600; color: var(--ink-3); }
+.notice table.ex tr.sum td { font-weight: 700; color: var(--ink); border-bottom: 0; }
