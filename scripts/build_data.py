@@ -78,6 +78,21 @@ for r in raw["members"]:
 pr.sort(key=lambda m: (m["party"], m["name"]))
 vacant = sorted(keys - set(district))
 
+def add_dokdo(features, sido):
+    """독도(경북 울릉군 울릉읍 독도리) — 원본 선거구 경계(오마이뉴스)에 없어 동도·서도를 작은 다각형으로 더한다."""
+    import math
+    def islet(lon, lat, rx, ry):
+        ring = [[round(lon + rx * math.cos(a * math.pi / 6), 6), round(lat + ry * math.sin(a * math.pi / 6), 6)] for a in range(12)]
+        return [ring + [ring[0]]]
+    dokdo = [islet(131.8652, 37.2418, 0.0016, 0.0012), islet(131.8696, 37.2408, 0.0012, 0.0010)]   # 서도, 동도
+    for f in features:
+        if f["properties"].get("key") == "경북 포항시남구울릉군" and f["geometry"]["type"] == "MultiPolygon":
+            f["geometry"]["coordinates"] += dokdo
+    for f in sido["features"]:
+        if f["properties"].get("SIDO") == "경북" and f["geometry"]["type"] == "MultiPolygon":
+            f["geometry"]["coordinates"] += dokdo
+
+add_dokdo(features, sido)
 json.dump({"type": "FeatureCollection", "features": features}, open(os.path.join(OUT, "districts.geojson"), "w"),
           ensure_ascii=False, separators=(",", ":"))
 json.dump(sido, open(os.path.join(OUT, "sido.geojson"), "w"), ensure_ascii=False, separators=(",", ":"))

@@ -21,7 +21,7 @@ const PARTY_COLOR = {
 const PARTY_ORDER = ["진보당", "기본소득당", "사회민주당", "조국혁신당", "더불어민주당", "무소속", "개혁신당", "국민의힘"];
 const OFF = "#E3E5E9";            // 정당 선택 시 나머지
 const VACANT = "#FFFFFF";
-const KOREA = [[124.6, 33.1], [130.95, 38.65]];
+const KOREA = [[124.6, 33.1], [132.0, 38.65]];   // 동쪽 끝은 독도(131.87)까지
 const colorOf = (p) => (p === "공석" ? VACANT : PARTY_COLOR[p] || "#B8BBC2");
 // 정당 필터를 반영한 실제 칠할 색
 const paint = (p) => (!state.party || state.party === p ? colorOf(p) : OFF);
@@ -274,6 +274,14 @@ function drawGeo() {
     map.addLayer({ id: "hover", type: "line", source: "d", filter: ["==", ["get", "key"], ""], paint: { "line-color": "#111318", "line-width": 1.6 } });
     map.addLayer({ id: "sel", type: "line", source: "d", filter: ["==", ["get", "key"], ""], paint: { "line-color": "#111318", "line-width": 3 } });
     if (state.sel) highlightGeo(state.sel, true);
+
+    // 독도: 전국 지도에서는 섬이 점보다 작아 이름표를 항상 붙여 둠(누르면 포항남구·울릉 선거구)
+    const dokdo = document.createElement("button");
+    dokdo.className = "dokdo";
+    dokdo.innerHTML = "<i></i>독도";
+    dokdo.title = "독도 · 경북 울릉군 울릉읍 독도리 (경북 포항시남구울릉군 선거구)";
+    dokdo.addEventListener("click", () => select("경북 포항시남구울릉군", false));
+    new maplibregl.Marker({ element: dokdo, anchor: "left" }).setLngLat([131.867, 37.2413]).addTo(map);
 
     map.on("mousemove", "fill", (e) => {
       const k = e.features[0].properties.key;

@@ -484,3 +484,7 @@ b.hi, .rk.hi { color: #C4252D; }
 .leancalc .ltag { display: inline-block; margin-left: 6px; padding: 1px 10px; border-radius: 999px; font-family: var(--serif); font-size: 17px; font-weight: 700; background: #fff; border: 1px solid currentColor; }
 .leancalc .lc-say { margin: 4px 0 0; font-size: 14px; color: var(--ink-2); }
 @media (max-width: 640px) { .m-gloss { grid-template-columns: 1fr; gap: 2px; } .m-gloss dd { margin-bottom: 6px; } }
+/* 독도 이름표 */
+.dokdo { display: inline-flex; align-items: center; gap: 4px; padding: 0 0 0 0; border: 0; background: none; cursor: pointer; font: 700 12px var(--sans); color: var(--ink-2); text-shadow: 0 0 3px #fff, 0 0 3px #fff, 0 0 3px #fff; white-space: nowrap; }
+.dokdo i { width: 6px; height: 6px; border-radius: 50%; background: var(--ink-2); box-shadow: 0 0 0 2px #fff; transform: translateX(-3px); }
+.dokdo:hover { color: var(--ink); }
