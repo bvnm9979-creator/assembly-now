@@ -71,8 +71,7 @@ async function init() {
   load("results.json").then((r) => { state.results = r; if (state.sel) select(state.sel, false); }).catch(() => {});
   load("outlook.json").then((o) => {
     state.outlook = o;
-    for (const f of state.geo.features) f.properties.grade = o.district[f.properties.key]?.grade || "";
-    state.map?.getSource("d")?.setData(state.geo);
+    applyEnv(o.env_default);
     if (state.mode === "outlook") refreshMode();
   }).catch(() => {});
   load("chairs.json").then((c) => { state.chairs = c; if (state.sel) select(state.sel, false); else if (state.mode === "outlook") showOverview(); }).catch(() => {});
@@ -145,6 +144,18 @@ function drawParties() {
     const b = e.target.closest("button"); if (!b) return;
     setParty(state.party === b.dataset.p ? null : b.dataset.p);
   };
+}
+
+// 예상 격차 = 지역구 성향 + 전국 분위기 → 등급 (scripts/build_outlook.py 와 같은 기준)
+const gradeOf = (m) => m >= 10 ? "우세" : m >= 5 ? "경합우세" : m > -5 ? "경합" : m > -10 ? "경합열세" : "열세";
+function applyEnv(env) {
+  state.env = env;
+  for (const d of Object.values(state.outlook.district)) {
+    d.exp = Math.round((d.lean + env) * 10) / 10;
+    d.grade = gradeOf(d.exp);
+  }
+  for (const f of state.geo.features) f.properties.grade = state.outlook.district[f.properties.key]?.grade || "";
+  state.map?.getSource("d")?.setData(state.geo);
 }
 
 // 판세 모드의 띠: 우세~열세 버튼(누르면 그 등급만 표시)
@@ -541,6 +552,7 @@ function raceHTML({ e, r }, main) {
 
 // ── 판세 · 민주당 지역위원장 ────────────────────────────
 const signed = (x) => (x > 0 ? "+" : x < 0 ? "−" : "±") + Math.abs(x).toFixed(1);
+const envLabel = (x) => x > 0 ? `민주 +${x.toFixed(1)}%p` : x < 0 ? `국민의힘 +${(-x).toFixed(1)}%p` : "양당 같음";
 const chairOf = (key) => state.chairs?.district[key];
 const chairName = (key) => chairOf(key)?.chair?.name || "";
 const naverNews = (q) => "https://search.naver.com/search.naver?where=news&sort=1&query=" + encodeURIComponent(q);
@@ -552,10 +564,10 @@ function listKeys(tab) {
   const d = state.outlook.district;
   let keys = Object.keys(d);
   if (state.grade) keys = keys.filter((k) => d[k].grade === state.grade);
-  if (tab === "close") return keys.filter((k) => ["경합우세", "경합", "경합열세"].includes(d[k].grade)).sort((a, b) => Math.abs(d[a].avg) - Math.abs(d[b].avg));
+  if (tab === "close") return keys.filter((k) => ["경합우세", "경합", "경합열세"].includes(d[k].grade)).sort((a, b) => Math.abs(d[a].exp) - Math.abs(d[b].exp));
   if (tab === "risk") return keys.filter((k) => highCount(k) || (chairOf(k)?.news || []).length)
     .sort((a, b) => highCount(b) - highCount(a) || (chairOf(b)?.news.length || 0) - (chairOf(a)?.news.length || 0));
-  return keys.sort((a, b) => d[b].avg - d[a].avg);
+  return keys.sort((a, b) => d[b].exp - d[a].exp);
 }
 
 function showOutlookOverview() {
@@ -568,24 +580,44 @@ function showOutlookOverview() {
   state.list = list;
   const right = (k) => state.listTab === "risk"
     ? `${esc(chairName(k))} · <b class="hi">${highCount(k)}</b>/${(chairOf(k)?.news || []).length}건`
-    : `<b class="${d[k].avg >= 0 ? "pos" : "neg"}">${signed(d[k].avg)}</b>`;
+    : `<b class="${d[k].exp >= 0 ? "pos" : "neg"}">${signed(d[k].exp)}</b>`;
+  const o = state.outlook, def = o.env_default;
   $("#panel").innerHTML = `
     <h2 class="ov-title">판세 현황</h2>
-    <p class="ov-sub">2024 총선 · 2025 대선 · 2026 지선에서 민주당이 상대 후보보다 몇 %p 앞섰는지 평균 낸 값이에요.</p>
+    <p class="ov-sub">지역구 성향에 전국 분위기를 더한 예상 격차(민주 − 상대)로 등급을 매김</p>
+    <div class="envbox">
+      <label for="env">전국 분위기 <b id="envv" class="${state.env >= 0 ? "pos" : "neg"}">${envLabel(state.env)}</b></label>
+      <input type="range" id="env" min="-15" max="15" step="0.5" value="${state.env}">
+      <div class="envscale"><span>국민의힘 +15</span><span>0</span><span>민주 +15</span></div>
+      <p>기본값 ${signed(def)} = 최근 세 선거 전국 평균 격차 ${state.env !== def ? `<button class="clear" id="envReset">기본값으로</button>` : ""}</p>
+    </div>
     <div class="gradebar">${GRADES.map(([g, c]) => cnt[g] ? `<span data-g="${g}" style="flex:${cnt[g]};background:${c}" title="${g} ${cnt[g]}곳"></span>` : "").join("")}</div>
     <ul class="gradelegend">${GRADES.map(([g, c]) => `<li data-g="${g}" class="${state.grade === g ? "on" : ""}"><i style="background:${c}"></i>${g} <b>${cnt[g]}</b></li>`).join("")}</ul>
     <details class="notice">
       <summary>판세 기준</summary>
+      <p class="src"><b>계산 방법</b></p>
+      <ol class="formula">
+        <li><b>선거별 격차</b> = 민주당 득표율 − 상대 후보 중 최다 득표 후보 득표율<br><small>2024 총선(지역구 후보) · 2025 대선(이재명·김문수) · 2026 지선(시·도지사)</small></li>
+        <li><b>지역구 성향</b> = 세 선거의 (지역구 격차 − 전국 평균 격차) 평균<br><small>전국 평균 격차: 2024 총선 ${signed(o.national.g22)} · 2025 대선 ${signed(o.national.p21)} · 2026 지선 ${signed(o.national.l9)} (254개 지역구 단순 평균)</small></li>
+        <li><b>예상 격차</b> = 지역구 성향 + 전국 분위기(위 막대)</li>
+      </ol>
       <ul>
-        <li><b>계산 방법</b>: 세 선거에서 '민주당 득표율 − 상대 후보 중 가장 많이 받은 후보 득표율'을 구해 평균</li>
-        <li><b>등급 기준</b>: +10%p 이상 우세 · +5~10 경합우세 · ±5 안 경합 · −5~−10 경합열세 · −10 이하 열세</li>
+        <li><b>등급 기준</b>(예상 격차): +10%p 이상 우세 · +5~10 경합우세 · ±5 안 경합 · −5~−10 경합열세 · −10 이하 열세</li>
+      </ul>
+      <p class="src"><b>검증</b></p>
+      <ul>
+        <li>같은 방식으로 2020 총선·2022 대선·2022 지선만 써서 2024 총선 예측(전국 분위기는 실제 값 +5.5 입력)</li>
+        <li>승패 적중 254곳 중 237곳(93%) · 우세 107곳 중 105곳 승리 · 열세 66곳 중 64곳 패배 · 경합 39곳 중 25곳 승리</li>
+        <li>전국 분위기를 ±3%p 틀리게 넣어도 적중 91~92%</li>
+        <li>성향 없이 세 선거 단순 평균만 쓰면 적중 80%(당시 2022년 선거가 국민의힘 쪽으로 기울어 전체가 7%p 밀림)</li>
       </ul>
       <p class="src"><b>참고 사항</b></p>
       <ul>
         <li>대선·지방선거 숫자는 지역구에 맞춰 다시 더한 추정치</li>
         <li>민주당이 후보를 안 낸 곳은 같은 계열 후보로 계산</li>
-        <li>민주 계열 후보가 없던 3곳(세종갑·대구 서구·경북 의성청송영덕울진)은 총선 빼고 두 선거만 평균</li>
-        <li>여론조사·후보 인지도는 들어가지 않음</li>
+        <li>민주 계열 후보가 없던 3곳(세종갑·대구 서구·경북 의성청송영덕울진)은 총선 빼고 두 선거만으로 성향 계산</li>
+        <li>검증 때 2020 총선은 선거구 경계가 2024년과 같은 199곳만 사용</li>
+        <li>여론조사·후보 인지도·현역 여부는 들어가지 않음</li>
       </ul>
     </details>
     <div class="ltabs" role="tablist">${LIST_TABS.map(([t, n]) => `<button data-t="${t}" class="${state.listTab === t ? "on" : ""}">${n}</button>`).join("")}</div>
@@ -600,6 +632,16 @@ function showOutlookOverview() {
   $$(".ltabs button").forEach((b) => b.addEventListener("click", () => { state.listTab = b.dataset.t; state.listScroll = 0; showOutlookOverview(); }));
   $$(".gradelegend li").forEach((li) => li.addEventListener("click", () => setGrade(state.grade === li.dataset.g ? null : li.dataset.g)));
   $("#clearGrade")?.addEventListener("click", () => setGrade(null));
+  // 막대: 움직이는 동안 지도·띠만 다시 칠하고, 손을 떼면 목록까지 다시 그림
+  const env = $("#env");
+  env.addEventListener("input", () => {
+    applyEnv(+env.value);
+    $("#envv").textContent = envLabel(state.env);
+    $("#envv").className = state.env >= 0 ? "pos" : "neg";
+    drawGrades(); repaint();
+  });
+  env.addEventListener("change", () => { state.listScroll = $("#panel").scrollTop; showOutlookOverview(); });
+  $("#envReset")?.addEventListener("click", () => { applyEnv(def); drawGrades(); repaint(); showOutlookOverview(); });
   $("#panel").scrollTop = state.listScroll || 0;
   $$(".gradebar span").forEach((sp) => (sp.style.opacity = !state.grade || sp.dataset.g === state.grade ? 1 : 0.25));
 }
@@ -649,7 +691,7 @@ function outlookHTML(key) {
       ${r.note ? `<small class="note">${esc(r.note)}</small>` : ""}</li>`;
   };
   return `<section class="outlook">
-    <div class="grade-badge" style="--c:${GRADE_COLOR[o.grade]}"><b>${o.grade}</b><span>세 선거 평균 <b>${signed(o.avg)}%p</b></span></div>
+    <div class="grade-badge" style="--c:${GRADE_COLOR[o.grade]}"><b>${o.grade}</b><span>예상 격차 <b>${signed(o.exp)}%p</b> <small>= 성향 ${signed(o.lean)} + 전국 분위기 ${signed(state.env)}</small></span></div>
     <ul class="mrows">${state.outlook.elections.map(row).join("")}</ul>
     ${o.trend != null ? `<p class="trend">2024 총선 → 2026 지선: 민주당 격차 <b class="${o.trend >= 0 ? "pos" : "neg"}">${o.trend >= 0 ? "▲" : "▼"} ${Math.abs(o.trend).toFixed(1)}%p</b> ${o.trend >= 0 ? "좋아짐" : "나빠짐"}</p>` : ""}
     <p class="src">대선·지선은 투표구·읍면동 결과를 이 지역구로 다시 더한 값(일부 나뉜 동은 비율로 추정)</p>
@@ -706,7 +748,7 @@ function showTip(key, ev) {
   const tip = $("#tip");
   const o = state.outlook?.district[key];
   tip.innerHTML = `<div class="k">${esc(key)}</div>` + (state.mode === "outlook" && o
-    ? `<i style="background:${GRADE_COLOR[o.grade]}"></i><b>${o.grade}</b> · 평균 ${signed(o.avg)}%p${chairName(key) ? `<div class="k2">민주당 ${esc(chairName(key))}</div>` : ""}`
+    ? `<i style="background:${GRADE_COLOR[o.grade]}"></i><b>${o.grade}</b> · 예상 ${signed(o.exp)}%p${chairName(key) ? `<div class="k2">민주당 ${esc(chairName(key))}</div>` : ""}`
     : (m ? `<i style="background:${colorOf(m.party)}"></i><b>${esc(m.name)}</b> · ${esc(m.party)}` : "공석"));
   tip.hidden = false;
   tip.style.left = Math.min(ev.clientX + 14, innerWidth - tip.offsetWidth - 8) + "px";

@@ -186,15 +186,27 @@ def main():
             why = "(공천 취소)" if k == "세종 세종특별자치시갑" else ""
             row["g22"] = {"none": f"민주 계열 후보 없음{why} — 평균에서 제외"}
         ms = [row[x]["m"] for x in ("g22", "p21", "l9") if row[x] and "m" in row[x]]
-        avg = round(sum(ms) / len(ms), 1)
-        out[k] = dict(row, avg=avg, grade=grade(avg),
+        out[k] = dict(row, avg=round(sum(ms) / len(ms), 1),
                       trend=round(row["l9"]["m"] - row["g22"]["m"], 1) if row["l9"] and "m" in row["g22"] else None)
+
+    # 지역구 성향 = 선거마다 (지역구 격차 − 전국 평균 격차)의 평균. 예상 격차 = 성향 + 전국 분위기(화면 막대, 기본값은 세 선거 전국 평균)
+    # 전국 평균 격차는 254개 지역구 단순 평균 (scripts/backtest.py 로 2024 총선 예측 검증한 방식과 같음)
+    ids = ("g22", "p21", "l9")
+    nat = {e: round(sum(v[e]["m"] for v in out.values() if v[e] and "m" in v[e]) /
+                    sum(1 for v in out.values() if v[e] and "m" in v[e]), 1) for e in ids}
+    env = round(sum(nat.values()) / len(nat), 1)
+    for v in out.values():
+        ls = [v[e]["m"] - nat[e] for e in ids if v[e] and "m" in v[e]]
+        v["lean"] = round(sum(ls) / len(ls), 1)
+        v["exp"] = round(v["lean"] + env, 1)
+        v["grade"] = grade(v["exp"])
 
     json.dump({"source": "중앙선거관리위원회 선거통계시스템 투표구·읍면동별 개표결과를 22대 지역구로 다시 합산",
                "elections": [{"id": "g22", "name": "2024 총선", "desc": "지역구 후보"},
                              {"id": "p21", "name": "2025 대선", "desc": "이재명 · 김문수"},
                              {"id": "l9", "name": "2026 지선", "desc": "시·도지사 후보"}],
-               "rule": "세 선거의 '민주 득표율 − 상대(국민의힘 등) 최다 득표 후보 득표율' 평균 · +10%p 이상 우세 · +5~10 경합우세 · ±5 안 경합 · −5~−10 경합열세 · −10 이하 열세",
+               "national": nat, "env_default": env,
+               "rule": "예상 격차 = 지역구 성향(선거별 지역구 격차 − 전국 평균 격차의 평균) + 전국 분위기 · +10%p 이상 우세 · +5~10 경합우세 · ±5 안 경합 · −5~−10 경합열세 · −10 이하 열세",
                "district": out},
               open(os.path.join(OUT, "outlook.json"), "w"), ensure_ascii=False, separators=(",", ":"))
 

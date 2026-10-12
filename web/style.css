@@ -390,3 +390,11 @@ b.hi, .rk.hi { color: #C4252D; }
 .tip { font-size: 16px; }
 .tip .k2 { font-size: 14px; }
 @media (min-width: 1081px) { .stage { grid-template-columns: minmax(0, 1fr) 500px; } }
+.envbox { margin: 12px 0 14px; padding: 12px 14px; border: 1px solid var(--hair); border-radius: 10px; background: var(--surface); }
+.envbox label { display: flex; justify-content: space-between; align-items: baseline; font-weight: 700; font-size: 15px; color: var(--ink); }
+.envbox input[type=range] { width: 100%; margin: 10px 0 2px; accent-color: #1F5BC4; }
+.envscale { display: flex; justify-content: space-between; font-size: 12px; color: var(--ink-3); }
+.envbox p { margin: 6px 0 0; font-size: 13px; color: var(--ink-3); display: flex; align-items: center; gap: 8px; flex-wrap: wrap; }
+.notice .formula li { margin: 6px 0; }
+.notice small { color: var(--ink-3); }
+.grade-badge small { font-weight: 400; color: var(--ink-3); font-size: 13px; margin-left: 4px; }
