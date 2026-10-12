@@ -666,7 +666,7 @@ function chairHTML(key, m) {
   const news = c.news || [];
   const hi = news.filter((n) => n.level === "high"), lo = news.filter((n) => n.level === "low");
   const li = (n) => `<li class="${n.level}"><a href="${esc(n.link)}" target="_blank" rel="noopener">${esc(n.title)}</a>
-      <small>${esc(n.date)} · ${esc(n.press)}${n.risk?.length ? ` · ${n.risk.map((w) => `<em>${esc(w)}</em>`).join("")}` : ""}</small></li>`;
+      <small>${esc(n.date)} · ${esc(n.press)}${n.reason ? ` · ${esc(n.reason)}` : ""}</small></li>`;
   const ordered = [...hi, ...lo, ...news.filter((n) => !n.level)];
   return `<section class="chair">
     <h3 class="sec-h">민주당 지역위원장</h3>
@@ -682,7 +682,7 @@ function chairHTML(key, m) {
     <div class="riskline"><span class="rk hi">높음 ${hi.length}</span><span class="rk lo">주의 ${lo.length}</span></div>
     <ul class="news">${ordered.slice(0, 8).map(li).join("") || "<li class='none'>최근 90일 동안 리스크 기사가 없어요</li>"}</ul>
     ${ordered.length > 8 ? `<details class="more"><summary>기사 ${ordered.length - 8}건 더 보기</summary><ul class="news">${ordered.slice(8).map(li).join("")}</ul></details>` : ""}
-    <p class="src">자동 수집 ${esc(state.chairs.updated)} · 높음: 고발·수사·입건·징계 등 / 주의: 논란·의혹·반발 등 — 단어로 고른 것이라 직접 확인이 필요해요</p>` : ""}
+    <p class="src">자동 수집 ${esc(state.chairs.updated)} · 본인의 비리·범죄 혐의·사회적 물의 기사만(AI 판단) · 높음: 수사·기소·재판·징계 진행 / 주의: 의혹·논란 단계 · 법안 발의·정책 주장·상대 측 정치 공방 고소는 제외</p>` : ""}
   </section>`;
 }
 

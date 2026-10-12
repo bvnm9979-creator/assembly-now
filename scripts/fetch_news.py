@@ -3,7 +3,8 @@
 - 지역위원장: 민주당 현역 의원 지역구는 그 의원, 나머지는 data/chairs_manual.json (사람이 확인한 명단)
 - 2024 경선 후보군: data/primary_2024.json (build_primary.py)
 - 기사: 네이버 뉴스 검색(안 되면 구글 뉴스 RSS)에서 '이름 + 지역' 최근 90일
-- 리스크 기사만 저장: 제목, 또는 요약에서 이름 가까이에 RISK_HIGH(고발·수사 등)/RISK_LOW(논란·의혹 등) 단어가 있는 기사
+- 1차: 제목, 또는 요약에서 이름 가까이에 RISK_HIGH(고발·수사 등)/RISK_LOW(논란·의혹 등) 단어가 있는 기사 → 후보
+- 2차: judge_news.py — Gemini가 '본인이 비리·물의 당사자인가' 판단, 맞는 기사만 저장
 매일 GitHub Actions(.github/workflows/news.yml)가 실행해 자동 갱신한다.
 """
 import json, os, re, sys, time
@@ -13,6 +14,7 @@ from datetime import datetime, timedelta, timezone
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 from naver_news import search as naver
 from search_chairs import rss as google, words
+import judge_news
 
 ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 KST = timezone(timedelta(hours=9))
@@ -110,7 +112,9 @@ def main():
         return k, n
     keys = sorted(set(ch) | set(primary))
     with ThreadPoolExecutor(4) as ex:
-        news = dict(ex.map(one, keys))
+        cands = dict(ex.map(one, keys))
+    json.dump(cands, open(judge_news.CANDS, "w"), ensure_ascii=False)        # 단어로 거른 후보(공개 안 함)
+    news = judge_news.run(cands, {k: (ch.get(k) or {}).get("name", "") for k in keys})   # AI가 본인 비리·물의만 남김
     out = {k: {"chair": ch.get(k), "primary2024": primary.get(k), "news": news.get(k, [])} for k in keys}
     json.dump({"updated": datetime.now(KST).strftime("%Y-%m-%d %H:%M"), "risk_words": {"high": RISK_HIGH, "low": RISK_LOW}, "district": out},
               open(path, "w"), ensure_ascii=False, separators=(",", ":"))
