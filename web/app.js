@@ -556,6 +556,8 @@ function raceHTML({ e, r }, main) {
 
 // ── 판세 · 민주당 지역위원장 ────────────────────────────
 const signed = (x) => (x > 0 ? "+" : x < 0 ? "−" : "±") + Math.abs(x).toFixed(1);
+const leanTag = (x) => x > 0 ? `민+${x.toFixed(1)}` : x < 0 ? `국+${(-x).toFixed(1)}` : "중립";
+const leanSay = (x) => x > 0 ? `전국 평균보다 더불어민주당 쪽으로 ${x.toFixed(1)}%p 기운 곳` : x < 0 ? `전국 평균보다 국민의힘 쪽으로 ${(-x).toFixed(1)}%p 기운 곳` : "전국 평균과 같은 곳";
 const envLabel = (x) => x > 0 ? `민주 +${x.toFixed(1)}%p` : x < 0 ? `국민의힘 +${(-x).toFixed(1)}%p` : "양당 같음";
 const chairOf = (key) => state.chairs?.district[key];
 const chairName = (key) => chairOf(key)?.chair?.name || "";
@@ -602,15 +604,16 @@ function openMethod(auto = false) {
     <section>
       <h3><span>1</span>지역구 성향 — 미국 Cook Political Report ‘PVI’</h3>
       <ul>
-        <li>PVI(Partisan Voter Index): 지역구가 전국보다 어느 당 쪽으로 몇 %p 기우는지 나타내는 지수 (예: D+5, R+3)</li>
-        <li>지역구 대선 결과 − 전국 대선 결과로 계산, 2022년부터 최근 대선 75%·직전 대선 25% 가중</li>
-        <li><b>이 지도</b>: 선거마다 (지역구 격차 − 전국 평균 격차)를 구해 세 선거 평균</li>
+        <li>PVI(Partisan Voter Index, 정당 성향 지수): 미국에서 지역구가 전국 평균보다 어느 당 쪽으로 몇 %p 기우는지 나타내는 지수</li>
+        <li>표기: <b>D+5</b> = 전국보다 민주당(Democratic) 쪽으로 5%p · <b>R+3</b> = 공화당(Republican) 쪽으로 3%p · EVEN = 전국과 같음</li>
+        <li>계산: 지역구 대선 득표율 − 전국 대선 득표율, 최근 대선 75%·직전 대선 25% 반영(2022년부터)</li>
+        <li><b>이 지도</b>: 선거마다 (지역구 격차 − 전국 평균 격차)를 구해 세 선거 평균 · 표기는 <b>민+5</b>(전국보다 더불어민주당 쪽) · <b>국+3</b>(국민의힘 쪽)</li>
       </ul>
     </section>
     <section>
       <h3><span>2</span>전국 분위기 — 호주 ABC Antony Green ‘스윙 계산기’</h3>
       <ul>
-        <li>전국 지지율 변화(스윙)를 입력하면 모든 지역구에 같은 폭으로 더해 의석을 다시 계산하는 방식</li>
+        <li>스윙(swing): 전국 지지율이 한쪽으로 움직인 폭 · 이 폭을 입력하면 모든 지역구에 똑같이 더해 결과를 다시 계산하는 방식</li>
         <li><b>이 지도</b>: 판세 현황의 막대 · 기본값 ${signed(o.env_default)} = 최근 세 선거 전국 평균 격차(${signed(o.national.g22)} · ${signed(o.national.p21)} · ${signed(o.national.l9)})의 평균</li>
       </ul>
     </section>
@@ -621,7 +624,7 @@ function openMethod(auto = false) {
 
     <section class="m-check">
       <h3>검증 — 2024 총선을 미리 맞혀 보기</h3>
-      <p>2020 총선 · 2022 대선 · 2022 지선만으로 같은 방식으로 계산해 실제 2024 총선 결과와 대조</p>
+      <p>2020 총선 · 2022 대선 · 2022 지방선거만으로 같은 방식으로 계산해 실제 2024 총선 결과와 대조</p>
       <div class="m-stats">
         <div><b>93<small>%</small></b><span>승패 적중<br>254곳 중 237곳</span></div>
         <div><b>105<small>/107</small></b><span>우세로 본 곳<br>민주 승리</span></div>
@@ -632,15 +635,27 @@ function openMethod(auto = false) {
     </section>
 
     <section>
+      <h3>용어 풀이</h3>
+      <dl class="m-gloss">
+        <dt>%p</dt><dd>퍼센트포인트 · 비율끼리 뺀 차이 (51%와 46%의 차이 = 5%p)</dd>
+        <dt>격차</dt><dd>민주당 득표율 − 상대 1위(국민의힘 등 민주당 외 가장 많이 받은 후보) 득표율</dd>
+        <dt>지역구 성향</dt><dd>그 지역구가 전국 평균보다 어느 당 쪽으로 기우는 정도 · 민+는 민주당 쪽, 국+는 국민의힘 쪽</dd>
+        <dt>전국 분위기</dt><dd>그해 선거에서 전국적으로 민주당이 몇 %p 앞설지에 대한 가정 · 화면의 막대로 정함</dd>
+        <dt>예상 격차</dt><dd>지역구 성향 + 전국 분위기 · 그 분위기라면 이 지역구에서 민주당이 몇 %p 앞설지</dd>
+        <dt>경합</dt><dd>예상 격차가 ±5%p 안인 접전 지역 · 경합우세는 +5~10, 경합열세는 −5~−10</dd>
+        <dt>적중</dt><dd>예상한 승패가 실제 결과와 맞은 비율</dd>
+      </dl>
+    </section>
+    <section>
       <h3>원래 방식과 다른 점</h3>
       <div class="m-tbl"><table>
         <tr><th></th><th>Cook PVI</th><th>이 지도</th></tr>
-        <tr><td>쓰는 선거</td><td>대통령 선거 2회</td><td>총선 · 대선 · 지선 3회</td></tr>
+        <tr><td>쓰는 선거</td><td>대통령 선거 2회</td><td>총선 · 대선 · 지방선거 3회</td></tr>
         <tr><td>비교 기준</td><td>양당 득표 비율</td><td>민주 − 상대 1위 격차</td></tr>
         <tr><td>전국 기준</td><td>실제 전국 득표</td><td>254개 지역구 단순 평균</td></tr>
         <tr><td>가중치</td><td>최근 75 · 직전 25</td><td>세 선거 같게</td></tr>
       </table></div>
-      <p class="m-note">대선·지선은 투표구·읍면동 결과를 22대 지역구로 다시 더한 추정치 · 여론조사·후보 요인은 들어가지 않음</p>
+      <p class="m-note">대선·지방선거은 투표구·읍면동 결과를 22대 지역구로 다시 더한 추정치 · 여론조사·후보 요인은 들어가지 않음</p>
     </section>
 
     <p class="m-src">참고: <a href="https://www.cookpolitical.com/cook-pvi/2022-partisan-voting-index/state-map-and-list" target="_blank" rel="noopener">Cook Political Report — 2022 Cook PVI</a> · <a href="https://aceproject.org/ero-en/regions/pacific/AU/australia-antony-greens-house-of-reps-calculator" target="_blank" rel="noopener">Antony Green’s House of Reps Calculator (ABC)</a> · 자료: 중앙선거관리위원회 선거통계시스템</p>
@@ -690,8 +705,8 @@ function showOutlookOverview() {
       <p class="oneline">예상 격차 = <b>지역구 성향</b>(평소 전국보다 민주당이 몇 %p 더 나오는 곳인지) + <b>전국 분위기</b>(위 막대)</p>
       <p class="src"><b>계산 순서</b></p>
       <ol class="formula">
-        <li><b>격차</b>: 선거마다 민주당 득표율 − 상대 1위 득표율<br><small>2024 총선 · 2025 대선 · 2026 지선</small></li>
-        <li><b>지역구 성향</b>: 그 격차가 전국 평균보다 몇 %p 높은지(낮은지)를 세 선거 평균<br><small>전국 평균 격차: 2024 총선 ${signed(o.national.g22)} · 2025 대선 ${signed(o.national.p21)} · 2026 지선 ${signed(o.national.l9)}</small></li>
+        <li><b>격차</b>: 선거마다 민주당 득표율 − 상대 1위 득표율<br><small>2024 총선 · 2025 대선 · 2026 지방선거</small></li>
+        <li><b>지역구 성향</b>: 그 격차가 전국 평균보다 몇 %p 높은지(낮은지)를 세 선거 평균<br><small>전국 평균 격차: 2024 총선 ${signed(o.national.g22)} · 2025 대선 ${signed(o.national.p21)} · 2026 지방선거 ${signed(o.national.l9)}</small></li>
         <li><b>예상 격차</b>: 지역구 성향 + 전국 분위기</li>
       </ol>
       <p class="src"><b>전국 분위기란</b></p>
@@ -705,7 +720,7 @@ function showOutlookOverview() {
         <tr><th></th><th>종로구</th><th>전국</th><th>차이</th></tr>
         <tr><td>2024 총선</td><td>+6.8</td><td>+6.4</td><td>+0.4</td></tr>
         <tr><td>2025 대선</td><td>+8.3</td><td>+8.2</td><td>+0.1</td></tr>
-        <tr><td>2026 지선</td><td>+2.9</td><td>+8.4</td><td>−5.5</td></tr>
+        <tr><td>2026 지방선거</td><td>+2.9</td><td>+8.4</td><td>−5.5</td></tr>
         <tr class="sum"><td colspan="3">지역구 성향 = (+0.4 +0.1 −5.5) ÷ 3</td><td>−1.7</td></tr>
       </table>
       <ul>
@@ -723,7 +738,7 @@ function showOutlookOverview() {
       </ul>
       <p class="src"><b>검증</b></p>
       <ul>
-        <li>2020 총선·2022 대선·2022 지선만으로 2024 총선을 이 방식으로 예측 → 254곳 중 237곳(93%) 승패 적중</li>
+        <li>2020 총선·2022 대선·2022 지방선거만으로 2024 총선을 이 방식으로 예측 → 254곳 중 237곳(93%) 승패 적중</li>
         <li>우세로 본 107곳 중 105곳 민주 승리, 열세로 본 66곳 중 64곳 패배</li>
         <li>그냥 평균 낸 방식은 80% 적중</li>
       </ul>
@@ -803,7 +818,8 @@ function leanHTML(o) {
   const rows = used.map((e) => `<tr><td>${esc(e.name)}</td><td>${signed(o[e.id].m)}</td><td>${signed(nat[e.id])}</td><td><b>${signed(diff(e))}</b></td></tr>`).join("");
   const sum = used.map((e) => signed(diff(e))).join(" ");
   return `<div class="leancalc">
-    <p class="lc-h">성향 계산 <small>전국보다 민주당이 몇 %p 더 나오는 곳인지</small></p>
+    <p class="lc-h">지역구 성향 <span class="ltag ${o.lean >= 0 ? "pos" : "neg"}">${leanTag(o.lean)}</span></p>
+    <p class="lc-say">${leanSay(o.lean)}</p>
     <table class="ex">
       <tr><th></th><th>이 지역구</th><th>전국 평균</th><th>차이</th></tr>
       ${rows}
@@ -830,8 +846,8 @@ function outlookHTML(key) {
     <div class="grade-badge" style="--c:${GRADE_COLOR[o.grade]}"><b>${o.grade}</b><span>예상 격차 <b>${signed(o.exp)}%p</b> <small>= 성향 ${signed(o.lean)} + 전국 분위기 ${signed(state.env)}</small></span></div>
     <ul class="mrows">${state.outlook.elections.map(row).join("")}</ul>
     ${leanHTML(o)}
-    ${o.trend != null ? `<p class="trend">2024 총선 → 2026 지선: 민주당 격차 <b class="${o.trend >= 0 ? "pos" : "neg"}">${o.trend >= 0 ? "▲" : "▼"} ${Math.abs(o.trend).toFixed(1)}%p</b> ${o.trend >= 0 ? "좋아짐" : "나빠짐"}</p>` : ""}
-    <p class="src">대선·지선은 투표구·읍면동 결과를 이 지역구로 다시 더한 값(일부 나뉜 동은 비율로 추정)</p>
+    ${o.trend != null ? `<p class="trend">2024 총선 → 2026 지방선거: 민주당 격차 <b class="${o.trend >= 0 ? "pos" : "neg"}">${o.trend >= 0 ? "▲" : "▼"} ${Math.abs(o.trend).toFixed(1)}%p</b> ${o.trend >= 0 ? "좋아짐" : "나빠짐"}</p>` : ""}
+    <p class="src">대선·지방선거은 투표구·읍면동 결과를 이 지역구로 다시 더한 값(일부 나뉜 동은 비율로 추정)</p>
   </section>`;
 }
 

@@ -478,3 +478,9 @@ b.hi, .rk.hi { color: #C4252D; }
   .m-eq > i { display: none; }
   .m-stats { grid-template-columns: repeat(2, 1fr); }
 }
+.m-gloss { margin: 0; display: grid; grid-template-columns: max-content 1fr; gap: 6px 14px; font-size: 14px; }
+.m-gloss dt { font-weight: 800; color: var(--ink); }
+.m-gloss dd { margin: 0; }
+.leancalc .ltag { display: inline-block; margin-left: 6px; padding: 1px 10px; border-radius: 999px; font-family: var(--serif); font-size: 17px; font-weight: 700; background: #fff; border: 1px solid currentColor; }
+.leancalc .lc-say { margin: 4px 0 0; font-size: 14px; color: var(--ink-2); }
+@media (max-width: 640px) { .m-gloss { grid-template-columns: 1fr; gap: 2px; } .m-gloss dd { margin-bottom: 6px; } }
