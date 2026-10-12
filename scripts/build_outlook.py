@@ -179,8 +179,9 @@ for k in sorted(g):
         notes.append(f"상대 후보 {c[ri]['party']} {c[ri]['name']}")
     if notes:
         row["g22"]["note"] = " · ".join(notes)
-    if di is None:                                   # 2024 세종갑: 민주당 공천 취소로 민주 계열 후보 없음
-        row["g22"] = {"none": "민주 계열 후보 없음(공천 취소) — 평균에서 제외"}
+    if di is None:                                   # 세종갑(민주당 공천 취소)·대구 서구·의성청송영덕울진: 민주 계열 후보 없음
+        why = "(공천 취소)" if k == "세종 세종특별자치시갑" else ""
+        row["g22"] = {"none": f"민주 계열 후보 없음{why} — 평균에서 제외"}
     ms = [row[x]["m"] for x in ("g22", "p21", "l9") if row[x] and "m" in row[x]]
     avg = round(sum(ms) / len(ms), 1)
     out[k] = dict(row, avg=avg, grade=grade(avg),
