@@ -586,3 +586,23 @@ details.calc > summary small { font-weight: 400; color: var(--ink-3); margin-lef
   .seg[aria-label="보기 방식"] { bottom: 10px; }
   .hero-h b { font-size: 34px; }
 }
+
+/* ── 우리 지역 단체장 (판세 > 지역구) ── */
+.lg { list-style: none; margin: 0; padding: 0; }
+.lg li { padding: 14px 0; border-top: 1px solid var(--hair); }
+.lg li:first-child { border-top: 0; padding-top: 4px; }
+.lg-top { display: flex; justify-content: space-between; align-items: baseline; gap: 8px; font-size: 15px; color: var(--ink-2); font-weight: 600; }
+.lg-top small { font-size: 13px; font-weight: 400; color: var(--ink-3); white-space: nowrap; }
+.lg-win { display: flex; align-items: baseline; gap: 6px; margin: 4px 0 8px; }
+.lg-win i { width: 10px; height: 10px; border-radius: 50%; align-self: center; flex: none; }
+.lg-win b { font-family: var(--serif); font-size: 22px; font-weight: 800; letter-spacing: -.02em; }
+.lg-win small { font-size: 14px; color: var(--ink-3); }
+.lg-win span { margin-left: auto; font-family: var(--serif); font-size: 22px; font-weight: 800; font-variant-numeric: tabular-nums; }
+.lg .stack { height: 8px; border-radius: 4px; }
+.lg-sub { margin: 7px 0 0; font-size: 14px; color: var(--ink-3); font-variant-numeric: tabular-nums; }
+.lg-sub + .lg-sub { margin-top: 2px; }
+.lg-sub small { font-size: inherit; }
+.lg-sub b { font-weight: 700; }
+.lg-gov { margin: 6px 0 0; padding: 10px 12px; background: var(--sea); border-radius: 8px; font-size: 14px; color: var(--ink-2); font-variant-numeric: tabular-nums; }
+.lg-gov span { font-weight: 700; color: var(--ink); margin-right: 6px; }
+.lg-gov small { font-size: inherit; color: var(--ink-3); }

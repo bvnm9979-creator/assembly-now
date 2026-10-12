@@ -72,6 +72,7 @@ async function init() {
   Object.assign(state, { members, hexes, geo, sido });
   // 선거 결과는 없어도 지도는 보이게 따로 받음
   load("results.json").then((r) => { state.results = r; if (state.sel) select(state.sel, false); }).catch(() => {});
+  load("local.json").then((r) => { state.local = r; if (state.sel && state.mode === "outlook") select(state.sel, false); }).catch(() => {});
   // 판세 + 검증 수치(calibration) + 재합산 정확도(accuracy): 안내문·팝업이 같이 쓰므로 함께 받음
   Promise.all([load("outlook.json"), load("calibration.json").catch(() => null), load("accuracy.json").catch(() => null),
                load("poll.json").catch(() => null), load("partylist_test.json").catch(() => null),
@@ -1047,6 +1048,7 @@ function showOutlook(key, m) {
     ${outlookHTML(key)}
     ${chairHTML(key, m)}
     ${primaryHTML(key)}
+    ${localHTML(key)}
     <details class="prev"><summary>현재 국회의원 · 2024 총선 결과 <small>${m ? `${esc(m.name)} (${esc(m.party)})` : "공석"}</small></summary>
       ${electionHTML(key, m?.name) || ""}
     </details>`;
@@ -1147,6 +1149,44 @@ function primaryHTML(key) {
       <small>${esc(c.career)}</small></li>`).join("")}</ul>
     <p class="src">예비후보·경선·컷오프 명단(나무위키 정리) · 이름을 누르면 최근 기사</p>
   </section>`;
+}
+
+// 우리 지역 단체장 (2026 지방선거 구청장·시장·군수 + 시·도지사) — 참고용, 판세 계산에는 안 씀
+const f1 = (x) => x.toFixed(1);
+const SHORT = { "더불어민주당": "민주", "국민의힘": "국민의힘", "조국혁신당": "조국혁신당", "무소속": "무소속" };
+function localHTML(key) {
+  const L = state.local, towns = L?.district[key];
+  if (!towns?.length) return "";
+  const rows = towns.map((t) => ({ ...t, m: L.mayor[t.t] })).filter((t) => t.m);
+  const gov = L.governor[key.split(" ")[0]] || L.governor[key.replace(/특별자치시.*/, "")];
+  if (!rows.length && !gov) return "";
+  const multi = rows.length > 1;
+  const counts = {};
+  rows.forEach((t) => { const p = t.m.cands[0].party; counts[p] = (counts[p] || 0) + 1; });
+  const sub = rows.length === 1
+    ? `${esc(rows[0].m.office)} ${esc(rows[0].m.cands[0].name)} (${esc(rows[0].m.cands[0].party)})`
+    : rows.length ? `${rows.length}곳 · ${Object.entries(counts).sort((a, b) => b[1] - a[1]).map(([p, n]) => `${esc(SHORT[p] || p)} ${n}`).join(" · ")}`
+    : `${esc(gov.title)} ${esc(gov.cands[0].name)}`;
+  const item = (t) => {
+    const m = t.m, [w, s] = m.cands;
+    const tag = multi ? `지역구 유권자의 ${Math.round(t.share)}%` : t.cover < 99 ? `${esc(t.t.split(" ")[1])} 전체 결과` : "";
+    const bar = m.nocontest ? "" : `<div class="stack">${m.cands.map((c) => `<span style="width:${c.pct}%;background:${colorOf(c.party)}" title="${esc(c.name)} ${f1(c.pct)}%"></span>`).join("")}</div>`;
+    const line = m.nocontest ? "후보 1명 · 무투표 당선"
+      : `${s ? `2위 ${esc(s.name)}<small>(${esc(SHORT[s.party] || s.party)})</small> ${f1(s.pct)}% · 격차 ${(w.pct - s.pct).toFixed(1)}%p · ` : ""}투표율 ${f1((m.turnout / m.electors) * 100)}%`;
+    const fx = m.dcand != null && m.dparty != null ? Math.round((m.dcand - m.dparty) * 10) / 10 : null;
+    return `<li>
+      <div class="lg-top"><span>${esc(m.office)}</span>${tag ? `<small>${tag}</small>` : ""}</div>
+      <div class="lg-win"><i style="background:${colorOf(w.party)}"></i><b>${esc(w.name)}</b><small>${esc(w.party)}</small>${m.nocontest ? "" : `<span>${f1(w.pct)}%</span>`}</div>
+      ${bar}
+      <p class="lg-sub">${line}</p>
+      ${fx != null ? `<p class="lg-sub">후보 개인 효과 <b class="${fx >= 0 ? "pos" : "neg"}">${signed(fx)}%p</b> · 민주당 후보 ${f1(m.dcand)}% vs 정당표 ${f1(m.dparty)}%</p>` : ""}
+    </li>`;
+  };
+  return `<details class="prev local"><summary>우리 지역 단체장 · ${esc(L.election.name)}<small>${sub}</small></summary>
+    <ul class="lg">${rows.map(item).join("")}</ul>
+    ${gov ? `<p class="lg-gov"><span>${esc(gov.title)}</span><b>${esc(gov.cands[0].name)}</b><small>(${esc(SHORT[gov.cands[0].party] || gov.cands[0].party)})</small> ${f1(gov.cands[0].pct)}%${gov.cands[1] ? ` · 2위 ${esc(gov.cands[1].name)} ${f1(gov.cands[1].pct)}%` : ""} · 투표율 ${f1((gov.turnout / gov.electors) * 100)}%</p>` : ""}
+    <p class="src">${esc(L.election.date)} 지방선거 · 중앙선거관리위원회 · 후보 개인 효과 = 민주당 후보 득표율 − 같은 지역 민주당 광역비례 득표율 · 판세 계산에는 넣지 않음</p>
+  </details>`;
 }
 
 // ── 말풍선 ─────────────────────────────────────────────
