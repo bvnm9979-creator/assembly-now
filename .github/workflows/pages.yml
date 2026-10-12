@@ -25,6 +25,9 @@ jobs:
     steps:
       - uses: actions/checkout@v4
       - uses: actions/configure-pages@v5
+      # 배포할 때마다 app.js·style.css 주소의 ?v= 를 커밋 번호로 바꿔, 올리자마자 모두에게 새 화면이 보이게 함
+      - name: Stamp build version
+        run: sed -i -E "s/\?v=[0-9A-Za-z]+/?v=${GITHUB_SHA::8}/g" web/index.html && grep -o '?v=[0-9a-z]*' web/index.html
       - uses: actions/upload-pages-artifact@v3
         with:
           path: web

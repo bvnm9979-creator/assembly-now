@@ -1,5 +1,8 @@
 // 22대 국회 지역구 지도 — 실제 지도(MapLibre) + 육각형 지도(SVG) + 비례대표 목록
 
+// 배포 버전: index.html 의 app.js?v=… (배포 때 커밋 번호로 자동으로 바뀜) → 자료 파일에도 붙여 예전 파일 캐시를 피함
+const BUILD = new URL(document.currentScript.src).searchParams.get("v") || "";
+
 const PARTY_COLOR = {
   "더불어민주당": "#1F5BC4",
   "국민의힘": "#E2333C",
@@ -46,7 +49,7 @@ async function init() {
   const load = async (f) => {
     for (let i = 0; ; i++) {
       try {
-        const r = await fetch("data/" + f);
+        const r = await fetch("data/" + f + (BUILD ? "?v=" + BUILD : ""));
         if (r.ok) return await r.json();
         throw new Error(r.status);
       } catch (e) {
