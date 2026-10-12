@@ -609,7 +609,7 @@ function showOutlookOverview() {
         <tr><td>2024 총선</td><td>+6.8</td><td>+6.4</td><td>+0.4</td></tr>
         <tr><td>2025 대선</td><td>+8.3</td><td>+8.2</td><td>+0.1</td></tr>
         <tr><td>2026 지선</td><td>+2.9</td><td>+8.4</td><td>−5.5</td></tr>
-        <tr class="sum"><td colspan="3">지역구 성향(세 차이 평균)</td><td>−1.7</td></tr>
+        <tr class="sum"><td colspan="3">지역구 성향 = (+0.4 +0.1 −5.5) ÷ 3</td><td>−1.7</td></tr>
       </table>
       <ul>
         <li>전국 분위기 민주 +7.7이면 → −1.7 + 7.7 = <b>+6.0 경합우세</b></li>
@@ -697,6 +697,24 @@ function showOutlook(key, m) {
   }
 }
 
+// 성향 계산 표: 선거마다 (이 지역구 격차 − 전국 평균 격차) → 평균 → + 전국 분위기
+function leanHTML(o) {
+  const nat = state.outlook.national;
+  const used = state.outlook.elections.filter((e) => o[e.id]?.m !== undefined);
+  const diff = (e) => Math.round((o[e.id].m - nat[e.id]) * 10) / 10;
+  const rows = used.map((e) => `<tr><td>${esc(e.name)}</td><td>${signed(o[e.id].m)}</td><td>${signed(nat[e.id])}</td><td><b>${signed(diff(e))}</b></td></tr>`).join("");
+  const sum = used.map((e) => signed(diff(e))).join(" ");
+  return `<div class="leancalc">
+    <p class="lc-h">성향 계산 <small>전국보다 민주당이 몇 %p 더 나오는 곳인지</small></p>
+    <table class="ex">
+      <tr><th></th><th>이 지역구</th><th>전국 평균</th><th>차이</th></tr>
+      ${rows}
+      <tr class="sum"><td colspan="3">성향 = (${sum}) ÷ ${used.length}</td><td>${signed(o.lean)}</td></tr>
+      <tr class="sum"><td colspan="3">예상 격차 = 성향 ${signed(o.lean)} + 전국 분위기 ${signed(state.env)}</td><td>${signed(o.exp)}</td></tr>
+    </table>
+  </div>`;
+}
+
 function outlookHTML(key) {
   const o = state.outlook?.district[key];
   if (!o) return "";
@@ -713,6 +731,7 @@ function outlookHTML(key) {
   return `<section class="outlook">
     <div class="grade-badge" style="--c:${GRADE_COLOR[o.grade]}"><b>${o.grade}</b><span>예상 격차 <b>${signed(o.exp)}%p</b> <small>= 성향 ${signed(o.lean)} + 전국 분위기 ${signed(state.env)}</small></span></div>
     <ul class="mrows">${state.outlook.elections.map(row).join("")}</ul>
+    ${leanHTML(o)}
     ${o.trend != null ? `<p class="trend">2024 총선 → 2026 지선: 민주당 격차 <b class="${o.trend >= 0 ? "pos" : "neg"}">${o.trend >= 0 ? "▲" : "▼"} ${Math.abs(o.trend).toFixed(1)}%p</b> ${o.trend >= 0 ? "좋아짐" : "나빠짐"}</p>` : ""}
     <p class="src">대선·지선은 투표구·읍면동 결과를 이 지역구로 다시 더한 값(일부 나뉜 동은 비율로 추정)</p>
   </section>`;
