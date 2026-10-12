@@ -161,6 +161,12 @@ def aggregate(src, precinct_level, stats=None, with_town=True):
 # 민주 계열 승리 확률 = Φ(예상 격차 / σ). σ는 scripts/calibrate.py 가 2024·2020 총선 검증(503곳)으로 정한 값:
 # 민주 불리 쪽 5.0, 유리 쪽 7.5 (불리한 곳은 예상보다 더 크게 지는 일이 많아 흩어짐이 작다)
 SIGMA = (5.0, 7.5)
+# 예상 의석 범위: 권역마다 함께 흔들리는 폭(σ). 과거 두 총선에서 권역 평균 오차가 해마다 ±2~8%p 달라 4로 둠 —
+# 이때 80% 범위가 2024(134~164, 실제 162)·2020(156~185, 실제 164) 실제 의석을 모두 포함 (scripts/calibrate.py)
+SIGMA_REGION = 4.0
+REGION = {"서울": "수도권", "인천": "수도권", "경기": "수도권", "대전": "충청", "세종": "충청", "충북": "충청", "충남": "충청",
+          "광주": "호남", "전북": "호남", "전남": "호남", "부산": "부울경", "울산": "부울경", "경남": "부울경",
+          "대구": "대구·경북", "경북": "대구·경북", "강원": "강원·제주", "제주": "강원·제주"}
 
 def win_prob(m):
     return 0.5 * (1 + math.erf(m / (SIGMA[0] if m < 0 else SIGMA[1]) / math.sqrt(2)))
@@ -228,7 +234,7 @@ def main():
                "elections": [{"id": "g22", "name": "2024 총선", "desc": "지역구 후보"},
                              {"id": "p21", "name": "2025 대선", "desc": "이재명 · 김문수"},
                              {"id": "l9", "name": "2026 지방선거", "desc": "광역비례 정당 투표"}],
-               "national": nat, "env_default": env, "sigma": SIGMA,
+               "national": nat, "env_default": env, "sigma": SIGMA, "sigma_region": SIGMA_REGION, "region": REGION,
                "rule": "예상 격차 = 지역구 성향(선거별 지역구 격차 − 전국 평균 격차의 평균) + 전국 분위기 · 승리 확률 = Φ(예상 격차 / σ), σ 불리 5.0·유리 7.5 · 우세 90%↑ · 경합우세 70~90 · 경합 30~70 · 경합열세 10~30 · 열세 10%↓",
                "district": out},
               open(os.path.join(OUT, "outlook.json"), "w"), ensure_ascii=False, separators=(",", ":"))

@@ -488,3 +488,23 @@ b.hi, .rk.hi { color: #C4252D; }
 /* 독도 이름표 */
 .dokdo { display: inline-flex; align-items: center; gap: 4px; padding: 0 0 0 0; border: 0; background: none; cursor: pointer; font: 700 12px var(--sans); color: var(--ink-2); text-shadow: 0 0 3px #fff, 0 0 3px #fff, 0 0 3px #fff; white-space: nowrap; }
 .dokdo:hover { color: var(--ink); }
+
+/* 예상 의석 상자 · 권역별 조정 */
+.seatbox { margin: 0 0 14px; padding: 12px 14px; border: 1px solid var(--hair); border-radius: 10px; background: var(--surface); }
+.sb-h { margin: 0; display: flex; align-items: baseline; gap: 6px; flex-wrap: wrap; font-weight: 700; font-size: 14px; color: var(--ink-2); }
+.sb-h b { font-size: 26px; color: #1F5BC4; font-variant-numeric: tabular-nums; }
+.sb-h small { font-size: 13px; color: var(--ink-3); font-weight: 400; }
+.sb-bar { position: relative; height: 12px; margin: 10px 0 22px; border-radius: 6px; background: #E9ECF1; }
+.sb-rng { position: absolute; top: 0; bottom: 0; border-radius: 6px; background: color-mix(in srgb, #1F5BC4 35%, white); }
+.sb-mean { position: absolute; top: -3px; bottom: -3px; width: 3px; margin-left: -1.5px; border-radius: 2px; background: #1F5BC4; }
+.sb-half { position: absolute; top: -4px; bottom: -4px; width: 0; border-left: 2px dashed var(--ink-2); }
+.sb-half em { position: absolute; top: 18px; left: 0; transform: translateX(-50%); white-space: nowrap; font-style: normal; font-size: 11px; color: var(--ink-3); }
+.sb-sub { margin: 0; font-size: 13px; color: var(--ink-3); }
+.regbox { margin-top: 10px; border-top: 1px solid var(--hair); padding-top: 8px; }
+.regbox summary { cursor: pointer; font-size: 13px; font-weight: 700; color: var(--ink-2); }
+.regbox summary small { font-weight: 400; color: var(--ink-3); }
+.regbox summary .on { margin-left: 4px; padding: 1px 6px; border-radius: 8px; background: #1F5BC4; color: #fff; font-size: 11px; }
+.regbox .reg { display: grid; grid-template-columns: 74px 1fr 44px; align-items: center; gap: 8px; margin: 6px 0 0; font-size: 13px; font-weight: 400; }
+.regbox .reg input { margin: 0; width: 100%; accent-color: #1F5BC4; }
+.regbox .reg b { text-align: right; font-variant-numeric: tabular-nums; }
+.m-stats2 { grid-template-columns: repeat(2, 1fr); }

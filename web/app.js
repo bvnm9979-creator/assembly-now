@@ -40,7 +40,7 @@ const $ = (s) => document.querySelector(s);
 const $$ = (s) => document.querySelectorAll(s);
 const esc = (s) => String(s ?? "").replace(/[&<>"']/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]));
 const state = { members: null, hexes: null, geo: null, sido: null, party: null, sel: null, map: null, view: "geo", counts: [],
-                mode: "seat", grade: null, outlook: null, chairs: null };
+                mode: "seat", grade: null, outlook: null, chairs: null, regAdj: {} };   // regAdj: 권역별 조정(%p), 기본 0
 
 init();
 
@@ -168,10 +168,14 @@ function gradeRange(i) {
   return ["격차 " + f(c[0]) + " 이상", f(c[1]) + " ~ " + f(c[0]), f(c[2]) + " ~ " + f(c[1]), f(c[3]) + " ~ " + f(c[2]), f(c[3]) + " 미만"][i];
 }
 const GRADE_PROB = ["90% 이상", "70~90%", "30~70%", "10~30%", "10% 미만"];
+// 권역: 시도 → 수도권·충청·호남·부울경·대구·경북·강원·제주 (outlook.json region)
+const regionOf = (key) => state.outlook?.region?.[key.split(" ")[0]] || "";
+const REGIONS = ["수도권", "충청", "호남", "부울경", "대구·경북", "강원·제주"];
 function applyEnv(env) {
   state.env = env;
-  for (const d of Object.values(state.outlook.district)) {
-    d.exp = Math.round((d.lean + env) * 10) / 10;
+  for (const [k, d] of Object.entries(state.outlook.district)) {
+    d.adj = state.regAdj[regionOf(k)] || 0;
+    d.exp = Math.round((d.lean + env + d.adj) * 10) / 10;
     d.grade = gradeOf(d.exp);
   }
   for (const f of state.geo.features) f.properties.grade = state.outlook.district[f.properties.key]?.grade || "";
@@ -651,6 +655,17 @@ function openMethod(auto = false) {
       <div class="m-grades">${GRADES.map(([g, c], i) => `<span style="--c:${c}"><b>${g}</b>${GRADE_PROB[i]}<small>${gradeRange(i)}</small></span>`).join("")}</div>
     </section>
 
+    <section>
+      <h3><span>4</span>예상 의석 — 모의 선거 2,000번</h3>
+      <ul>
+        <li>지역구마다 승리 확률대로 모의 선거를 2,000번 치러 민주 계열 지역구 의석을 셈 · 평균 = 예상 의석, 가운데 80% = 범위 (FiveThirtyEight·Economist 의석 전망과 비슷한 원리)</li>
+        <li>한 권역이 통째로 같이 움직이는 일을 반영해 권역별로 ±${o.sigma_region || 4}%p씩 함께 흔듦 — 이 폭을 빼면 범위가 너무 좁아져 과거 실제 의석이 범위 밖으로 나감</li>
+      </ul>
+      ${state.cal?.seats ? `<div class="m-stats m-stats2">
+        ${["2024", "2020"].map((y) => { const v = state.cal.seats[y]; return `<div><b>${v.actual}<small>석</small></b><span>${y} 총선 실제<br>예상 ${v.mean.toFixed(0)}석 · 범위 ${v.lo}~${v.hi}</span></div>`; }).join("")}
+      </div><p class="m-note">그해 실제 전국 분위기를 넣고, 그 이전 선거만으로 계산한 결과 · 두 번 모두 실제 의석이 80% 범위 안</p>` : ""}
+    </section>
+
     <section class="m-check">
       <h3>검증 — 과거 총선 두 번을 미리 맞혀 보기</h3>
       <p>과거 선거만으로 같은 방식으로 계산해 실제 총선 결과와 두 번 대조 · 1차 2020·2022 선거 → 2024 총선 · 2차 2016·2017·2018 선거 → 2020 총선</p>
@@ -679,7 +694,7 @@ function openMethod(auto = false) {
         <tr><td>전국 기준</td><td>실제 전국 득표</td><td>254개 지역구 단순 평균</td></tr>
         <tr><td>가중치</td><td>최근 75 · 직전 25</td><td>세 선거 같게</td></tr>
       </table></div>
-      <p class="m-note">여론조사·후보 요인은 들어가지 않음</p>
+      <p class="m-note">여론조사·후보 요인은 들어가지 않음 · 현역 의원 효과는 과거 총선으로 검증해 보니 해마다 방향이 달라 넣지 않음</p>
     </section>
     <section>
       <h3>대선·지방선거 숫자를 지역구에 맞춘 방법</h3>
@@ -701,6 +716,35 @@ function openMethod(auto = false) {
     else if (e.target === box || e.target.closest(".m-x, .m-close")) close();
   });
   box.querySelector(".m-close").focus({ preventScroll: true });
+}
+
+// 예상 의석: 권역마다 함께 흔들리는 폭(sigma_region) + 지역구 승리 확률로 2000번 모의 선거 → 평균·80% 범위
+// 같은 입력이면 같은 숫자가 나오도록 씨앗 고정 난수(mulberry32)
+function seatSim(n = 2000) {
+  const o = state.outlook, sr = o.sigma_region || 4;
+  let a = 20280412;
+  const rnd = () => { a |= 0; a = (a + 0x6D2B79F5) | 0; let t = Math.imul(a ^ (a >>> 15), 1 | a); t = (t + Math.imul(t ^ (t >>> 7), 61 | t)) ^ t; return ((t ^ (t >>> 14)) >>> 0) / 4294967296; };
+  const gauss = () => Math.sqrt(-2 * Math.log(1 - rnd())) * Math.cos(2 * Math.PI * rnd());
+  const ds = Object.entries(o.district).map(([k, d]) => [REGIONS.indexOf(regionOf(k)), d.exp]);
+  const sims = [];
+  for (let i = 0; i < n; i++) {
+    const sh = REGIONS.map(() => gauss() * sr);
+    let w = 0;
+    for (const [r, x] of ds) if (rnd() < probOf(x + (sh[r] || 0))) w++;
+    sims.push(w);
+  }
+  sims.sort((x, y) => x - y);
+  return { mean: Math.round(sims.reduce((x, y) => x + y, 0) / n), lo: sims[Math.floor(n * 0.1)], hi: sims[Math.floor(n * 0.9)], total: ds.length };
+}
+function seatHTML() {
+  const s = seatSim(), half = Math.floor(s.total / 2) + 1, pc = (x) => (x / s.total * 100).toFixed(1) + "%";
+  return `<p class="sb-h">민주 계열 지역구 예상 의석 <b>${s.mean}석</b> <small>/ ${s.total}석</small></p>
+      <div class="sb-bar" title="80% 범위 ${s.lo}~${s.hi}석">
+        <span class="sb-rng" style="left:${pc(s.lo)};width:${pc(s.hi - s.lo)}"></span>
+        <span class="sb-mean" style="left:${pc(s.mean)}"></span>
+        <span class="sb-half" style="left:${pc(half)}"><em>지역구 과반 ${half}</em></span>
+      </div>
+      <p class="sb-sub">10번 중 8번은 <b>${s.lo}~${s.hi}석</b> 사이 · 지역구만(비례대표 제외) · 위 전국 분위기 기준</p>`;
 }
 
 // 검증 결과: calibration.json (scripts/calibrate.py)
@@ -759,7 +803,13 @@ function showOutlookOverview() {
       <input type="range" id="env" min="-15" max="15" step="0.5" value="${state.env}">
       <div class="envscale"><span>국민의힘 +15</span><span>0</span><span>민주 +15</span></div>
       <p>기본값 ${signed(def)} = 최근 세 선거 전국 평균 격차 ${state.env !== def ? `<button class="clear" id="envReset">기본값으로</button>` : ""}</p>
+      <details class="regbox" ${state.regOpen ? "open" : ""}>
+        <summary>권역별 조정 <small>(선택 · 특정 권역만 분위기가 다를 때)</small>${Object.values(state.regAdj).some(Boolean) ? ` <b class="on">조정 중</b>` : ""}</summary>
+        ${REGIONS.map((g) => `<label class="reg"><span>${g}</span><input type="range" min="-10" max="10" step="0.5" value="${state.regAdj[g] || 0}" data-r="${g}"><b class="${(state.regAdj[g] || 0) >= 0 ? "pos" : "neg"}">${signed(state.regAdj[g] || 0)}</b></label>`).join("")}
+        <p>전국 분위기에 더해지는 값 · 예: 부울경 −3 = 부울경만 전국보다 국민의힘 쪽으로 3%p ${Object.values(state.regAdj).some(Boolean) ? `<button class="clear" id="regReset">모두 0으로</button>` : ""}</p>
+      </details>
     </div>
+    <div class="seatbox" id="seatbox">${seatHTML()}</div>
     <div class="gradebar">${GRADES.map(([g, c]) => cnt[g] ? `<span data-g="${g}" style="flex:${cnt[g]};background:${c}" title="${g} ${cnt[g]}곳"></span>` : "").join("")}</div>
     <ul class="gradelegend">${GRADES.map(([g, c]) => `<li data-g="${g}" class="${state.grade === g ? "on" : ""}"><i style="background:${c}"></i>${g} <b>${cnt[g]}</b></li>`).join("")}</ul>
     <details class="notice">
@@ -790,6 +840,17 @@ function showOutlookOverview() {
         <li>전국 분위기 ${envLabel(o.env_default)}이면 → ${signed(z.lean)} + ${o.env_default.toFixed(1)} = <b>${signed(z.lean + o.env_default)} → 승리 확률 ${pct(z.lean + o.env_default)} ${gradeOf(z.lean + o.env_default)}</b></li>
         <li>전국 분위기 양당 같음(0)이면 → ${signed(z.lean)} + 0 = <b>${signed(z.lean)} → 승리 확률 ${pct(z.lean)} ${gradeOf(z.lean)}</b></li>
       </ul>`; })()}
+      <p class="src"><b>예상 의석</b></p>
+      <ul>
+        <li>254개 지역구마다 승리 확률대로 모의 선거를 2,000번 치러 민주 계열이 이긴 지역구 수를 셈 → 평균이 예상 의석, 가운데 80%가 범위</li>
+        <li>실제 선거에서는 한 권역이 통째로 같이 움직이므로(예: 2020 부울경 −8%p) 모의 선거마다 권역별로 ±${o.sigma_region || 4}%p 정도씩 함께 흔듦</li>
+        ${state.cal?.seats ? `<li>검증: 2024 총선 예상 ${state.cal.seats["2024"].mean.toFixed(0)}석(${state.cal.seats["2024"].lo}~${state.cal.seats["2024"].hi}) → 실제 ${state.cal.seats["2024"].actual}석 · 2020 총선 예상 ${state.cal.seats["2020"].mean.toFixed(0)}석(${state.cal.seats["2020"].lo}~${state.cal.seats["2020"].hi}) → 실제 ${state.cal.seats["2020"].actual}석 — 두 번 모두 범위 안</li>` : ""}
+      </ul>
+      <p class="src"><b>권역별 조정</b>(선택)</p>
+      <ul>
+        <li>특정 권역만 분위기가 다를 때 그 권역 지역구에만 더하는 값 · 기본 0</li>
+        <li>권역: 수도권(서울·인천·경기) · 충청(대전·세종·충북·충남) · 호남(광주·전북·전남) · 부울경(부산·울산·경남) · 대구·경북 · 강원·제주</li>
+      </ul>
       <p class="src"><b>등급 기준</b>(민주 계열 승리 확률)</p>
       <ul>
         ${GRADES.map(([g], i) => `<li>${g}: ${GRADE_PROB[i]} <small>(예상 ${gradeRange(i)})</small></li>`).join("")}
@@ -811,7 +872,8 @@ function showOutlookOverview() {
         <li>전국 평균 격차는 254개 지역구 단순 평균</li>
         <li>검증 때 전국 분위기는 그해 실제 값 입력 · 이전 총선은 선거구 경계가 같은 곳만 사용(1차 199곳·2차 210곳) · 민주 계열 후보가 없던 곳은 대조에서 뺌</li>
         <li>지방선거는 시·도지사보다 정당 투표가 더 정확해 정당 투표를 씀(2차 검증 89% → 91%)</li>
-        <li>여론조사·후보 인지도·현역 여부는 들어가지 않음</li>
+        <li>여론조사·후보 인지도는 들어가지 않음</li>
+        ${state.cal?.incumbent ? `<li>현역 의원 효과는 검증 후 뺐음: 이전 당선자가 다시 나온 곳은 현역 없는 곳보다 민주 현역 +${state.cal.incumbent["2024"].D}%p(2024)·+${state.cal.incumbent["2020"].D}%p(2020), 국민의힘 현역 ${signed(state.cal.incumbent["2024"].R)}%p·${signed(state.cal.incumbent["2020"].R)}%p로 해마다 들쭉날쭉하고, 넣어도 적중률이 거의 그대로(0~1곳)</li>` : ""}
       </ul>
     </details>
     <div class="ltabs" role="tablist">${LIST_TABS.map(([t, n]) => `<button data-t="${t}" class="${state.listTab === t ? "on" : ""}">${n}</button>`).join("")}</div>
@@ -834,7 +896,19 @@ function showOutlookOverview() {
     $("#envv").textContent = envLabel(state.env);
     $("#envv").className = state.env >= 0 ? "pos" : "neg";
     drawGrades(); repaint();
+    $("#seatbox").innerHTML = seatHTML();
   });
+  $(".regbox").addEventListener("toggle", (e) => (state.regOpen = e.target.open));
+  $$(".regbox input").forEach((r) => {
+    r.addEventListener("input", () => {
+      state.regAdj[r.dataset.r] = +r.value;
+      const b = r.nextElementSibling; b.textContent = signed(+r.value); b.className = +r.value >= 0 ? "pos" : "neg";
+      applyEnv(state.env); drawGrades(); repaint();
+      $("#seatbox").innerHTML = seatHTML();
+    });
+    r.addEventListener("change", () => { state.listScroll = $("#panel").scrollTop; showOutlookOverview(); });
+  });
+  $("#regReset")?.addEventListener("click", () => { state.regAdj = {}; applyEnv(state.env); drawGrades(); repaint(); showOutlookOverview(); });
   env.addEventListener("change", () => { state.listScroll = $("#panel").scrollTop; showOutlookOverview(); });
   $("#envReset")?.addEventListener("click", () => { applyEnv(def); drawGrades(); repaint(); showOutlookOverview(); });
   $("#panel").scrollTop = state.listScroll || 0;
@@ -886,7 +960,7 @@ function leanHTML(o) {
       <tr><th></th><th>이 지역구</th><th>전국 평균</th><th>차이</th></tr>
       ${rows}
       <tr class="sum"><td colspan="3">성향 = (${sum}) ÷ ${used.length}</td><td>${signed(o.lean)}</td></tr>
-      <tr class="sum"><td colspan="3">예상 격차 = 성향 ${signed(o.lean)} + 전국 분위기 ${signed(state.env)}</td><td>${signed(o.exp)}</td></tr>
+      <tr class="sum"><td colspan="3">예상 격차 = 성향 ${signed(o.lean)} + 전국 분위기 ${signed(state.env)}${o.adj ? ` + 권역 조정 ${signed(o.adj)}` : ""}</td><td>${signed(o.exp)}</td></tr>
       <tr class="sum"><td colspan="3">민주 계열 승리 확률 → ${o.grade}</td><td>${pct(o.exp)}</td></tr>
     </table>
   </div>`;
@@ -906,7 +980,7 @@ function outlookHTML(key) {
       ${r.note ? `<small class="note">${esc(r.note)}</small>` : ""}</li>`;
   };
   return `<section class="outlook">
-    <div class="grade-badge" style="--c:${GRADE_COLOR[o.grade]}"><b>${o.grade}</b><span>승리 확률 <b>${pct(o.exp)}</b> · 예상 격차 <b>${signed(o.exp)}%p</b> <small>= 성향 ${signed(o.lean)} + 전국 분위기 ${signed(state.env)}</small></span></div>
+    <div class="grade-badge" style="--c:${GRADE_COLOR[o.grade]}"><b>${o.grade}</b><span>승리 확률 <b>${pct(o.exp)}</b> · 예상 격차 <b>${signed(o.exp)}%p</b> <small>= 성향 ${signed(o.lean)} + 전국 분위기 ${signed(state.env)}${o.adj ? ` + 권역 조정 ${signed(o.adj)}` : ""}</small></span></div>
     <ul class="mrows">${state.outlook.elections.map(row).join("")}</ul>
     ${leanHTML(o)}
     ${o.trend != null ? `<p class="trend">2024 총선 → 2026 지방선거: 민주당 격차 <b class="${o.trend >= 0 ? "pos" : "neg"}">${o.trend >= 0 ? "▲" : "▼"} ${Math.abs(o.trend).toFixed(1)}%p</b> ${o.trend >= 0 ? "좋아짐" : "나빠짐"}</p>` : ""}
