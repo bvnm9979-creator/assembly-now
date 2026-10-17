@@ -626,3 +626,8 @@ details.calc > summary small { font-weight: 400; color: var(--ink-3); margin-lef
 .ttable td.old { opacity: .5; }
 .tmethod { margin: 8px 0; padding-left: 18px; font-size: 14px; line-height: 1.6; color: var(--ink-2); }
 .tmethod li { margin: 3px 0; }
+.grade-badge.tbadge { flex-direction: column; align-items: flex-start; gap: 4px; }
+.grade-badge.tbadge > b { font-size: 26px; white-space: normal; }
+.grade-badge.tbadge span { font-size: 18px; }
+.grade-badge.tbadge span b { font-size: 20px; }
+.grade-badge.tbadge span b.pos { color: #1F5BC4; } .grade-badge.tbadge span b.neg { color: #C4252D; }

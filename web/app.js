@@ -30,10 +30,13 @@ const GRADES = [["우세", "#1F5BC4"], ["경합우세", "#8DB1EC"], ["경합", "
 const GRADE_COLOR = Object.fromEntries(GRADES);
 const gpaint = (g) => (!state.grade || state.grade === g ? GRADE_COLOR[g] || "#B8BBC2" : OFF);
 // 흐름: 2020~2026 선거 6번으로 본 6년 변화(전국 분위기 영향 뺌, scripts/build_trend.py) → 5단계
-const TCLS = [["뚜렷한 상승", "#1F5BC4"], ["상승", "#8DB1EC"], ["비슷", "#CDD1D8"], ["하락", "#F3A3A7"], ["뚜렷한 하락", "#E2333C"]];
+// 이름은 모두 '민주당 입장에서' (좋아짐 = 민주당에 유리해짐)
+const TCLS = [["확실히 좋아짐", "#1F5BC4"], ["좋아짐", "#8DB1EC"], ["그대로", "#CDD1D8"], ["나빠짐", "#F3A3A7"], ["확실히 나빠짐", "#E2333C"]];
 const TCLS_COLOR = Object.fromEntries(TCLS);
-const TREND_STEP = 3;   // ±3%p 넘으면 상승·하락 (뚜렷 = 통계상 우연으로 보기 어려운 곳)
-const tclsOf = (t) => !t ? "" : t.sig ? (t.chg > 0 ? "뚜렷한 상승" : "뚜렷한 하락") : t.chg >= TREND_STEP ? "상승" : t.chg <= -TREND_STEP ? "하락" : "비슷";
+const TREND_STEP = 3;   // ±3%p 넘으면 좋아짐·나빠짐 (확실히 = 통계상 우연으로 보기 어려운 곳)
+const tclsOf = (t) => !t ? "" : t.sig ? (t.chg > 0 ? "확실히 좋아짐" : "확실히 나빠짐") : t.chg >= TREND_STEP ? "좋아짐" : t.chg <= -TREND_STEP ? "나빠짐" : "그대로";
+// 6년 변화를 말로: +7.9 → '민주당에 7.9%p 유리해짐'
+const chgSay = (x) => x > 0 ? `민주당에 ${x.toFixed(1)}%p 유리해짐` : x < 0 ? `민주당에 ${(-x).toFixed(1)}%p 불리해짐` : "변화 없음";
 const tpaint = (c) => (!state.grade || state.grade === c ? TCLS_COLOR[c] || "#B8BBC2" : OFF);
 // 지역구 칸 색: 지금 색칠 기준(현재 의원 / 판세 / 흐름)에 따라
 const cellColor = (key) => {
@@ -87,7 +90,7 @@ async function init() {
     Object.assign(state, { outlook: o, cal, acc, poll, pltest, bt3, abl });
     loadScenario();
     if (state.mode === "outlook") refreshMode();
-    if (!methodHidden()) openWelcome();
+    if (!methodHidden() && state.mode !== "trend") openWelcome();   // 판세 보는 법 안내라 흐름 화면에선 안 띄움
   }).catch(() => {});
   load("chairs.json").then((c) => { state.chairs = c; if (state.sel) select(state.sel, false); else if (state.mode === "outlook") showOverview(); }).catch(() => {});
   load("trend.json").then((t) => {
@@ -226,7 +229,7 @@ function applyEnv(env) {
 
 // 머리띠: 현재 의원 모드 = 지금 국회 의석 · 판세 모드 = 다음 총선 예상(지역구)
 const BRAND = { seat: ["제22대 국회", "지역구 지도"], outlook: ["다음 총선 판세 · 지역구 254석", "총선 판세"],
-                trend: ["2020→2026 선거 6번 · 전국 분위기 영향 뺌", "민주당 흐름"] };
+                trend: ["최근 6년 · 민주당에 좋아진 곳 / 나빠진 곳", "민주당 흐름"] };
 function setBrand(m) {
   const [eye, title] = BRAND[m];
   $(".brand h1").textContent = title;
@@ -259,8 +262,8 @@ function drawTrendBar() {
   const d = Object.values(state.trend?.district || {});
   const n = (c) => d.filter((x) => x.cls === c).length;
   $(".majority").textContent = `${d.length}곳`;
-  $("#leadL").innerHTML = `<i style="background:#1F5BC4"></i>민주 쪽으로 <b>${d.filter((x) => x.chg > 0).length}</b>`;
-  $("#leadR").innerHTML = `<b>${d.filter((x) => x.chg < 0).length}</b> 국민의힘 쪽으로<i style="background:#E2333C"></i>`;
+  $("#leadL").innerHTML = `<i style="background:#1F5BC4"></i>민주당에 좋아진 곳 <b>${d.filter((x) => x.chg > 0).length}</b>`;
+  $("#leadR").innerHTML = `<b>${d.filter((x) => x.chg < 0).length}</b> 나빠진 곳<i style="background:#E2333C"></i>`;
   $("#seatbar").innerHTML = TCLS.map(([c, col]) => n(c) ? `<span style="flex:${n(c)};background:${col}" title="${c} ${n(c)}곳"></span>` : "").join("");
   $("#parties").innerHTML = TCLS.map(([c, col]) =>
     `<button data-g="${c}" style="--c:${col}" aria-pressed="false"><i style="background:${col}"></i>${c} <b>${n(c)}</b></button>`).join("");
@@ -1151,9 +1154,9 @@ function outlookHTML(key) {
 }
 
 // ── 흐름 모드 ───────────────────────────────────────────
-const TREND_TABS = [["up", "민주 쪽으로"], ["down", "국민의힘 쪽으로"]];
+const TREND_TABS = [["up", "민주당에 좋아진 곳"], ["down", "민주당에 나빠진 곳"]];
 const TREND_KINDS = [["총선 비례", ["g20", "g21", "g22"]], ["대선", ["p19", "p20", "p21"]], ["지선 비례", ["l7", "l8", "l9"]]];
-const sigTag = (t) => t.sig ? `<em class="tsig">뚜렷</em>` : "";
+const sigTag = (t) => t.sig ? `<em class="tsig">확실</em>` : "";
 function trendKeys(tab) {
   const d = state.trend.district, keys = Object.keys(d);
   if (state.grade) return keys.filter((k) => d[k].cls === state.grade).sort((a, b) => d[b].chg - d[a].chg);
@@ -1169,7 +1172,7 @@ function trendMethodHTML() {
       <li>격차 = 민주 계열 − 보수 1당 득표율 (총선 비례는 2020 더불어시민당+열린민주당, 2024 더불어민주연합+조국혁신당)</li>
       <li>지역구마다 '격차 = 기본 성향 + 전국 분위기에 따라 움직이는 몫 + 해마다 바뀌는 몫'으로 맞춘 뒤, 해마다 바뀌는 몫 × 6년을 흐름으로 표시</li>
       <li>전국 분위기 몫을 따로 빼는 이유: 호남처럼 이미 80~90%를 받는 곳은 분위기가 좋아져도 더 오를 자리가 없어, 그냥 비교하면 떨어지는 것처럼 보임</li>
-      <li>상승·하락 = 6년 변화 ±${TREND_STEP}%p 이상 · 뚜렷 = 선거 6번이 한 방향으로 고르게 움직여 우연으로 보기 어려운 곳(${ok}곳)</li>
+      <li>좋아짐·나빠짐 = 6년 동안 민주당에 ${TREND_STEP}%p 이상 유리해지거나 불리해진 곳 · 확실히 = 선거 6번이 한 방향으로 고르게 움직여 우연으로 보기 어려운 곳(${ok}곳)</li>
       <li>2016 총선·2017 대선·2018 지선은 국민의당 3당 구도라 흐름 계산에서 빼고 지역구 화면 표에만 참고로 보여 줌</li>
       <li>과거 흐름일 뿐 앞으로도 이어진다는 뜻은 아님 · 판세(승리 확률) 계산에는 넣지 않음</li>
     </ul>
@@ -1191,12 +1194,12 @@ function showTrendOverview() {
   const max = Math.max(...sido.map(([, x]) => Math.abs(x)), 1);
   $("#panel").innerHTML = `
     <h2 class="ov-title">민주당 흐름</h2>
-    <p class="ov-sub">2020~2026년 선거 6번에서 지역구마다 민주 계열이 <b>전국 평균보다</b> 얼마나 더(덜) 받게 됐나 · 6년 변화</p>
-    <div class="tsum"><span style="--c:${TCLS_COLOR["뚜렷한 상승"]}">뚜렷한 상승 <b>${n("뚜렷한 상승")}</b>곳</span><span style="--c:${TCLS_COLOR["뚜렷한 하락"]}">뚜렷한 하락 <b>${n("뚜렷한 하락")}</b>곳</span></div>
-    <h3 class="sec-h">시·도별 평균</h3>
+    <p class="ov-sub">최근 6년(2020~2026년 선거 6번) 동안 우리 지역이 <b class="pos">민주당에 좋아졌는지</b>, <b class="neg">나빠졌는지</b> · 파랑 = 좋아짐, 빨강 = 나빠짐</p>
+    <div class="tsum"><span style="--c:${TCLS_COLOR["확실히 좋아짐"]}">확실히 좋아진 곳 <b>${n("확실히 좋아짐")}</b>곳</span><span style="--c:${TCLS_COLOR["확실히 나빠짐"]}">확실히 나빠진 곳 <b>${n("확실히 나빠짐")}</b>곳</span></div>
+    <h3 class="sec-h">시·도별 평균 <small>+ 민주당에 좋아짐 · − 나빠짐</small></h3>
     <ul class="tbars">${sido.map(([s, x, c]) => `<li><span>${esc(s)} <small>${c}곳</small></span><span class="tb"><span class="${x >= 0 ? "pos" : "neg"}" style="width:${Math.abs(x) / max * 50}%"></span></span><b class="${x >= 0 ? "pos" : "neg"}">${signed(Math.round(x * 10) / 10)}</b></li>`).join("")}</ul>
     <div class="ltabs" role="tablist">${TREND_TABS.map(([x, nm]) => `<button data-t="${x}" class="${state.trendTab === x && !state.grade ? "on" : ""}">${nm}</button>`).join("")}</div>
-    <p class="lmeta">${state.grade ? `<b>${state.grade}</b> ${list.length}곳 <button class="clear" id="clearGrade">해제</button>` : `${list.length}곳 · 6년 변화 큰 순 · <em class="tsig">뚜렷</em> = 우연으로 보기 어려운 곳`}</p>
+    <p class="lmeta">${state.grade ? `<b>${state.grade}</b> ${list.length}곳 <button class="clear" id="clearGrade">해제</button>` : `${list.length}곳 · 변화 큰 순(숫자 = 6년간 %p) · <em class="tsig">확실</em> = 우연으로 보기 어려운 곳`}</p>
     <ul class="klist" id="klist">${list.map((k, i) => `<li data-k="${esc(k)}"><em>${i + 1}</em><i style="background:${TCLS_COLOR[d[k].cls]}"></i><span>${esc(k)}</span><small>${sigTag(d[k])} <b class="${d[k].chg >= 0 ? "pos" : "neg"}">${signed(d[k].chg)}</b></small></li>`).join("") || "<li class='none'>해당 지역구가 없어요</li>"}</ul>
     ${trendMethodHTML()}`;
   $$("#klist li[data-k]").forEach((li) => li.addEventListener("click", () => { state.listScroll = $("#panel").scrollTop; select(li.dataset.k, true); }));
@@ -1209,19 +1212,19 @@ function showTrend(key, m) {
   if (!t) { $("#panel").innerHTML = `${navBar(key)}<p class="where big"><span>지역구</span><b>${esc(key)}</b></p><p class="ov-sub">흐름 자료를 불러오는 중이에요…</p>`; bindBack(); return; }
   const yr = Object.fromEntries(state.trend.elections.map((e) => [e.id, e.year]));
   const cell = (id) => t.rel[id] === undefined ? `<td>–</td>` : `<td class="${id in { g20: 1, p19: 1, l7: 1 } ? "old" : ""}"><small>${yr[id]}</small> <b class="${t.rel[id] >= 0 ? "pos" : "neg"}">${signed(t.rel[id])}</b></td>`;
-  const dir = t.chg > 0 ? "민주 쪽으로" : t.chg < 0 ? "국민의힘 쪽으로" : "";
   $("#panel").innerHTML = `
     ${navBar(key)}
     <p class="where big"><span>지역구</span><b>${esc(key)}</b></p>
     <section class="outlook">
-      <div class="grade-badge" style="--c:${TCLS_COLOR[t.cls]}"><b>${t.cls}</b><span>6년 변화 <b class="big">${signed(t.chg)}%p</b> <small>${dir} · 전국 분위기 영향 뺀 값 · ${t.sig ? "선거 6번이 고르게 같은 방향(뚜렷)" : "선거마다 들쭉날쭉해 확실하지 않음"}</small></span></div>
+      <div class="grade-badge tbadge" style="--c:${TCLS_COLOR[t.cls]}"><b>${t.cls === "그대로" ? "큰 변화 없음" : "민주당에 " + t.cls}</b><span>최근 6년간 <b class="${t.chg >= 0 ? "pos" : "neg"}">${chgSay(t.chg)}</b><small>${t.sig ? "선거 6번 모두 같은 방향이라 확실한 흐름" : "선거마다 들쭉날쭉해 아직 확실하지 않음"} · 전국 분위기 영향은 뺀 값</small></span></div>
       <div class="leancalc">
-        <p class="lc-h">전국 평균보다 민주 계열 격차가 얼마나 컸나</p>
+        <p class="lc-h">이 지역이 전국 평균보다 민주당을 얼마나 더 찍었나</p>
+        <p class="lc-say"><b class="pos">+</b> = 전국보다 민주당 표가 많음 · <b class="neg">−</b> = 전국보다 국민의힘 표가 많음 · 오른쪽으로 갈수록 최근</p>
         <table class="ex ttable">
           <tr><th></th><th>2016~18</th><th>2020~22</th><th>2024~26</th></tr>
           ${TREND_KINDS.map(([nm, ids]) => `<tr><td>${nm}</td>${ids.map(cell).join("")}</tr>`).join("")}
         </table>
-        <p class="lc-say">전국 분위기가 1%p 바뀔 때 이 지역은 약 ${t.el.toFixed(1)}%p 움직임${t.el >= 1.2 ? " — 바람을 크게 타는 곳" : t.el <= 0.8 ? " — 바람을 덜 타는 곳" : ""}</p>
+        <p class="lc-say">${t.el >= 1.2 ? "전국 분위기(바람)를 크게 타는 곳" : t.el <= 0.8 ? "전국 분위기(바람)를 덜 타는 곳" : "전국 분위기(바람)를 보통으로 타는 곳"} — 전국이 1%p 움직이면 이 지역은 약 ${t.el.toFixed(1)}%p 움직임</p>
         <p class="src">흐름은 2020~2026 선거 6번으로 계산 · 2016~18(흐린 글씨)은 국민의당 3당 구도라 참고만</p>
       </div>
     </section>
@@ -1329,7 +1332,7 @@ function showTip(key, ev) {
   const tip = $("#tip");
   const o = state.outlook?.district[key];
   const t = state.trend?.district[key];
-  if (state.mode === "trend" && t) tip.innerHTML = `<div class="k">${esc(key)}</div><i style="background:${TCLS_COLOR[t.cls]}"></i><b>${t.cls}</b> · 6년 변화 ${signed(t.chg)}%p`;
+  if (state.mode === "trend" && t) tip.innerHTML = `<div class="k">${esc(key)}</div><i style="background:${TCLS_COLOR[t.cls]}"></i><b>${t.cls === "그대로" ? "큰 변화 없음" : t.cls}</b> · 6년간 ${chgSay(t.chg)}`;
   else tip.innerHTML = `<div class="k">${esc(key)}</div>` + (state.mode === "outlook" && o
     ? `<i style="background:${GRADE_COLOR[o.grade]}"></i><b>${o.grade}</b> · 승리 확률 ${pct(o.exp)} · 예상 ${signed(o.exp)}%p${chairName(key) ? `<div class="k2">민주당 ${esc(chairName(key))}</div>` : ""}`
     : (m ? `<i style="background:${colorOf(m.party)}"></i><b>${esc(m.name)}</b> · ${esc(m.party)}` : "공석"));
