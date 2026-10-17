@@ -773,7 +773,7 @@ function openMethod(auto = false) {
       <h3><span>2</span>전국 분위기 — 호주 ABC Antony Green ‘스윙 계산기’</h3>
       <ul>
         <li>스윙(swing): 전국 지지율이 한쪽으로 움직인 폭 · 이 폭을 입력하면 모든 지역구에 똑같이 더해 결과를 다시 계산하는 방식</li>
-        <li><b>이 지도</b>: 판세 현황의 막대 · 기본값 ${signed(o.env_default)} = 최근 세 선거 전국 평균 격차(${signed(o.national.g22)} · ${signed(o.national.p21)} · ${signed(o.national.l9)})의 평균</li>
+        <li><b>이 지도</b>: 판세 현황의 막대 · 기본값 ${signed(o.env_default)} = 최근 세 선거 전국 평균 격차(${["g22", "p21", "l9"].map((e) => signed((o.env_parts || o.national)[e])).join(" · ")})의 평균${o.env_parts ? " · 2026 지방선거는 더불어민주당 표 기준(비례 정당 합은 총선 지역구 대결보다 민주 쪽으로 크게 나와서, 2024 비례 합 +14.3 vs 지역구 +6.4)" : ""}</li>
       </ul>
     </section>
     <section>

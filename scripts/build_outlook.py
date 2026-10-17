@@ -223,7 +223,10 @@ def grade(m):
 def main():
     p21, lost_p = aggregate(json.load(open(os.path.join(RAW, "nec_p21_precinct_raw.json"))), True)
     # 2026 지선은 시·도지사 대신 광역의원 비례대표 정당 투표 — 후보 개인 인기가 빠져 성향이 더 정확 (backtest·backtest2 두 검증 모두 같거나 더 높음)
-    l9, lost_l = aggregate(json.load(open(os.path.join(RAW, "nec_l9_partylist_raw.json"))), False)
+    # 민주 쪽은 민주 계열 정당 합: 2026 조국혁신당이 부산·대구·경북엔 비례 후보를 안 내고 호남에선 12~15%를 받아
+    # 더불어민주당만 세면 영남은 민주 쪽, 호남은 반대로 기울어 보임. 총선 지역구에선 조국혁신당 지지자도 민주 후보를 찍으므로 합이 맞음
+    l9, lost_l = aggregate(json.load(open(os.path.join(RAW, "nec_l9_partylist_raw.json"))), False,
+                           d_parties=["더불어민주당", "조국혁신당", "진보당", "기본소득당", "사회민주당"])
 
     # ── 3) 2024 총선은 공식 지역구 결과 그대로, 세 선거 비교 ──────────────────
     res = json.load(open(os.path.join(OUT, "results.json")))
@@ -260,7 +263,12 @@ def main():
     ids = ("g22", "p21", "l9")
     nat = {e: round(sum(v[e]["m"] for v in out.values() if v[e] and "m" in v[e]) /
                     sum(1 for v in out.values() if v[e] and "m" in v[e]), 1) for e in ids}
-    env = round(sum(nat.values()) / len(nat), 1)
+    # 기본 전국 분위기는 2026을 더불어민주당 표 기준으로: 비례 정당 합은 총선 지역구 대결보다 민주 쪽으로 크게 나옴
+    # (2024 총선 비례 합 +14.3 vs 지역구 +6.4) → 성향(지역 간 차이)만 정당 합으로 고치고 분위기 수준은 그대로
+    l9_dem, _ = aggregate(json.load(open(os.path.join(RAW, "nec_l9_partylist_raw.json"))), False)
+    ms = [(v["D"] - v["R"]) / v["valid"] * 100 for k, v in l9_dem.items() if k in out and v["valid"]]
+    env_parts = dict(nat, l9=round(sum(ms) / len(ms), 1))
+    env = round(sum(env_parts.values()) / len(env_parts), 1)
     for v in out.values():
         ls = [v[e]["m"] - nat[e] for e in ids if v[e] and "m" in v[e]]
         v["lean"] = round(sum(ls) / len(ls), 1)
@@ -271,8 +279,8 @@ def main():
     json.dump({"source": "중앙선거관리위원회 선거통계시스템 투표구·읍면동별 개표결과를 22대 지역구로 다시 합산",
                "elections": [{"id": "g22", "name": "2024 총선", "desc": "2024.4.10 제22대 · 지역구 후보"},
                              {"id": "p21", "name": "2025 대선", "desc": "2025.6.3 제21대 · 이재명 · 김문수"},
-                             {"id": "l9", "name": "2026 지방선거", "desc": "2026.6.3 제9회 · 광역비례 정당 투표"}],
-               "national": nat, "env_default": env, "sigma": SIGMA, "sigma_region": SIGMA_REGION, "region": REGION,
+                             {"id": "l9", "name": "2026 지방선거", "desc": "2026.6.3 제9회 · 광역비례 정당 투표(민주·조국·진보 등 합)"}],
+               "national": nat, "env_default": env, "env_parts": env_parts, "sigma": SIGMA, "sigma_region": SIGMA_REGION, "region": REGION,
                "rule": "예상 격차 = 지역구 성향(선거별 지역구 격차 − 전국 평균 격차의 평균) + 전국 분위기 · 승리 확률 = Φ(예상 격차 / σ), σ 불리 5.0·유리 7.5 · 우세 90%↑ · 경합우세 70~90 · 경합 30~70 · 경합열세 10~30 · 열세 10%↓",
                "district": out},
               open(os.path.join(OUT, "outlook.json"), "w"), ensure_ascii=False, separators=(",", ":"))
