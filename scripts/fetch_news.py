@@ -2,7 +2,7 @@
 
 - 지역위원장: 민주당 현역 의원 지역구는 그 의원, 나머지는 data/chairs_manual.json (사람이 확인한 명단)
 - 2024 경선 후보군: data/primary_2024.json (build_primary.py)
-- 기사: 네이버 뉴스 검색(안 되면 구글 뉴스 RSS)에서 '이름 + 지역' 최근 90일
+- 기사: 네이버 뉴스 검색(안 되면 구글 뉴스 RSS)에서 '이름 + 지역' 최근 90일 (--since 2026-10-01 을 주면 그날부터 오늘까지)
 - 1차: 제목, 또는 요약에서 이름 가까이에 RISK_HIGH(고발·수사 등)/RISK_LOW(논란·의혹 등) 단어가 있는 기사 → 후보
 - 2차: judge_news.py — Gemini가 '본인이 비리·물의 당사자인가' 판단, 맞는 기사만 저장
 매일 GitHub Actions(.github/workflows/news.yml)가 실행해 자동 갱신한다.
@@ -18,6 +18,7 @@ import judge_news
 
 ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 KST = timezone(timedelta(hours=9))
+SINCE = sys.argv[sys.argv.index("--since") + 1] if "--since" in sys.argv else None   # 'YYYY-MM-DD' 또는 None(최근 90일)
 RISK_HIGH = ["고발", "고소", "피소", "수사", "압수수색", "기소", "입건", "구속", "재판", "벌금", "유죄", "징계", "윤리심판",
              "폭행", "성추행", "성희롱", "비리", "횡령", "뇌물", "선거법", "정치자금", "제명", "명예훼손", "경찰 조사", "검찰"]
 RISK_LOW = ["의혹", "논란", "막말", "폭언", "갑질", "사퇴 요구", "사퇴하라", "반발", "규탄", "탈당", "특혜", "낙하산", "허위", "공천 취소"]
@@ -70,7 +71,8 @@ def news_for(key, name):
     if not name:
         return []
     area = area_word(key)
-    since = (datetime.now(KST) - timedelta(days=90)).strftime("%Y.%m.%d")
+    start = datetime.strptime(SINCE, "%Y-%m-%d") if SINCE else datetime.now(KST) - timedelta(days=90)
+    since = start.strftime("%Y.%m.%d")
     today = datetime.now(KST).strftime("%Y.%m.%d")
     items = naver(f'"{name}" {area}', sort=1, extra=f"&pd=3&ds={since}&de={today}")
     items += naver(f'"{name}" {area}', sort=0, extra=f"&pd=3&ds={since}&de={today}")
@@ -78,7 +80,7 @@ def news_for(key, name):
     if not items:   # 네이버가 막히면 구글 뉴스
         items = [{"title": re.sub(r" - [^-]+$", "", x["title"]), "body": "", "press": x["title"].rsplit(" - ", 1)[-1],
                   "date": x["date"], "link": x["link"]}
-                 for x in google(f'"{name}" {area} when:90d')]
+                 for x in google(f'"{name}" {area} ' + (f"after:{SINCE}" if SINCE else "when:90d"))]
     seen, out = set(), []
     for x in items:
         text = x["title"] + " " + x["body"]
@@ -88,6 +90,8 @@ def news_for(key, name):
         if sig in seen:
             continue
         seen.add(sig)
+        if SINCE and norm_date(x["date"]) and norm_date(x["date"]) < SINCE:
+            continue
         level, risk = risk_of(name, x["title"], x["body"])
         if not level:          # 리스크 기사만 남긴다
             continue
@@ -116,7 +120,7 @@ def main():
     json.dump(cands, open(judge_news.CANDS, "w"), ensure_ascii=False)        # 단어로 거른 후보(공개 안 함)
     news = judge_news.run(cands, {k: (ch.get(k) or {}).get("name", "") for k in keys})   # AI가 본인 비리·물의만 남김
     out = {k: {"chair": ch.get(k), "primary2024": primary.get(k), "news": news.get(k, [])} for k in keys}
-    json.dump({"updated": datetime.now(KST).strftime("%Y-%m-%d %H:%M"), "risk_words": {"high": RISK_HIGH, "low": RISK_LOW}, "district": out},
+    json.dump({"updated": datetime.now(KST).strftime("%Y-%m-%d %H:%M"), "since": SINCE, "risk_words": {"high": RISK_HIGH, "low": RISK_LOW}, "district": out},
               open(path, "w"), ensure_ascii=False, separators=(",", ":"))
     n_news = sum(len(v["news"]) for v in out.values())
     n_risk = sum(1 for v in out.values() for x in v["news"] if x["level"] == "high")

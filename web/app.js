@@ -637,6 +637,7 @@ const leanTag = (x) => x > 0 ? `민+${x.toFixed(1)}` : x < 0 ? `국+${(-x).toFix
 const leanSay = (x) => x > 0 ? `전국 평균보다 더불어민주당 쪽으로 ${x.toFixed(1)}%p 기운 곳` : x < 0 ? `전국 평균보다 국민의힘 쪽으로 ${(-x).toFixed(1)}%p 기운 곳` : "전국 평균과 같은 곳";
 const envLabel = (x) => x > 0 ? `민주 +${x.toFixed(1)}` : x < 0 ? `국민의힘 +${(-x).toFixed(1)}` : "양당 같음";
 const chairOf = (key) => state.chairs?.district[key];
+const newsSpan = () => state.chairs?.since ? `${+state.chairs.since.slice(5, 7)}월 ${+state.chairs.since.slice(8)}일 이후` : "최근 90일";
 const chairName = (key) => chairOf(key)?.chair?.name || "";
 const naverNews = (q) => "https://search.naver.com/search.naver?where=news&sort=1&query=" + encodeURIComponent(q);
 const highCount = (key) => (chairOf(key)?.news || []).filter((n) => n.level === "high").length;
@@ -1129,9 +1130,9 @@ function chairHTML(key, m) {
         ${ch.name ? `<a class="nlink" href="${naverNews(ch.name + " " + key.split(" ")[1].replace(/[갑을병정]$/, ""))}" target="_blank" rel="noopener">네이버 뉴스에서 더 보기 ↗</a>` : ""}
       </div>
     </div>
-    ${ch.name ? `<h4 class="risk-h">리스크 기사 <small>최근 90일</small></h4>
+    ${ch.name ? `<h4 class="risk-h">리스크 기사 <small>${newsSpan()}</small></h4>
     <div class="riskline"><span class="rk hi">높음 ${hi.length}</span><span class="rk lo">주의 ${lo.length}</span></div>
-    <ul class="news">${ordered.slice(0, 8).map(li).join("") || "<li class='none'>최근 90일 동안 리스크 기사가 없어요</li>"}</ul>
+    <ul class="news">${ordered.slice(0, 8).map(li).join("") || `<li class='none'>${newsSpan()} 리스크 기사가 없어요</li>`}</ul>
     ${ordered.length > 8 ? `<details class="more"><summary>기사 ${ordered.length - 8}건 더 보기</summary><ul class="news">${ordered.slice(8).map(li).join("")}</ul></details>` : ""}
     <p class="src">자동 수집 ${esc(state.chairs.updated)} · 본인의 비리·범죄 혐의·사회적 물의 기사만(AI 판단) · 높음: 수사·기소·재판·징계 진행 / 주의: 의혹·논란 단계 · 법안 발의·정책 주장·상대 측 정치 공방 고소는 제외</p>` : ""}
   </section>`;
