@@ -109,12 +109,13 @@ def party_table(src):
     return out
 
 
-def aggregate(src, precinct_level, stats=None, with_town=True, d_parties=None):
+def aggregate(src, precinct_level, stats=None, with_town=True, d_parties=None, r_parties=None):
     """{시도: {'코드|구시군': rows}} → ({지역구: Counter(D,R,valid)}, {짝 못 찾은 곳: 유효표})
     stats(Counter)를 주면 유효표가 어떻게 배정됐는지 센다 — official(선관위 합계), exact(한 지역구에 그대로),
     split(두 지역구에 나뉜 동), town(관외사전·거소·재외 등 구시군 단위 표), unknown(짝 못 찾은 새 동)
     with_town=False 면 구시군 단위 표를 빼고 더한다(그 표를 나누는 방식이 결과를 얼마나 움직이는지 점검용).
-    d_parties 를 주면 그 정당들 득표를 합쳐 민주 쪽으로 본다(예: 비례 더불어민주연합 + 조국혁신당)."""
+    d_parties 를 주면 그 정당들 득표를 합쳐 민주 쪽으로 본다(예: 비례 더불어민주연합 + 조국혁신당).
+    r_parties 를 주면 상대 쪽을 그 정당으로 고정한다(2016·2017 호남처럼 국민의당이 1위인 곳도 보수 정당과 비교)."""
     acc, lost = collections.defaultdict(Counter), Counter()
     for code, pages in src.items():
         for page, rows in pages.items():
@@ -128,6 +129,8 @@ def aggregate(src, precinct_level, stats=None, with_town=True, d_parties=None):
             tv_ = [num(x) for x in total[4:4 + n]]
             others = [i for i in range(n) if i not in iDs and cands[i].split("|")[0] not in LEFT]
             iR = max(others, key=lambda i: tv_[i]) if others else None   # 시도 전체에서 민주 쪽 아닌 1위(대선 김문수, 지선 국민의힘 후보)
+            if r_parties:
+                iR = pick(cands, r_parties)
 
             def vec(r):
                 return Counter({"D": sum(num(r[4 + i]) for i in iDs),

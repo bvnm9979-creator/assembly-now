@@ -606,3 +606,23 @@ details.calc > summary small { font-weight: 400; color: var(--ink-3); margin-lef
 .lg-gov { margin: 6px 0 0; padding: 10px 12px; background: var(--sea); border-radius: 8px; font-size: 14px; color: var(--ink-2); font-variant-numeric: tabular-nums; }
 .lg-gov span { font-weight: 700; color: var(--ink); margin-right: 6px; }
 .lg-gov small { font-size: inherit; color: var(--ink-3); }
+
+/* ── 민주당 흐름 (흐름 모드) ── */
+.tsum { display: flex; flex-wrap: wrap; gap: 8px; margin: 12px 0 4px; }
+.tsum span { padding: 8px 12px; border-radius: 10px; background: color-mix(in srgb, var(--c) 14%, white); border-left: 5px solid var(--c); font-size: 16px; color: var(--ink-2); }
+.tsum b { font-family: var(--serif); font-size: 22px; color: var(--ink); margin: 0 2px; }
+.tbars { list-style: none; margin: 0 0 8px; padding: 0; }
+.tbars li { display: grid; grid-template-columns: 92px 1fr 52px; gap: 10px; align-items: center; padding: 6px 0; border-bottom: 1px solid var(--hair); font-size: 15px; }
+.tbars li small { color: var(--ink-3); font-size: 12px; }
+.tbars .tb { position: relative; height: 10px; background: var(--off); border-radius: 5px; }
+.tbars .tb::after { content: ""; position: absolute; left: 50%; top: -3px; bottom: -3px; width: 1px; background: var(--ink-3); }
+.tbars .tb span { position: absolute; top: 0; bottom: 0; border-radius: 5px; }
+.tbars .tb .pos { left: 50%; background: #1F5BC4; }
+.tbars .tb .neg { right: 50%; background: #E2333C; }
+.tbars > li > b { text-align: right; font-variant-numeric: tabular-nums; }
+.tsig { font-style: normal; font-size: 12px; font-weight: 700; padding: 1px 6px; border-radius: 10px; background: #F1F2F4; color: var(--ink-2); }
+.klist li em.tsig { width: auto; color: var(--ink-2); font-size: 12px; }
+.ttable td small { color: var(--ink-3); font-size: 11px; }
+.ttable td.old { opacity: .5; }
+.tmethod { margin: 8px 0; padding-left: 18px; font-size: 14px; line-height: 1.6; color: var(--ink-2); }
+.tmethod li { margin: 3px 0; }

@@ -29,9 +29,16 @@ const paint = (p) => (!state.party || state.party === p ? colorOf(p) : OFF);
 const GRADES = [["우세", "#1F5BC4"], ["경합우세", "#8DB1EC"], ["경합", "#F0C24B"], ["경합열세", "#F3A3A7"], ["열세", "#E2333C"]];
 const GRADE_COLOR = Object.fromEntries(GRADES);
 const gpaint = (g) => (!state.grade || state.grade === g ? GRADE_COLOR[g] || "#B8BBC2" : OFF);
-// 지역구 칸 색: 지금 색칠 기준(현재 의원 / 판세)에 따라
+// 흐름: 2020~2026 선거 6번으로 본 6년 변화(전국 분위기 영향 뺌, scripts/build_trend.py) → 5단계
+const TCLS = [["뚜렷한 상승", "#1F5BC4"], ["상승", "#8DB1EC"], ["비슷", "#CDD1D8"], ["하락", "#F3A3A7"], ["뚜렷한 하락", "#E2333C"]];
+const TCLS_COLOR = Object.fromEntries(TCLS);
+const TREND_STEP = 3;   // ±3%p 넘으면 상승·하락 (뚜렷 = 통계상 우연으로 보기 어려운 곳)
+const tclsOf = (t) => !t ? "" : t.sig ? (t.chg > 0 ? "뚜렷한 상승" : "뚜렷한 하락") : t.chg >= TREND_STEP ? "상승" : t.chg <= -TREND_STEP ? "하락" : "비슷";
+const tpaint = (c) => (!state.grade || state.grade === c ? TCLS_COLOR[c] || "#B8BBC2" : OFF);
+// 지역구 칸 색: 지금 색칠 기준(현재 의원 / 판세 / 흐름)에 따라
 const cellColor = (key) => {
   if (state.mode === "outlook") return gpaint(state.outlook?.district[key]?.grade);
+  if (state.mode === "trend") return tpaint(state.trend?.district[key]?.cls);
   const m = state.members.district[key];
   return paint(m ? m.party : "공석");
 };
@@ -83,6 +90,13 @@ async function init() {
     if (!methodHidden()) openWelcome();
   }).catch(() => {});
   load("chairs.json").then((c) => { state.chairs = c; if (state.sel) select(state.sel, false); else if (state.mode === "outlook") showOverview(); }).catch(() => {});
+  load("trend.json").then((t) => {
+    for (const d of Object.values(t.district)) d.cls = tclsOf(d);
+    for (const f of state.geo.features) f.properties.tcls = t.district[f.properties.key]?.cls || "";
+    state.trend = t;
+    state.map?.getSource("d")?.setData(state.geo);
+    if (state.mode === "trend") refreshMode();
+  }).catch(() => {});
   state.counts = partyCounts();
   $("#asof").textContent = members.fetched.replace(/-/g, ".") + " 기준";
   $("#prcount").textContent = members.pr.length;
@@ -97,7 +111,8 @@ async function init() {
   setupTabs();
   setupMode();
 
-  if (new URLSearchParams(location.search).get("mode") === "outlook") setMode("outlook");
+  const qm = new URLSearchParams(location.search).get("mode");
+  if (qm === "outlook" || qm === "trend") setMode(qm);
   const fromHash = decodeURIComponent(location.hash.slice(1));
   if (fromHash && (members.district[fromHash] || members.vacant.includes(fromHash))) select(fromHash);
   else showOverview();
@@ -210,7 +225,8 @@ function applyEnv(env) {
 }
 
 // 머리띠: 현재 의원 모드 = 지금 국회 의석 · 판세 모드 = 다음 총선 예상(지역구)
-const BRAND = { seat: ["제22대 국회", "지역구 지도"], outlook: ["다음 총선 판세 · 지역구 254석", "총선 판세"] };
+const BRAND = { seat: ["제22대 국회", "지역구 지도"], outlook: ["다음 총선 판세 · 지역구 254석", "총선 판세"],
+                trend: ["2020→2026 선거 6번 · 전국 분위기 영향 뺌", "민주당 흐름"] };
 function setBrand(m) {
   const [eye, title] = BRAND[m];
   $(".brand h1").textContent = title;
@@ -238,17 +254,34 @@ function drawGrades() {
   };
 }
 
+// 흐름 모드의 띠: 오름·내림 곳 수 + 5단계 버튼(누르면 그 단계만 표시)
+function drawTrendBar() {
+  const d = Object.values(state.trend?.district || {});
+  const n = (c) => d.filter((x) => x.cls === c).length;
+  $(".majority").textContent = `${d.length}곳`;
+  $("#leadL").innerHTML = `<i style="background:#1F5BC4"></i>민주 쪽으로 <b>${d.filter((x) => x.chg > 0).length}</b>`;
+  $("#leadR").innerHTML = `<b>${d.filter((x) => x.chg < 0).length}</b> 국민의힘 쪽으로<i style="background:#E2333C"></i>`;
+  $("#seatbar").innerHTML = TCLS.map(([c, col]) => n(c) ? `<span style="flex:${n(c)};background:${col}" title="${c} ${n(c)}곳"></span>` : "").join("");
+  $("#parties").innerHTML = TCLS.map(([c, col]) =>
+    `<button data-g="${c}" style="--c:${col}" aria-pressed="false"><i style="background:${col}"></i>${c} <b>${n(c)}</b></button>`).join("");
+  $("#parties").onclick = (e) => {
+    const b = e.target.closest("button"); if (!b) return;
+    setGrade(state.grade === b.dataset.g ? null : b.dataset.g);
+  };
+}
+
 function setGrade(g) {
   state.grade = g;
   $("#parties").classList.toggle("filtering", !!g);
   $$("#parties button").forEach((b) => { b.classList.toggle("on", b.dataset.g === g); b.setAttribute("aria-pressed", b.dataset.g === g); });
   repaint();
   if (state.mode === "outlook" && !state.sel && state.outlook) { state.listScroll = 0; showOutlookOverview(); }
+  if (state.mode === "trend" && !state.sel && state.trend) { state.listScroll = 0; showTrendOverview(); }
 }
 
-// ── 색칠 기준: 현재 의원 / 판세 ───────────────────────────
+// ── 색칠 기준: 현재 의원 / 판세 / 흐름 ─────────────────────
 document.addEventListener("keydown", (e) => {
-  if (state.mode !== "outlook" || !state.sel || e.target.closest("input")) return;
+  if (state.mode === "seat" || !state.sel || e.target.closest("input")) return;
   if (e.key === "Escape") clearSelection();
   if (e.key === "ArrowLeft" || e.key === "ArrowUp") $("#prevK")?.click();
   if (e.key === "ArrowRight" || e.key === "ArrowDown") { $("#nextK")?.click(); }
@@ -263,7 +296,7 @@ function setMode(m) {
   state.mode = m;
   $$(".seg.mode button").forEach((b) => { b.classList.toggle("on", b.dataset.mode === m); b.setAttribute("aria-pressed", b.dataset.mode === m); });
   const u = new URL(location.href);
-  m === "outlook" ? u.searchParams.set("mode", "outlook") : u.searchParams.delete("mode");
+  m !== "seat" ? u.searchParams.set("mode", m) : u.searchParams.delete("mode");
   history.replaceState(null, "", u);
   refreshMode();
 }
@@ -272,6 +305,7 @@ function refreshMode() {
   $("#parties").classList.remove("filtering");
   setBrand(state.mode);
   if (state.mode === "outlook") drawGrades();
+  else if (state.mode === "trend") drawTrendBar();
   else { drawParties(); drawScore(); $(".majority").textContent = "과반 150"; }
   repaint();
   state.sel ? select(state.sel, false) : showOverview();
@@ -298,6 +332,12 @@ function fillExpr() {
   if (state.mode === "outlook") {
     const g = ["match", ["get", "grade"]];
     for (const [k] of GRADES) g.push(k, gpaint(k));
+    g.push("#B8BBC2");
+    return g;
+  }
+  if (state.mode === "trend") {
+    const g = ["match", ["get", "tcls"]];
+    for (const [k] of TCLS) g.push(k, tpaint(k));
     g.push("#B8BBC2");
     return g;
   }
@@ -497,6 +537,7 @@ function hemicycle() {
 
 function showOverview() {
   if (state.mode === "outlook") return showOutlookOverview();
+  if (state.mode === "trend") return showTrendOverview();
   const rows = [...state.counts].sort((a, b) => (a.party === "공석") - (b.party === "공석") || b.total - a.total);
   $("#panel").innerHTML = `
     <h2 class="ov-title">지금 국회는</h2>
@@ -521,6 +562,7 @@ function select(key, fly = true) {
   history.replaceState(null, "", "#" + encodeURIComponent(key));
   const m = state.members.district[key];
   if (state.mode === "outlook") return showOutlook(key, m);
+  if (state.mode === "trend") return showTrend(key, m);
   if (m) return showMember(m, key);
   $("#panel").innerHTML = `${backBtn()}<p class="where"><span>지역구</span><b>${esc(key)}</b></p>
     <div class="vacant"><b>공석</b> — 재보궐선거 전까지 이 지역구의 국회의원이 없어요.</div>
@@ -1037,7 +1079,7 @@ function navBar(key) {
   const list = state.list || [];
   const i = list.indexOf(key);
   return `<div class="pnav">
-    <button class="pback" id="back">← ${LIST_TABS.find(([t]) => t === state.listTab)?.[1] || "지역구"} 목록</button>
+    <button class="pback" id="back">← ${state.mode === "trend" ? (TREND_TABS.find(([t]) => t === state.trendTab)?.[1] || "흐름") : LIST_TABS.find(([t]) => t === state.listTab)?.[1] || "지역구"} 목록</button>
     ${i >= 0 ? `<span class="pstep"><button id="prevK" ${i === 0 ? "disabled" : ""} aria-label="이전 지역구">‹</button><b>${i + 1}</b>/${list.length}<button id="nextK" ${i === list.length - 1 ? "disabled" : ""} aria-label="다음 지역구">›</button></span>` : ""}
   </div>`;
 }
@@ -1106,6 +1148,97 @@ function outlookHTML(key) {
     <p class="src">대선·지방선거는 투표구·읍면동 결과를 이 지역구로 다시 더한 값(관외사전·재외 등 구 단위 표만 비율로 나눔)</p>
     </details>
   </section>`;
+}
+
+// ── 흐름 모드 ───────────────────────────────────────────
+const TREND_TABS = [["up", "민주 쪽으로"], ["down", "국민의힘 쪽으로"]];
+const TREND_KINDS = [["총선 비례", ["g20", "g21", "g22"]], ["대선", ["p19", "p20", "p21"]], ["지선 비례", ["l7", "l8", "l9"]]];
+const sigTag = (t) => t.sig ? `<em class="tsig">뚜렷</em>` : "";
+function trendKeys(tab) {
+  const d = state.trend.district, keys = Object.keys(d);
+  if (state.grade) return keys.filter((k) => d[k].cls === state.grade).sort((a, b) => d[b].chg - d[a].chg);
+  return tab === "down" ? keys.filter((k) => d[k].chg < 0).sort((a, b) => d[a].chg - d[b].chg)
+                        : keys.filter((k) => d[k].chg > 0).sort((a, b) => d[b].chg - d[a].chg);
+}
+function trendMethodHTML() {
+  const t = state.trend, ok = Object.values(t.district).filter((x) => x.sig).length;
+  return `<details class="calc"><summary>어떻게 계산했나요? <small>방법 · 주의할 점</small></summary>
+    <ul class="tmethod">
+      <li>선관위 개표 결과(투표구·읍면동별)를 지금 지역구 254곳 경계로 다시 더함</li>
+      <li>쓴 선거 6번: 2020·2024 총선 비례, 2022·2025 대선, 2022·2026 지방선거 광역의원 비례 — 후보 개인 인기가 덜 섞이게 정당 투표 위주</li>
+      <li>격차 = 민주 계열 − 보수 1당 득표율 (총선 비례는 2020 더불어시민당+열린민주당, 2024 더불어민주연합+조국혁신당)</li>
+      <li>지역구마다 '격차 = 기본 성향 + 전국 분위기에 따라 움직이는 몫 + 해마다 바뀌는 몫'으로 맞춘 뒤, 해마다 바뀌는 몫 × 6년을 흐름으로 표시</li>
+      <li>전국 분위기 몫을 따로 빼는 이유: 호남처럼 이미 80~90%를 받는 곳은 분위기가 좋아져도 더 오를 자리가 없어, 그냥 비교하면 떨어지는 것처럼 보임</li>
+      <li>상승·하락 = 6년 변화 ±${TREND_STEP}%p 이상 · 뚜렷 = 선거 6번이 한 방향으로 고르게 움직여 우연으로 보기 어려운 곳(${ok}곳)</li>
+      <li>2016 총선·2017 대선·2018 지선은 국민의당 3당 구도라 흐름 계산에서 빼고 지역구 화면 표에만 참고로 보여 줌</li>
+      <li>과거 흐름일 뿐 앞으로도 이어진다는 뜻은 아님 · 판세(승리 확률) 계산에는 넣지 않음</li>
+    </ul>
+    <p class="src">출처 중앙선거관리위원회 선거통계시스템 · 동 이름이 바뀌어 짝을 못 찾은 표 0~1.2%는 구시군 안 비율로 나눔</p>
+  </details>`;
+}
+function showTrendOverview() {
+  const t = state.trend;
+  if (!t) { $("#panel").innerHTML = `<h2 class="ov-title">민주당 흐름</h2><p class="ov-sub">자료를 불러오는 중이에요…</p>`; return; }
+  const d = t.district;
+  if (!TREND_TABS.some(([x]) => x === state.trendTab)) state.trendTab = "up";
+  const list = trendKeys(state.trendTab);
+  state.list = list;
+  const n = (c) => Object.values(d).filter((x) => x.cls === c).length;
+  // 시도별 평균 6년 변화
+  const by = {};
+  for (const [k, v] of Object.entries(d)) (by[k.split(" ")[0]] ??= []).push(v.chg);
+  const sido = Object.entries(by).map(([s, xs]) => [s, xs.reduce((a, b) => a + b, 0) / xs.length, xs.length]).sort((a, b) => b[1] - a[1]);
+  const max = Math.max(...sido.map(([, x]) => Math.abs(x)), 1);
+  $("#panel").innerHTML = `
+    <h2 class="ov-title">민주당 흐름</h2>
+    <p class="ov-sub">2020~2026년 선거 6번에서 지역구마다 민주 계열이 <b>전국 평균보다</b> 얼마나 더(덜) 받게 됐나 · 6년 변화</p>
+    <div class="tsum"><span style="--c:${TCLS_COLOR["뚜렷한 상승"]}">뚜렷한 상승 <b>${n("뚜렷한 상승")}</b>곳</span><span style="--c:${TCLS_COLOR["뚜렷한 하락"]}">뚜렷한 하락 <b>${n("뚜렷한 하락")}</b>곳</span></div>
+    <h3 class="sec-h">시·도별 평균</h3>
+    <ul class="tbars">${sido.map(([s, x, c]) => `<li><span>${esc(s)} <small>${c}곳</small></span><span class="tb"><span class="${x >= 0 ? "pos" : "neg"}" style="width:${Math.abs(x) / max * 50}%"></span></span><b class="${x >= 0 ? "pos" : "neg"}">${signed(Math.round(x * 10) / 10)}</b></li>`).join("")}</ul>
+    <div class="ltabs" role="tablist">${TREND_TABS.map(([x, nm]) => `<button data-t="${x}" class="${state.trendTab === x && !state.grade ? "on" : ""}">${nm}</button>`).join("")}</div>
+    <p class="lmeta">${state.grade ? `<b>${state.grade}</b> ${list.length}곳 <button class="clear" id="clearGrade">해제</button>` : `${list.length}곳 · 6년 변화 큰 순 · <em class="tsig">뚜렷</em> = 우연으로 보기 어려운 곳`}</p>
+    <ul class="klist" id="klist">${list.map((k, i) => `<li data-k="${esc(k)}"><em>${i + 1}</em><i style="background:${TCLS_COLOR[d[k].cls]}"></i><span>${esc(k)}</span><small>${sigTag(d[k])} <b class="${d[k].chg >= 0 ? "pos" : "neg"}">${signed(d[k].chg)}</b></small></li>`).join("") || "<li class='none'>해당 지역구가 없어요</li>"}</ul>
+    ${trendMethodHTML()}`;
+  $$("#klist li[data-k]").forEach((li) => li.addEventListener("click", () => { state.listScroll = $("#panel").scrollTop; select(li.dataset.k, true); }));
+  $$(".ltabs button").forEach((b) => b.addEventListener("click", () => { state.trendTab = b.dataset.t; state.listScroll = 0; state.grade ? setGrade(null) : showTrendOverview(); }));
+  $("#clearGrade")?.addEventListener("click", () => setGrade(null));
+  $("#panel").scrollTop = state.listScroll || 0;
+}
+function showTrend(key, m) {
+  const t = state.trend?.district[key];
+  if (!t) { $("#panel").innerHTML = `${navBar(key)}<p class="where big"><span>지역구</span><b>${esc(key)}</b></p><p class="ov-sub">흐름 자료를 불러오는 중이에요…</p>`; bindBack(); return; }
+  const yr = Object.fromEntries(state.trend.elections.map((e) => [e.id, e.year]));
+  const cell = (id) => t.rel[id] === undefined ? `<td>–</td>` : `<td class="${id in { g20: 1, p19: 1, l7: 1 } ? "old" : ""}"><small>${yr[id]}</small> <b class="${t.rel[id] >= 0 ? "pos" : "neg"}">${signed(t.rel[id])}</b></td>`;
+  const dir = t.chg > 0 ? "민주 쪽으로" : t.chg < 0 ? "국민의힘 쪽으로" : "";
+  $("#panel").innerHTML = `
+    ${navBar(key)}
+    <p class="where big"><span>지역구</span><b>${esc(key)}</b></p>
+    <section class="outlook">
+      <div class="grade-badge" style="--c:${TCLS_COLOR[t.cls]}"><b>${t.cls}</b><span>6년 변화 <b class="big">${signed(t.chg)}%p</b> <small>${dir} · 전국 분위기 영향 뺀 값 · ${t.sig ? "선거 6번이 고르게 같은 방향(뚜렷)" : "선거마다 들쭉날쭉해 확실하지 않음"}</small></span></div>
+      <div class="leancalc">
+        <p class="lc-h">전국 평균보다 민주 계열 격차가 얼마나 컸나</p>
+        <table class="ex ttable">
+          <tr><th></th><th>2016~18</th><th>2020~22</th><th>2024~26</th></tr>
+          ${TREND_KINDS.map(([nm, ids]) => `<tr><td>${nm}</td>${ids.map(cell).join("")}</tr>`).join("")}
+        </table>
+        <p class="lc-say">전국 분위기가 1%p 바뀔 때 이 지역은 약 ${t.el.toFixed(1)}%p 움직임${t.el >= 1.2 ? " — 바람을 크게 타는 곳" : t.el <= 0.8 ? " — 바람을 덜 타는 곳" : ""}</p>
+        <p class="src">흐름은 2020~2026 선거 6번으로 계산 · 2016~18(흐린 글씨)은 국민의당 3당 구도라 참고만</p>
+      </div>
+    </section>
+    ${state.outlook ? `<button class="to-outlook" id="toOutlook">이 지역구 판세(승리 확률) 보기 →</button>` : ""}
+    <details class="prev"><summary>현재 국회의원 · 2024 총선 결과 <small>${m ? `${esc(m.name)} (${esc(m.party)})` : "공석"}</small></summary>
+      ${electionHTML(key, m?.name) || ""}
+    </details>`;
+  bindBack();
+  $("#toOutlook")?.addEventListener("click", () => setMode("outlook"));
+  $("#panel").scrollTop = 0;
+  const list = state.list || [], i = list.indexOf(key);
+  $("#prevK")?.addEventListener("click", () => select(list[i - 1], true));
+  $("#nextK")?.addEventListener("click", () => select(list[i + 1], true));
+  if (window.matchMedia("(max-width: 1080px)").matches) {
+    const y = $("#panel").getBoundingClientRect().top + scrollY - $("#bar").offsetHeight - 12;
+    window.scrollTo({ top: y, behavior: "smooth" });
+  }
 }
 
 const STATUS_CLASS = { "현역 의원": "s-mp", "위원장": "s-chair", "직무대행": "s-acting", "확인필요": "s-unknown" };
@@ -1195,7 +1328,9 @@ function showTip(key, ev) {
   const m = state.members.district[key];
   const tip = $("#tip");
   const o = state.outlook?.district[key];
-  tip.innerHTML = `<div class="k">${esc(key)}</div>` + (state.mode === "outlook" && o
+  const t = state.trend?.district[key];
+  if (state.mode === "trend" && t) tip.innerHTML = `<div class="k">${esc(key)}</div><i style="background:${TCLS_COLOR[t.cls]}"></i><b>${t.cls}</b> · 6년 변화 ${signed(t.chg)}%p`;
+  else tip.innerHTML = `<div class="k">${esc(key)}</div>` + (state.mode === "outlook" && o
     ? `<i style="background:${GRADE_COLOR[o.grade]}"></i><b>${o.grade}</b> · 승리 확률 ${pct(o.exp)} · 예상 ${signed(o.exp)}%p${chairName(key) ? `<div class="k2">민주당 ${esc(chairName(key))}</div>` : ""}`
     : (m ? `<i style="background:${colorOf(m.party)}"></i><b>${esc(m.name)}</b> · ${esc(m.party)}` : "공석"));
   tip.hidden = false;
