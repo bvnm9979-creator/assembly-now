@@ -24,7 +24,7 @@ def search(query, sort=1, start=1, extra=""):
         head = t[max(0, m.start() - 6000):m.start()]
         date = re.findall(r">(\d{4}\.\d{2}\.\d{2})\.<|>(\d+(?:분|시간|일|주) 전)<", head)
         press = re.findall(r'sds-comps-profile-info-title-text[^>]*>(?:<[^>]+>)*([^<]+)<', head)
-        out.append({"title": clean(title.replace('<span class="fender-ui_0cb57fb2">새 창 열림</span>', "")),
+        out.append({"title": clean(re.sub(r"<span[^>]*>\s*새 창 열림\s*</span>", "", title)).removesuffix("새 창 열림").strip(),
                     "body": clean(body.replace('<span class="fender-ui_0cb57fb2">새 창 열림</span>', "")),
                     "date": "".join(date[-1]) if date else "", "press": press[-1].strip() if press else "",
                     "link": html.unescape(link)})
