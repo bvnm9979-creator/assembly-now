@@ -7,15 +7,17 @@
    (한 기관이 여러 번 조사해도 한 표만 갖게)
 4) 보정: 과거 세 선거 직전 20일 여론조사 평균(같은 방식)과 실제 전국 평균 격차(판세 계산과 같은 정의)의 차이를 평균해 더함
    — 지방선거 실제값은 광역비례 '더불어민주당' 표만 쓰므로 여론조사도 더불어민주당만으로 비교
-결과 → web/data/poll.json · 실행: python3 scripts/fetch_polls.py
+결과 → web/data/poll.json · 실행: python3 scripts/fetch_polls.py [시작일 예: 2026-10-01]
+   (시작일을 주면 최근 2주 대신 그날부터 마지막 조사까지)
 """
-import datetime as dt, json, os, re, statistics as st, urllib.request, zipfile
+import datetime as dt, json, os, re, statistics as st, sys, urllib.request, zipfile
 import xml.etree.ElementTree as ET
 from collections import defaultdict
 
 ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 XLSX = os.path.join(ROOT, "raw", "nesdc_polls.xlsx")
 OUT = os.path.join(ROOT, "web", "data", "poll.json")
+EXTRA = os.path.join(ROOT, "data", "polls_extra.json")   # 엑셀에 아직 없는 최신 등록 조사(손으로 옮김)
 BASE = "https://www.nesdc.go.kr"
 LIST = BASE + "/portal/bbs/B0000025/list.do?menuNo=200500"
 DBLOC = ("더불어민주당", "조국혁신당", "진보당", "기본소득당", "사회민주당", "더불어민주연합", "새진보연합")
@@ -100,6 +102,11 @@ def polls():
             out.append({"no": r["A"], "org": r.get("B", "").replace("\n", " ").strip(), "date": day, "method": r.get("E", ""),
                         "bloc": round(sum(num(r.get(cols[p])) for p in DBLOC if p in cols), 1),
                         "dem": num(r.get(cols["더불어민주당"])), "R": round(sum(num(r.get(cols[p])) for p in RIVAL if p in cols), 1)})
+    have = {p["no"] for p in out}
+    if os.path.exists(EXTRA):
+        for e in json.load(open(EXTRA))["polls"]:
+            if e["no"] not in have:
+                out.append({**e, "date": dt.date.fromisoformat(e["date"]), "extra": True})
     return out
 
 
@@ -122,15 +129,17 @@ def main():
                      "n": len(w), "orgs": n_org, "basis": "민주 계열" if key == "bloc" else "더불어민주당"})
     corr = round(st.mean(x["diff"] for x in past), 1)
     last = max(p["date"] for p in ps)
-    recent = sorted((p for p in ps if p["date"] > last - dt.timedelta(days=14)), key=lambda p: p["date"])
+    since = dt.date.fromisoformat(sys.argv[1]) if len(sys.argv) > 1 else last - dt.timedelta(days=13)
+    recent = sorted((p for p in ps if p["date"] >= since), key=lambda p: p["date"])
     avg, n_org = org_avg(recent, "bloc")
     out = {"kind": "average", "source": "중앙선거여론조사심의위원회 '여론조사결과 주요 데이터' " + title, "url": view,
-           "window": [recent[0]["date"].isoformat(), last.isoformat()], "n": len(recent), "orgs": n_org,
+           "window": [recent[0]["date"].isoformat(), last.isoformat()], "since": since.isoformat() if len(sys.argv) > 1 else None, "n": len(recent), "orgs": n_org,
            "avg": round(avg, 1), "correction": corr, "gap": round(avg + corr, 1), "past": past,
-           "polls": [{"no": p["no"], "org": p["org"], "date": p["date"].isoformat(), "method": p["method"], "bloc": p["bloc"], "R": p["R"]} for p in recent],
+           "polls": [{"no": p["no"], "org": p["org"], "date": p["date"].isoformat(), "method": p["method"], "bloc": p["bloc"], "R": p["R"], **({"extra": True} if p.get("extra") else {})} for p in recent],
+           "extra": sum(1 for p in recent if p.get("extra")),
            "updated": dt.date.today().isoformat()}
     json.dump(out, open(OUT, "w"), ensure_ascii=False, separators=(",", ":"))
-    print(f"{title}: 전국 조사 {len(ps)}건 · 최근 2주({out['window'][0]}~{out['window'][1]}) {len(recent)}건 {n_org}개 기관")
+    print(f"{title}: 전국 조사 {len(ps)}건 · 사용 기간({out['window'][0]}~{out['window'][1]}) {len(recent)}건 {n_org}개 기관")
     print(f"평균 {out['avg']:+.1f} · 과거 보정 {corr:+.1f} → 여론조사 버튼 {out['gap']:+.1f}")
     for x in past:
         print(f"  {x['name']}: 직전 20일 {x['n']}건({x['orgs']}개 기관, {x['basis']}) {x['poll']:+.1f} → 실제 {x['actual']:+.1f} ({x['diff']:+.1f})")
