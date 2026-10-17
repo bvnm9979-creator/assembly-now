@@ -34,7 +34,7 @@ const gpaint = (g) => (!state.grade || state.grade === g ? GRADE_COLOR[g] || "#B
 const TCLS = [["확실히 좋아짐", "#1F5BC4"], ["좋아짐", "#8DB1EC"], ["그대로", "#CDD1D8"], ["나빠짐", "#F3A3A7"], ["확실히 나빠짐", "#E2333C"]];
 const TCLS_COLOR = Object.fromEntries(TCLS);
 const TREND_STEP = 3;   // ±3%p 넘으면 좋아짐·나빠짐 (확실히 = 통계상 우연으로 보기 어려운 곳)
-const tclsOf = (t) => !t ? "" : t.sig ? (t.chg > 0 ? "확실히 좋아짐" : "확실히 나빠짐") : t.chg >= TREND_STEP ? "좋아짐" : t.chg <= -TREND_STEP ? "나빠짐" : "그대로";
+const tclsOf = (t) => !t ? "" : t.cls ? t.cls : t.sig ? (t.chg > 0 ? "확실히 좋아짐" : "확실히 나빠짐") : t.chg >= TREND_STEP ? "좋아짐" : t.chg <= -TREND_STEP ? "나빠짐" : "그대로";
 // 6년 변화를 말로: +7.9 → '민주당에 7.9%p 유리해짐'
 const chgSay = (x) => x > 0 ? `민주당에 ${x.toFixed(1)}%p 유리해짐` : x < 0 ? `민주당에 ${(-x).toFixed(1)}%p 불리해짐` : "변화 없음";
 const tpaint = (c) => (!state.grade || state.grade === c ? TCLS_COLOR[c] || "#B8BBC2" : OFF);
@@ -262,8 +262,8 @@ function drawTrendBar() {
   const d = Object.values(state.trend?.district || {});
   const n = (c) => d.filter((x) => x.cls === c).length;
   $(".majority").textContent = `${d.length}곳`;
-  $("#leadL").innerHTML = `<i style="background:#1F5BC4"></i>민주당에 좋아진 곳 <b>${d.filter((x) => x.chg > 0).length}</b>`;
-  $("#leadR").innerHTML = `<b>${d.filter((x) => x.chg < 0).length}</b> 나빠진 곳<i style="background:#E2333C"></i>`;
+  $("#leadL").innerHTML = `<i style="background:#1F5BC4"></i>민주당에 좋아진 곳 <b>${d.filter((x) => x.cls.endsWith("좋아짐")).length}</b>`;
+  $("#leadR").innerHTML = `<b>${d.filter((x) => x.cls.endsWith("나빠짐")).length}</b> 나빠진 곳<i style="background:#E2333C"></i>`;
   $("#seatbar").innerHTML = TCLS.map(([c, col]) => n(c) ? `<span style="flex:${n(c)};background:${col}" title="${c} ${n(c)}곳"></span>` : "").join("");
   $("#parties").innerHTML = TCLS.map(([c, col]) =>
     `<button data-g="${c}" style="--c:${col}" aria-pressed="false"><i style="background:${col}"></i>${c} <b>${n(c)}</b></button>`).join("");
@@ -1160,8 +1160,8 @@ const sigTag = (t) => t.sig ? `<em class="tsig">확실</em>` : "";
 function trendKeys(tab) {
   const d = state.trend.district, keys = Object.keys(d);
   if (state.grade) return keys.filter((k) => d[k].cls === state.grade).sort((a, b) => d[b].chg - d[a].chg);
-  return tab === "down" ? keys.filter((k) => d[k].chg < 0).sort((a, b) => d[a].chg - d[b].chg)
-                        : keys.filter((k) => d[k].chg > 0).sort((a, b) => d[b].chg - d[a].chg);
+  return tab === "down" ? keys.filter((k) => d[k].cls.endsWith("나빠짐")).sort((a, b) => d[a].chg - d[b].chg)
+                        : keys.filter((k) => d[k].cls.endsWith("좋아짐")).sort((a, b) => d[b].chg - d[a].chg);
 }
 function trendMethodHTML() {
   const t = state.trend, ok = Object.values(t.district).filter((x) => x.sig).length;
@@ -1169,10 +1169,11 @@ function trendMethodHTML() {
     <ul class="tmethod">
       <li>선관위 개표 결과(투표구·읍면동별)를 지금 지역구 254곳 경계로 다시 더함</li>
       <li>쓴 선거 6번: 2020·2024 총선 비례, 2022·2025 대선, 2022·2026 지방선거 광역의원 비례 — 후보 개인 인기가 덜 섞이게 정당 투표 위주</li>
-      <li>격차 = 민주 계열 − 보수 1당 득표율 (총선 비례는 2020 더불어시민당+열린민주당, 2024 더불어민주연합+조국혁신당)</li>
+      <li>격차 = 민주 계열 − 보수 1당 득표율 (총선 비례는 2020 더불어시민당+열린민주당, 2024 더불어민주연합+조국혁신당, 지방선거 비례는 민주당+조국혁신당+진보당 등 — 2026 조국혁신당이 부산·대구·경북엔 후보를 안 내 민주당만 세면 비뚤어짐)</li>
+      <li>격차는 두 방식으로 계산(전체 표 대비 / 두 쪽 표만). 호남처럼 국민의힘 표가 아주 적은 곳은 작은 정당 표에 따라 두 방식이 반대로 나오기도 해서, <b>두 방식이 같은 방향일 때만</b> 좋아짐·나빠짐으로 표시하고 숫자는 두 값의 평균</li>
       <li>지역구마다 '격차 = 기본 성향 + 전국 분위기에 따라 움직이는 몫 + 해마다 바뀌는 몫'으로 맞춘 뒤, 해마다 바뀌는 몫 × 6년을 흐름으로 표시</li>
       <li>전국 분위기 몫을 따로 빼는 이유: 호남처럼 이미 80~90%를 받는 곳은 분위기가 좋아져도 더 오를 자리가 없어, 그냥 비교하면 떨어지는 것처럼 보임</li>
-      <li>좋아짐·나빠짐 = 6년 동안 민주당에 ${TREND_STEP}%p 이상 유리해지거나 불리해진 곳 · 확실히 = 선거 6번이 한 방향으로 고르게 움직여 우연으로 보기 어려운 곳(${ok}곳)</li>
+      <li>좋아짐·나빠짐 = 두 방식 모두 6년 동안 민주당에 ${TREND_STEP}%p 이상 유리해지거나 불리해진 곳 · 확실히 = 두 방식 모두 선거 6번이 한 방향으로 고르게 움직여 우연으로 보기 어려운 곳(${ok}곳)</li>
       <li>2016 총선·2017 대선·2018 지선은 국민의당 3당 구도라 흐름 계산에서 빼고 지역구 화면 표에만 참고로 보여 줌</li>
       <li>과거 흐름일 뿐 앞으로도 이어진다는 뜻은 아님 · 판세(승리 확률) 계산에는 넣지 않음</li>
     </ul>
@@ -1216,7 +1217,9 @@ function showTrend(key, m) {
     ${navBar(key)}
     <p class="where big"><span>지역구</span><b>${esc(key)}</b></p>
     <section class="outlook">
-      <div class="grade-badge tbadge" style="--c:${TCLS_COLOR[t.cls]}"><b>${t.cls === "그대로" ? "큰 변화 없음" : "민주당에 " + t.cls}</b><span>최근 6년간 <b class="${t.chg >= 0 ? "pos" : "neg"}">${chgSay(t.chg)}</b><small>${t.sig ? "선거 6번 모두 같은 방향이라 확실한 흐름" : "선거마다 들쭉날쭉해 아직 확실하지 않음"} · 전국 분위기 영향은 뺀 값</small></span></div>
+      ${t.a !== undefined && (t.a > 0) !== (t.b > 0)
+        ? `<div class="grade-badge tbadge" style="--c:${TCLS_COLOR[t.cls]}"><b>판단 보류</b><span>계산 방식에 따라 좋아짐·나빠짐이 엇갈림<small>전체 표 대비 ${signed(t.a)}%p · 두 당 표만 ${signed(t.b)}%p — 국민의힘 표가 아주 적거나 작은 정당 표가 많은 곳에서 생김</small></span></div>`
+        : `<div class="grade-badge tbadge" style="--c:${TCLS_COLOR[t.cls]}"><b>${t.cls === "그대로" ? "큰 변화 없음" : "민주당에 " + t.cls}</b><span>최근 6년간 <b class="${t.chg >= 0 ? "pos" : "neg"}">${chgSay(t.chg)}</b><small>${t.sig ? "선거 6번 모두 같은 방향이라 확실한 흐름" : t.cls === "그대로" ? "변화가 작음" : "선거마다 들쭉날쭉해 아직 확실하지 않음"} · 전국 분위기 영향은 뺀 값</small></span></div>`}
       <div class="leancalc">
         <p class="lc-h">이 지역이 전국 평균보다 민주당을 얼마나 더 찍었나</p>
         <p class="lc-say"><b class="pos">+</b> = 전국보다 민주당 표가 많음 · <b class="neg">−</b> = 전국보다 국민의힘 표가 많음 · 오른쪽으로 갈수록 최근</p>

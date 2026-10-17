@@ -25,8 +25,12 @@ import backtest as bt
 bo.ALIAS[("2800", "남구")] = ["미추홀구"]      # 인천 남구 → 2018.7 미추홀구 (2016·2017·2018 자료)
 FIT = ("g21", "g22", "p20", "p21", "l8", "l9")
 T_SIG = 2.35
+STEP = 3.0      # 두 방식 모두 6년간 3%p 넘게 같은 방향이면 좋아짐·나빠짐
 
 load = lambda f: json.load(open(os.path.join(bo.RAW, f)))
+# 지선 비례의 민주 계열 = 2024 총선 비례(더불어민주연합 = 민주·진보·기본소득·사민 + 조국혁신당)와 같은 묶음.
+# 더불어민주당만 세면 2026 조국혁신당이 후보를 안 낸 부산·대구·경북은 오르고, 12~15% 받은 호남은 내려가는 착시가 생김
+DBLOC = ["더불어민주당", "조국혁신당", "진보당", "기본소득당", "사회민주당"]
 # (id, 종류, 연도, 이름, 원자료, 투표구별?, 비례 표?, 민주 계열, 보수 1당)
 ELECTIONS = [
     ("g20", "총선", 2016, "2016 총선 비례", "nec_g20_partylist_raw.json", True, True, ["더불어민주당"], ["새누리당"]),
@@ -36,54 +40,67 @@ ELECTIONS = [
     ("p20", "대선", 2022, "2022 대선", "nec_p20_precinct_raw.json", True, False, ["더불어민주당"], ["국민의힘"]),
     ("p21", "대선", 2025, "2025 대선", "nec_p21_precinct_raw.json", True, False, ["더불어민주당"], ["국민의힘"]),
     ("l7", "지선", 2018, "2018 지선 비례", "nec_l7_partylist_raw.json", False, False, ["더불어민주당"], ["자유한국당"]),
-    ("l8", "지선", 2022, "2022 지선 비례", "nec_l8_partylist_raw.json", False, False, ["더불어민주당"], ["국민의힘"]),
-    ("l9", "지선", 2026, "2026 지선 비례", "nec_l9_partylist_raw.json", False, False, ["더불어민주당"], ["국민의힘"]),
+    ("l8", "지선", 2022, "2022 지선 비례", "nec_l8_partylist_raw.json", False, False, DBLOC, ["국민의힘"]),
+    ("l9", "지선", 2026, "2026 지선 비례", "nec_l9_partylist_raw.json", False, False, DBLOC, ["국민의힘"]),
 ]
 KINDS = {"총선": ("g20", "g21", "g22"), "대선": ("p19", "p20", "p21"), "지선": ("l7", "l8", "l9")}
 
 
 def main():
     g = next(e for e in json.load(open(os.path.join(bo.OUT, "results.json")))["elections"] if e["id"] == "g22")["district"]
-    rel, nat, lost_share = {}, {}, {}
+    # 두 가지 격차로 따로 계산: share = 전체 유효표 대비, two = 민주 계열 + 보수 1당 두 쪽 표만
+    # (호남처럼 보수 표가 아주 적은 곳은 작은 정당 표가 어디로 가느냐에 따라 두 방식이 반대로 나옴 → 둘이 같은 방향일 때만 좋아짐·나빠짐)
+    rel = {"share": {}, "two": {}}
+    nat = {"share": {}, "two": {}}
+    lost_share = {}
     for eid, _, _, name, f, prec, party, d, r in ELECTIONS:
         src = bt.remap(load(f))
         if party:
             src = bo.party_table(src)
         acc, lost = bo.aggregate(src, prec, d_parties=d, r_parties=r)
-        m = {k: (v["D"] - v["R"]) / v["valid"] * 100 for k, v in acc.items() if k in g and v["valid"]}
-        nat[eid] = st.mean(m.values())
-        rel[eid] = {k: x - nat[eid] for k, x in m.items()}
+        for how in rel:
+            m = {k: (v["D"] - v["R"]) / (v["valid"] if how == "share" else v["D"] + v["R"]) * 100
+                 for k, v in acc.items() if k in g and v["valid"]}
+            nat[how][eid] = st.mean(m.values())
+            rel[how][eid] = {k: x - nat[how][eid] for k, x in m.items()}
         tot = sum(v["valid"] for v in acc.values())
         lost_share[eid] = sum(lost.values()) / (tot + sum(lost.values())) * 100
-        print(f"{name}: {len(m)}/{len(g)}곳 · 전국 평균 격차 {nat[eid]:+.1f} · 동 짝 못 찾은 표 {lost_share[eid]:.2f}%")
+        print(f"{name}: 전국 평균 격차 {nat['share'][eid]:+.1f} · 동 짝 못 찾은 표 {lost_share[eid]:.2f}%")
 
     year = {e[0]: e[2] for e in ELECTIONS}
-    X = np.array([[1, nat[e], year[e] - 2023] for e in FIT])
-    XtXi = np.linalg.inv(X.T @ X)
-    out = {}
-    for k in sorted(g):
-        row = {e: round(rel[e][k], 1) for e in rel if k in rel[e]}
-        y = np.array([rel[e][k] + nat[e] for e in FIT])
+
+    def fit(how, k):
+        X = np.array([[1, nat[how][e], year[e] - 2023] for e in FIT])
+        XtXi = np.linalg.inv(X.T @ X)
+        y = np.array([rel[how][e][k] + nat[how][e] for e in FIT])
         c = XtXi @ X.T @ y
         res = y - X @ c
         se = float(np.sqrt(res @ res / (len(FIT) - 3) * XtXi[2, 2]))
-        t = float(c[2]) / se if se else 0
-        out[k] = {"rel": row, "chg": round(float(c[2]) * 6, 1), "el": round(float(c[1]), 2),
-                  "sig": abs(t) >= T_SIG, "t": round(t, 1)}
+        return float(c[2]) * 6, float(c[1]), (float(c[2]) / se if se else 0)
+
+    out = {}
+    for k in sorted(g):
+        (ca, ea, ta), (cb, _, tb) = fit("share", k), fit("two", k)
+        same = (ca > 0) == (cb > 0)
+        sig = same and abs(ta) >= T_SIG and abs(tb) >= T_SIG
+        big = same and min(abs(ca), abs(cb)) >= STEP
+        cls = ("확실히 좋아짐" if ca > 0 else "확실히 나빠짐") if sig else ("좋아짐" if ca > 0 else "나빠짐") if big else "그대로"
+        out[k] = {"rel": {e: round(rel["share"][e][k], 1) for e in rel["share"] if k in rel["share"][e]},
+                  "chg": round((ca + cb) / 2, 1), "a": round(ca, 1), "b": round(cb, 1), "el": round(ea, 2),
+                  "sig": sig, "cls": cls}
 
     json.dump({"source": "중앙선거관리위원회 선거통계시스템 투표구·읍면동별 개표결과를 22대 지역구로 다시 합산",
                "elections": [{"id": e[0], "kind": e[1], "year": e[2], "name": e[3]} for e in ELECTIONS],
-               "fit": FIT, "national": {e: round(v, 1) for e, v in nat.items()},
+               "fit": FIT, "national": {e: round(v, 1) for e, v in nat["share"].items()},
                "lost": {e: round(v, 2) for e, v in lost_share.items()},
-               "rule": "흐름 = 2020~2026 선거 6개로 '지역구 격차 = a + b × 전국 평균 격차 + c × 연도'를 맞춘 c × 6년 · 뚜렷 = t ≥ 2.35",
+               "rule": "흐름 = 2020~2026 선거 6개로 '지역구 격차 = a + b × 전국 평균 격차 + c × 연도'를 맞춘 c × 6년, 격차 두 방식(전체 표 대비·두 쪽 표만) 평균 · 두 방식이 같은 방향으로 ±3%p 이상이면 좋아짐·나빠짐, 둘 다 t ≥ 2.35면 확실히",
                "district": out},
               open(os.path.join(bo.OUT, "trend.json"), "w"), ensure_ascii=False, separators=(",", ":"))
 
-    xs = sorted(((v["chg"], v["sig"], k) for k, v in out.items()), reverse=True)
-    print("흐름 분포: 평균", round(st.mean(x for x, *_ in xs), 2), "· 흩어짐", round(st.pstdev([x for x, *_ in xs]), 2),
-          "· 뚜렷 오름", sum(1 for x, s, _ in xs if s and x > 0), "· 뚜렷 내림", sum(1 for x, s, _ in xs if s and x < 0))
-    print("오름 상위:", xs[:12])
-    print("내림 상위:", xs[-12:])
+    from collections import Counter
+    print(Counter(v["cls"] for v in out.values()))
+    for c in ("확실히 나빠짐", "확실히 좋아짐"):
+        print(c, [(k, v["chg"]) for k, v in sorted(out.items(), key=lambda x: x[1]["chg"]) if v["cls"] == c])
 
 
 if __name__ == "__main__":
